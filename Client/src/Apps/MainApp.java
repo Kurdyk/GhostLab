@@ -14,7 +14,9 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import models.Config;
 import models.Partie;
+import utils.CallbackInstance;
 import utils.ConnectionHandler;
+import utils.PartiesUpdater;
 import utils.RecurrentServerRequest;
 import views.HomeController;
 import views.WelcomeController;
@@ -78,14 +80,17 @@ public class MainApp extends Application {
     }
 
     private void fetchPartiesList(){
-        //connectionHandler.registerCallback("121", new PartiesUpdater(this), CallbackInstance::parse);
-        fetchPartiesListTimer = connectionHandler.registerRecurrentServerCall(new RecurrentServerRequest() {
-            @Override
-            public void run() {
-                handler.send("120 GETLIST");
-            }
-        }, 1000);
+        connectionHandler.registerCallback("GAMES", new PartiesUpdater(this), CallbackInstance::parse, true);
+        connectionHandler.registerCallback("OGAME", new PartiesUpdater(this), CallbackInstance::parse, true);
 
+        if (this.serverConfig.isServeurAmeliore()) {
+            fetchPartiesListTimer = connectionHandler.registerRecurrentServerCall(new RecurrentServerRequest() {
+                @Override
+                public void run() {
+                    handler.send("GAME?***");
+                }
+            }, 1000);
+        }
         // On simule 3 parties que l'on peut rejoindre
 
 

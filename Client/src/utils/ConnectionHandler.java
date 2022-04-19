@@ -3,7 +3,6 @@ package utils;
 import models.Config;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.*;
 
@@ -14,7 +13,7 @@ public class ConnectionHandler extends Thread{
     private Config config;
     private boolean running = true;
     private Scanner scanner;
-    private PrintWriter printWriter;
+    private MyPrintWriter printWriter;
     private Socket socket;
     private Map<String, CallbackServer> callLinks = new HashMap<>();
     private Map<String, CallbackInstance> callOwners = new HashMap<>();
@@ -126,7 +125,7 @@ public class ConnectionHandler extends Thread{
         try {
             socket = new Socket(config.getAdresseServeur(), config.getPortServeur());
             scanner = new Scanner(socket.getInputStream());
-            printWriter = new PrintWriter(socket.getOutputStream(), true);
+            printWriter = new MyPrintWriter(socket.getOutputStream(), true);
         } catch (IOException e){
             e.printStackTrace();
             return;
@@ -137,7 +136,7 @@ public class ConnectionHandler extends Thread{
         while (running && scanner.hasNext()){
             String command = scanner.nextLine();
             System.err.println("RECU : "+command);
-            String[] response = command.split(" ");
+            String[] response = command.replace("***", "").split(" ");
             if (callLinks.containsKey(response[0])) {
                 callLinks.get(response[0]).call(callOwners.get(response[0]), command);
             } else {
