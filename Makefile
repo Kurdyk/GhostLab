@@ -2,14 +2,15 @@ ifeq ($(OS),Windows_NT)
 	jfx = Windows
 else
 	UNAME_S := $(shell uname -s)
-	ifeq ($(UNAME_S),Linux)
-		jfx = Linux
-	endif
 	ifeq ($(UNAME_S),Darwin)
-            jfx = Mac
+		jfx = Mac
+	else
+		jfx = Linux
 	endif
 endif
 
+configure:
+	export PATH := /usr/lib/jvm/java-17/bin:$(PATH)
 
 build_client:
 	mkdir -p out/production/Client out/production/Client/views/
