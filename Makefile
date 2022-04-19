@@ -10,7 +10,7 @@ else
 endif
 
 configure:
-	export PATH := /usr/lib/jvm/java-17/bin:$(PATH)
+	./univ.sh
 
 build_client:
 	mkdir -p out/production/Client out/production/Client/views/
