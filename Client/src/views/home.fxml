@@ -15,8 +15,7 @@
                   <TableView fx:id="partiesEnCoursTableView" prefHeight="398.0" prefWidth="295.0" style="-fx-font-family: Chilanka;" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0">
                     <columns>
                       <TableColumn fx:id="identifiantTableColumn" prefWidth="82.0" text="Identifiants" />
-                        <TableColumn fx:id="modeTableColumn" minWidth="0.0" prefWidth="68.0" text="Mode de jeu" />
-                      <TableColumn fx:id="createurTableColumn" prefWidth="75.0" text="Créateur" />
+                        <TableColumn fx:id="nbPlayerTableColumn" minWidth="0.0" prefWidth="68.0" text="Nombre de joueurs" />
                         <TableColumn fx:id="dimensionTableColumn" prefWidth="75.0" text="Dimensions" />
                     </columns>
                   </TableView>

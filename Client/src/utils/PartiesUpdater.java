@@ -32,17 +32,26 @@ public class PartiesUpdater extends CallbackInstance {
 
     public void parse(String message){
         String[] commande = message.split(" ");
-        if (commande[1].equals("NUMBER")){
-            this.totalParties = Integer.parseInt(commande[2]);
+        if (commande[0].equals("GAMES") && commande.length == 2){
+            this.totalParties = commande[1].charAt(0);
             partiesListBrute.clear();
             if(totalParties == 0){
                 mainApp.updateParties(partiesListBrute);
             }
-        } else if (commande[1].equals("MESS")){
+        } else if (commande[0].equals("OGAME") && commande.length == 3){
             partiesListBrute.add(message);
-            if (Integer.parseInt(commande[2]) == totalParties){
+            if (partiesListBrute.size() == totalParties){
                 mainApp.updateParties(partiesListBrute);
             }
+        } else if (commande[0].equals("SIZE!") && commande.length == 4){
+            int id = commande[1].charAt(0);
+            int h = commande[2].charAt(0);
+            int w = commande[3].charAt(0);
+            mainApp.getPartiesList().stream().filter(p -> p.getIdentifiant() == id).forEach(p -> p.setDimensions(h, w));
+        } else if (commande[0].equals("LIST!") && commande.length == 3){
+            int id = commande[1].charAt(0);
+            int nb = commande[2].charAt(0);
+            mainApp.getPartiesList().stream().filter(p -> p.getIdentifiant() == id).forEach(p -> p.setNbPlayers(nb));
         }
     }
 

@@ -2,7 +2,6 @@ package views;
 
 import Apps.MainApp;
 import javafx.application.Platform;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -28,10 +27,7 @@ public class HomeController extends CallbackInstance {
     private TableColumn<Partie, Integer> identifiantTableColumn;
 
     @FXML
-    private TableColumn<Partie, String> modeTableColumn;
-
-    @FXML
-    private TableColumn<Partie, String> createurTableColumn;
+    private TableColumn<Partie, Integer> nbPlayerTableColumn;
 
     @FXML
     private TableColumn<Partie, String> dimensionTableColumn;
@@ -126,9 +122,8 @@ public class HomeController extends CallbackInstance {
         // Les instructions permettent d'affecter les propriétés de l'élément Parties à chaque colonne du tableView
         partiesEnCoursTableView.setPlaceholder(new Label("Aucune partie n'est actuellement disponible"));
         identifiantTableColumn.setCellValueFactory(cellData -> cellData.getValue().identifiantProperty().asObject());
-        modeTableColumn.setCellValueFactory(cellData -> cellData.getValue().modeDeJeuProperty());
-        createurTableColumn.setCellValueFactory(cellData -> cellData.getValue().createurProperty());
-        dimensionTableColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getDimensionX()+"x"+cellData.getValue().getDimensionY()));
+        nbPlayerTableColumn.setCellValueFactory(cellData -> cellData.getValue().nbPlayersProperty().asObject());
+        dimensionTableColumn.setCellValueFactory(cellData -> cellData.getValue().dimensionsProperty());
 
         dimensionsXSpinner.valueProperty().addListener((observable, oldValue, newValue) -> {
             this.dimensionX = newValue;
@@ -188,7 +183,7 @@ public class HomeController extends CallbackInstance {
 
     @FXML
     private void handleCreateGameButtonClick(){
-        partieCreated = new Partie(-1, mainApp.getServerConfig().getUsername(), modeDeJeuChoiceBox.getValue().equals("Speeding contest") ? "1" : modeDeJeuChoiceBox.getValue().equals("Tour par tour") ? "2" : "3",
+        /*partieCreated = new Partie(-1, mainApp.getServerConfig().getUsername(), modeDeJeuChoiceBox.getValue().equals("Speeding contest") ? "1" : modeDeJeuChoiceBox.getValue().equals("Tour par tour") ? "2" : "3",
                 dimensionsXSpinner.getValue(), dimensionsYSpinner.getValue(), nombreDeTrousSpinner.getValue(), nombreDeTresorsSpinner.getValue(), mainApp.getServerConfig().isServeurAmeliore() ? nombreDeJoueursMaxSpinner.getValue() : -1,
                 mainApp.getServerConfig().isServeurAmeliore() && robotsCheckBox.isSelected());
         partieCreated.setCreator(true);
@@ -200,13 +195,13 @@ public class HomeController extends CallbackInstance {
                 partieCreated.getDimensionY(),
                 partieCreated.getNombreDeTrous(),
                 partieCreated.getNombreDeTresors()));
-
+*/
 
     }
 
     @Override
     public void partieCreationCallback(String s) {
-        this.partieCreated.setIdentifiant(Integer.parseInt(s.split(" ")[3]));
+        //this.partieCreated.setIdentifiant(Integer.parseInt(s.split(" ")[3]));
         this.mainApp.getPartiesList().add(this.partieCreated);
         Platform.runLater(() -> {
             try {

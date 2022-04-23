@@ -47,6 +47,8 @@ public class MainApp extends Application {
 
     private Timer fetchPartiesListTimer;
 
+    private final PartiesUpdater partiesUpdater = new PartiesUpdater(this);
+
     /**
      * The entry point of application.
      *
@@ -80,16 +82,18 @@ public class MainApp extends Application {
     }
 
     private void fetchPartiesList(){
-        connectionHandler.registerCallback("GAMES", new PartiesUpdater(this), CallbackInstance::parse, true);
-        connectionHandler.registerCallback("OGAME", new PartiesUpdater(this), CallbackInstance::parse, true);
+        connectionHandler.registerCallback("GAMES", this.partiesUpdater, CallbackInstance::parse, true);
+        connectionHandler.registerCallback("OGAME", this.partiesUpdater, CallbackInstance::parse, true);
+        connectionHandler.registerCallback("SIZE!", this.partiesUpdater, CallbackInstance::parse, true);
+        connectionHandler.registerCallback("LIST!", this.partiesUpdater, CallbackInstance::parse, true);
 
         if (this.serverConfig.isServeurAmeliore()) {
             fetchPartiesListTimer = connectionHandler.registerRecurrentServerCall(new RecurrentServerRequest() {
                 @Override
                 public void run() {
-                    handler.send("GAME?***");
+                    handler.send("GAME?");
                 }
-            }, 1000);
+            }, 10000000);
         }
         // On simule 3 parties que l'on peut rejoindre
 
@@ -105,15 +109,15 @@ public class MainApp extends Application {
         }
         for (String message : list){
             String[] liste_commandes = message.split(" ");
-            int id = Integer.parseInt(liste_commandes[4]);
+            int id = liste_commandes[1].charAt(0);
             if (identifiants.contains(id)){
                 identifiants.remove((Integer) id);
+                connectionHandler.send("LIST? " + (char) id);
             } else {
-                Partie nouvelle_partie = new Partie(Integer.parseInt(liste_commandes[4]), liste_commandes[11],
-                        liste_commandes[5], Integer.parseInt(liste_commandes[6]), Integer.parseInt(liste_commandes[7]),
-                        Integer.parseInt(liste_commandes[8]), Integer.parseInt(liste_commandes[9]), Integer.parseInt(liste_commandes[10]),
-                        Boolean.parseBoolean(liste_commandes[12]));
+                Partie nouvelle_partie = new Partie(id, liste_commandes[2].charAt(0));
                 partiesList.add(nouvelle_partie);
+                connectionHandler.send("SIZE? " + (char) id);
+                connectionHandler.send("LIST? " + (char) id);
             }
         }
         partiesList.removeIf(partie -> identifiants.contains(partie.getIdentifiant()));

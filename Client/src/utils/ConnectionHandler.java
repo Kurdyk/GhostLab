@@ -125,6 +125,7 @@ public class ConnectionHandler extends Thread{
         try {
             socket = new Socket(config.getAdresseServeur(), config.getPortServeur());
             scanner = new Scanner(socket.getInputStream());
+            scanner.useDelimiter("\\s*\\*{3}\\s*");
             printWriter = new MyPrintWriter(socket.getOutputStream(), true);
         } catch (IOException e){
             e.printStackTrace();
@@ -134,9 +135,9 @@ public class ConnectionHandler extends Thread{
             upgrade();
         }
         while (running && scanner.hasNext()){
-            String command = scanner.nextLine();
+            String command = scanner.next();
             System.err.println("RECU : "+command);
-            String[] response = command.replace("***", "").split(" ");
+            String[] response = command.split(" ");
             if (callLinks.containsKey(response[0])) {
                 callLinks.get(response[0]).call(callOwners.get(response[0]), command);
             } else {
