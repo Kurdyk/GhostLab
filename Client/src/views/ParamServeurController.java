@@ -3,8 +3,8 @@ package views;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import models.Config;
+import utils.MyPrintWriter;
 
-import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.Scanner;
@@ -62,11 +62,12 @@ public class ParamServeurController {
             Socket socket = new Socket();
             socket.connect(new InetSocketAddress(url, port), 3*1000);
             Scanner scanner = new Scanner(socket.getInputStream());
-            PrintWriter printWriter = new PrintWriter(socket.getOutputStream(), true);
+            scanner.useDelimiter("\\s*\\*{3}\\s*");
+            MyPrintWriter printWriter = new MyPrintWriter(socket.getOutputStream(), true);
 
-            printWriter.println("50 HELLO");
-            String rep = scanner.nextLine();
-            return rep.split(" ")[0].equals("50") && rep.split(" ")[1].equals("HELLO");
+            printWriter.println("PING?");
+            String rep = scanner.next();
+            return rep.equals("PING!");
         } catch (Exception e){
             return false;
         }

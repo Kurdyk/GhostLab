@@ -22,6 +22,7 @@ public class ClientHandler implements Runnable{
     private Parser parser;
     private boolean loggedIn;
     private final ArrayList<Integer> joinedGames = new ArrayList<>();
+    private String start_buffer = null;
 
 
 
@@ -38,9 +39,18 @@ public class ClientHandler implements Runnable{
         this.socket = socket;
         this.mainApp = mainApp;
         this.scanner = new Scanner(socket.getInputStream());
+        scanner.useDelimiter("\\s*\\*{3}\\s*");
         this.myPrintWriter = new MyPrintWriter(socket.getOutputStream(), true);
         this.parser = new Parser(this, mainApp);
         this.client = new Client();
+        if (scanner.hasNext()){
+            String c = scanner.next();
+            if (c.equals("PING?")){
+                myPrintWriter.println("PING!");
+            } else {
+                firstParse(c);
+            }
+        }
     }
 
     /**
@@ -58,6 +68,13 @@ public class ClientHandler implements Runnable{
         }
     }
 
+    private void firstParse(String command){
+        switch (command){
+            default:
+                illegalCommand();
+        }
+    }
+
     @Override
     public void run(){
         try {
@@ -67,12 +84,8 @@ public class ClientHandler implements Runnable{
             mainApp.getAvailableGamesMap().forEach((id, game)
                     -> myPrintWriter.println("OGAME +" + (char) id.intValue() + " " + (char) (game.getNb_players())));
 
-            while (scanner.hasNextLine()) {
-                String command = scanner.nextLine();
-                switch (command.split(" ")[0]) {
-                    default:
-                        illegalCommand();
-                }
+            while (scanner.hasNext()) {
+                firstParse(scanner.next());
             }
         } catch (Exception e){
             e.printStackTrace();
