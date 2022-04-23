@@ -2,7 +2,6 @@ package Utils;
 
 import Apps.ConnectionHandler;
 import Models.Client;
-import utils.MyPrintWriter;
 
 import java.net.Socket;
 import java.util.ArrayList;
@@ -101,12 +100,8 @@ public class ClientHandler implements Runnable{
      *
      * @param message the message
      */
-    public void send(String message){
-        int code = (int) (Math.random() * (9999-1000+1) + 1000);
-        this.sendingQueue.add(code);
-        while (!(this.sendingQueue.get(0) == code)){}
+    public synchronized void send(String message){
         this.myPrintWriter.print(message);
-        this.sendingQueue.remove((Integer) code);
     }
 
 

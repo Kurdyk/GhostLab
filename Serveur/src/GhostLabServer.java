@@ -1,9 +1,4 @@
 import Apps.ConnectionHandler;
-import Utils.ClientHandler;
-
-import java.net.ServerSocket;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 
 // Point d'entrée du serveur
@@ -11,7 +6,7 @@ import java.util.concurrent.Executors;
 /**
  * The type Tresor hunt server.
  */
-public class TresorHuntServer {
+public class GhostLabServer {
     /**
      * The entry point of application.
      *

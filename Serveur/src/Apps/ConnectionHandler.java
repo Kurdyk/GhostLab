@@ -43,7 +43,7 @@ public class ConnectionHandler {
      * @return the int
      */
     public int registerGameId(Game game){
-        int id = (int) (Math.random() * (9999   -1000+1) + 1000);
+        int id = (int) (Math.random() * (127) + 1);
         if (gamesMap.containsKey(id)){
             return registerGameId(game);
         } else {
