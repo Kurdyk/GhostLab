@@ -69,9 +69,15 @@ public class ClientHandler implements Runnable{
     }
 
     private void firstParse(String command){
+        System.out.println("PARSING " + command);
         switch (command){
+            case "UPGD?":
+                parser.setGoodClient(true);
+                send("UPGD!");
+                break;
             default:
-                illegalCommand();
+                parser.parse(command);
+                break;
         }
     }
 
@@ -114,7 +120,7 @@ public class ClientHandler implements Runnable{
      * @param message the message
      */
     public synchronized void send(String message){
-        this.myPrintWriter.print(message);
+        this.myPrintWriter.println(message);
     }
 
 

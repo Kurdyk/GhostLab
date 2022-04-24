@@ -117,7 +117,7 @@ public class ConnectionHandler extends Thread{
      * Upgrade.
      */
     public void upgrade(){
-        send("55 UPGRADE");
+        send("UPGD?");
     }
 
     @Override
@@ -136,7 +136,7 @@ public class ConnectionHandler extends Thread{
         }
         while (running && scanner.hasNext()){
             String command = scanner.next();
-            System.err.println("RECU : "+command);
+            System.out.println("RECU : "+command);
             String[] response = command.split(" ");
             if (callLinks.containsKey(response[0])) {
                 callLinks.get(response[0]).call(callOwners.get(response[0]), command);

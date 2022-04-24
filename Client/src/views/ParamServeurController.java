@@ -67,6 +67,9 @@ public class ParamServeurController {
 
             printWriter.println("PING?");
             String rep = scanner.next();
+            scanner.close();
+            printWriter.close();
+            socket.close();
             return rep.equals("PING!");
         } catch (Exception e){
             return false;

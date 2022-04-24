@@ -32,14 +32,17 @@ public class PartiesUpdater extends CallbackInstance {
 
     public void parse(String message){
         String[] commande = message.split(" ");
+        System.out.println("parse de PartiesUpdater = Message en "+commande.length + " morceaux");
         if (commande[0].equals("GAMES") && commande.length == 2){
             this.totalParties = commande[1].charAt(0);
+            System.out.println("On va recevoir " + this.totalParties + " parties.");
             partiesListBrute.clear();
             if(totalParties == 0){
                 mainApp.updateParties(partiesListBrute);
             }
         } else if (commande[0].equals("OGAME") && commande.length == 3){
             partiesListBrute.add(message);
+            System.out.println("Une nouvelle partie recue.");
             if (partiesListBrute.size() == totalParties){
                 mainApp.updateParties(partiesListBrute);
             }

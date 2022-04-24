@@ -4,8 +4,6 @@ package Utils;
 import Apps.ConnectionHandler;
 import Models.Games.Game;
 
-import java.util.ArrayList;
-
 /**
  * This class is used to parse messages from clients,
  * create java objects of the command
@@ -73,10 +71,28 @@ public class Parser {
     //Méthode principale qui lit la commande envoyée par l'utilisateur et agit en fonction
     public void parse(String response_text){
         System.out.println("PROCESSING COMMAND : "+ response_text);
+        if (!CommandValidator.valiate(response_text)) illegalCommand();
         String[] response = response_text.split(" ");
         switch (response[0]){
-
-
+            case "GAME?":
+                client.send("GAMES " + (char) mainHandler.getAvailableGamesNumber());
+                for (Game g: mainHandler.getAvailableGamesMap().values()){
+                    client.send("OGAME " + (char) g.getId() + " " + g.getNb_players());
+                }
+                break;
+            case "SIZE?":
+                int i = response[1].charAt(0);
+                Game g = mainHandler.getAvailableGamesMap().get(i);
+                client.send("SIZE! " + (char) g.getId() + " " + (char) g.getDimX() + " " + (char) g.getDimY());
+                break;
+            case "LIST?":
+                int id = response[1].charAt(0);
+                Game ga = mainHandler.getAvailableGamesMap().get(id);
+                client.send("LIST! " + (char) id + " " + (char) ga.getNb_players());
+                for (ClientHandler player: ga.getPlayers()){
+                    client.send("PLAYR " + player.getUsername());
+                }
+                break;
             default:
                 illegalCommand();
                 break;
