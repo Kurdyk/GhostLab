@@ -31,7 +31,7 @@ public class PartiesUpdater extends CallbackInstance {
     }
 
     public void parse(String message){
-        String[] commande = message.split(" ");
+        String[] commande = message.split("\\u0020");
         System.out.println("parse de PartiesUpdater = Message en "+commande.length + " morceaux");
         if (commande[0].equals("GAMES") && commande.length == 2){
             this.totalParties = commande[1].charAt(0);

@@ -42,6 +42,9 @@ public class HomeController extends CallbackInstance {
     private Button creationPartieButton;
 
     @FXML
+    private Button defaultGameButton;
+
+    @FXML
     private ChoiceBox<String> modeDeJeuChoiceBox;
 
     @FXML
@@ -179,6 +182,11 @@ public class HomeController extends CallbackInstance {
         } catch (Exception e1) {
             e1.printStackTrace();
         }
+    }
+
+    @FXML
+    private void handleDefaultGameButtonClick() {
+        mainApp.getConnectionHandler().send("NEWPL " + this.mainApp.getServerConfig().getUsername() + " " + (int) ((Math.random() * 60000) + 1000));
     }
 
     @FXML

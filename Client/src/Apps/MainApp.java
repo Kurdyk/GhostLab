@@ -93,7 +93,7 @@ public class MainApp extends Application {
                 public void run() {
                     handler.send("GAME?");
                 }
-            }, 10000000);
+            }, 500);
         }
         // On simule 3 parties que l'on peut rejoindre
 
@@ -112,6 +112,7 @@ public class MainApp extends Application {
             int id = liste_commandes[1].charAt(0);
             if (identifiants.contains(id)){
                 identifiants.remove((Integer) id);
+                connectionHandler.send("SIZE? " + (char) id);
                 connectionHandler.send("LIST? " + (char) id);
             } else {
                 Partie nouvelle_partie = new Partie(id, liste_commandes[2].charAt(0));

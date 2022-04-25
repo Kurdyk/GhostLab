@@ -72,12 +72,12 @@ public class Parser {
     public void parse(String response_text){
         System.out.println("PROCESSING COMMAND : "+ response_text);
         if (!CommandValidator.valiate(response_text)) illegalCommand();
-        String[] response = response_text.split(" ");
+        String[] response = response_text.split("\\u0020");
         switch (response[0]){
             case "GAME?":
                 client.send("GAMES " + (char) mainHandler.getAvailableGamesNumber());
                 for (Game g: mainHandler.getAvailableGamesMap().values()){
-                    client.send("OGAME " + (char) g.getId() + " " + g.getNb_players());
+                    client.send("OGAME " + (char) g.getId() + " " + (char) g.getNb_players());
                 }
                 break;
             case "SIZE?":
@@ -88,10 +88,21 @@ public class Parser {
             case "LIST?":
                 int id = response[1].charAt(0);
                 Game ga = mainHandler.getAvailableGamesMap().get(id);
-                client.send("LIST! " + (char) id + " " + (char) ga.getNb_players());
+                client.send("LIST! " + (char) id + " " + (char) (ga.getNb_players() == 42 ? 41 : ga.getNb_players() ));
                 for (ClientHandler player: ga.getPlayers()){
-                    client.send("PLAYR " + player.getUsername());
+                    client.send("PLAYR " + player.getClient().getName());
                 }
+                break;
+            case "NEWPL":
+                String pName = response[1];
+                int pPort = Integer.parseInt(response[2]);
+                this.client.newClient();
+                this.client.getClient().setPort_udp(pPort);
+                this.client.getClient().setName(pName);
+
+                Game game = new Game(this.client, this.mainHandler);
+                game.addPlayer(this.client);
+                client.send("REGOK " + (char) game.getId());
                 break;
             default:
                 illegalCommand();

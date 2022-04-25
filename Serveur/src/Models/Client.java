@@ -1,9 +1,6 @@
 package Models;
 
 import Models.Games.Game;
-//import Utils.Coordinates;
-
-import java.util.ArrayList;
 
 /**
  * The type Client.
@@ -14,6 +11,8 @@ public class Client {
     //private Coordinates coordonnees = new Coordinates(0,0);
     private boolean alive = true;
     private int score;
+    private int port_udp;
+    private String name;
 
 
     /**
@@ -41,6 +40,7 @@ public class Client {
         this.coordonnees = coordonnees;
     }
     */
+
 
     /**
      * Gets game running.
@@ -97,5 +97,19 @@ public class Client {
      */
     public void lowScore(int val) {score-=val;}
 
+    public int getPort_udp() {
+        return port_udp;
+    }
 
+    public void setPort_udp(int port_udp) {
+        this.port_udp = port_udp;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 }
