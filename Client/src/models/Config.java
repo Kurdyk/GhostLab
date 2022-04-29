@@ -31,7 +31,7 @@ public class Config {
     }
 
     private void defaultConfig(){
-        adresseServeur = "tresor.josso.fr";
+        adresseServeur = "127.0.0.1";
         portServeur = 7236;
         serveurAmeliore = true;
 

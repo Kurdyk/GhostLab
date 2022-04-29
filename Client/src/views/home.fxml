@@ -1,12 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
 <?import javafx.collections.FXCollections?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
-<?import java.lang.String?>
-<AnchorPane prefHeight="495.0" prefWidth="907.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="views.HomeController">
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="495.0" prefWidth="907.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="views.HomeController">
    <children>
       <SplitPane dividerPositions="0.4581497797356828" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <items>
@@ -15,8 +29,7 @@
                   <TableView fx:id="partiesEnCoursTableView" prefHeight="398.0" prefWidth="295.0" style="-fx-font-family: Chilanka;" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0">
                     <columns>
                       <TableColumn fx:id="identifiantTableColumn" prefWidth="82.0" text="Identifiants" />
-                        <TableColumn fx:id="modeTableColumn" minWidth="0.0" prefWidth="68.0" text="Mode de jeu" />
-                      <TableColumn fx:id="createurTableColumn" prefWidth="75.0" text="Créateur" />
+                        <TableColumn fx:id="nbPlayerTableColumn" minWidth="0.0" prefWidth="68.0" text="Nombre de joueurs" />
                         <TableColumn fx:id="dimensionTableColumn" prefWidth="75.0" text="Dimensions" />
                     </columns>
                   </TableView>
@@ -146,6 +159,11 @@
                         <font>
                             <Font name="Chilanka Regular" size="13.0" />
                         </font></Button>
+                        <Button fx:id="defaultGameButton" mnemonicParsing="false" onAction="#handleDefaultGameButtonClick" text="Partie par défault">
+                            <font>
+                                <Font name="Chilanka Regular" size="13.0" />
+                            </font>
+                        </Button>
                     </buttons>
                   </ButtonBar>
                   <Label fx:id="notGoodServerWarningLabel" style="-fx-rotate: 7;" text="Connectez vous à un serveur amélioré pour bénéficier de ces paramètres" textFill="RED" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="270.0">

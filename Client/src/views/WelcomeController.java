@@ -51,13 +51,10 @@ public class WelcomeController extends CallbackInstance {
     }
 
     private void validateUsername(String username){
-        if (username.length() < 4 || username.equals("Kevin")){
-            this.resumeConnectionCallback(false);
-        } else {
-            mainApp.getConnectionHandler().registerCallback("101", this, (controller, message) -> controller.resumeConnectionCallback(true));
-            mainApp.getConnectionHandler().registerCallback("901", this, (controller, message) -> controller.resumeConnectionCallback(false));
-            mainApp.getConnectionHandler().send("100 HELLO PLAYER " + username);
-        }
+        //mainApp.getConnectionHandler().registerCallback("101", this, (controller, message) -> controller.resumeConnectionCallback(true));
+        //mainApp.getConnectionHandler().registerCallback("901", this, (controller, message) -> controller.resumeConnectionCallback(false));
+        //mainApp.getConnectionHandler().send("100 HELLO PLAYER " + username);
+        this.resumeConnectionCallback(username.length() == 8);
     }
 
     // Cette fonction est appelée automatiquement par JavaFX après avoir dessiné l'inteface
@@ -94,7 +91,7 @@ public class WelcomeController extends CallbackInstance {
                 alert.initOwner(mainApp.getConfigStage());
                 alert.setTitle("Erreur");
                 alert.setHeaderText("Nom d'utilisateur non disponible");
-                alert.setContentText("Soit le nom d'utilisateur est déjà pris, soit il fait moins de 4 caractères.");
+                alert.setContentText("Le nom d'utilisateur doit faire exactement 8 caractères.");
 
                 alert.showAndWait();
             });
