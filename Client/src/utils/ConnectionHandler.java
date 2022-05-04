@@ -28,6 +28,10 @@ public class ConnectionHandler extends Thread{
         this.config = config;
     }
 
+    public int getSocketPort() {
+        return this.socket.getPort();
+    }
+
     /**
      * Quitter.
      */

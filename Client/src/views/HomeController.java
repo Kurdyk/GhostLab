@@ -177,7 +177,11 @@ public class HomeController extends CallbackInstance {
         try {
             Partie selectedPartie = partiesEnCoursTableView.getSelectionModel().getSelectedItem();
             if (selectedPartie!=null) {
-                this.mainApp.joinGameLobby(selectedPartie);
+                //this.mainApp.joinGameLobby(selectedPartie);
+                System.out.println(this.mainApp.getConnectionHandler().getSocketPort());
+                mainApp.getConnectionHandler().send("REGIS " + this.mainApp.getServerConfig().getUsername() + " "
+                        + this.mainApp.getConnectionHandler().getSocketPort() + " "
+                            + (char) selectedPartie.getIdentifiant());
             }
         } catch (Exception e1) {
             e1.printStackTrace();
@@ -186,7 +190,8 @@ public class HomeController extends CallbackInstance {
 
     @FXML
     private void handleDefaultGameButtonClick() {
-        mainApp.getConnectionHandler().send("NEWPL " + this.mainApp.getServerConfig().getUsername() + " " + (int) ((Math.random() * 60000) + 1000));
+        mainApp.getConnectionHandler().send("NEWPL " + this.mainApp.getServerConfig().getUsername() + " "
+                + this.mainApp.getConnectionHandler().getSocketPort());
     }
 
     @FXML
@@ -205,7 +210,9 @@ public class HomeController extends CallbackInstance {
                 partieCreated.getNombreDeTresors()));
 */
 
+
     }
+
 
     @Override
     public void partieCreationCallback(String s) {

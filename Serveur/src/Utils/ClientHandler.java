@@ -88,7 +88,7 @@ public class ClientHandler implements Runnable{
             int nb_parties = mainApp.getAvailableGamesNumber();
             myPrintWriter.println("GAMES " + (char) nb_parties);
             mainApp.getAvailableGamesMap().forEach((id, game)
-                    -> myPrintWriter.println("OGAME +" + (char) id.intValue() + " " + (char) (game.getNb_players())));
+                    -> myPrintWriter.println("OGAME " + (char) id.intValue() + " " + (char) (game.getNb_players())));
 
             while (scanner.hasNext()) {
                 firstParse(scanner.next());

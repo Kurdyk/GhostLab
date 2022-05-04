@@ -83,6 +83,9 @@ public class Parser {
             case "SIZE?":
                 int i = response[1].charAt(0);
                 Game g = mainHandler.getAvailableGamesMap().get(i);
+                if (g == null) {
+                    client.send("DUNNO");
+                }
                 client.send("SIZE! " + (char) g.getId() + " " + (char) g.getDimX() + " " + (char) g.getDimY());
                 break;
             case "LIST?":
@@ -102,9 +105,30 @@ public class Parser {
 
                 Game game = new Game(this.client, this.mainHandler);
                 game.addPlayer(this.client);
+                System.out.println(pName + " crée la partie : " + game.getId() + " avec le port : " + pPort);
+
                 client.send("REGOK " + (char) game.getId());
                 break;
+            case "REGIS":
+                pName = response[1];
+                pPort = Integer.parseInt(response[2]);
+                this.client.newClient();
+                this.client.getClient().setPort_udp(pPort);
+                this.client.getClient().setName(pName);
+                int gameID = (int) response[3].charAt(0);
+
+                System.out.println(pName + " s'inscrit dans la partie : " + gameID + " avec le port : " + pPort);
+
+                try {
+                    Game wantedGame = mainHandler.getAvailableGamesMap().get(gameID);
+                    wantedGame.addPlayer(this.client);
+                } catch (Exception e) {
+                    client.send("REGNO");
+                }
+                break;
+
             default:
+                System.out.println("Commande non reconnue");
                 illegalCommand();
                 break;
         }

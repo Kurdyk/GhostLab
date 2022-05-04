@@ -51,7 +51,6 @@ public class Partie {
     }
 
     public void setDimensions(int h, int w){
-
         this.dimensions = new SimpleStringProperty(h + "x" + w);
     }
 }

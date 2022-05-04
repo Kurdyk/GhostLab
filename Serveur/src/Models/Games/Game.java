@@ -69,13 +69,18 @@ public class Game {
         return this.players.stream().noneMatch(p -> Objects.equals(p.getClient().getName(), username));
     }
 
-    public void addPlayer(ClientHandler client){
+    public synchronized void addPlayer(ClientHandler client){
         if (!registerUsername(client.getClient().getName()) && this.players.size() < this.maxPlayers) {
             client.send("REGNO");
             return;
         }
         sendGood("PLJND " + client.getUsername());
+        for (ClientHandler c : players) {
+            if (c.equals(client)) return;
+        }
         players.add(client);
+        nb_players++;
+        client.send("REGOK " + (char) this.getId());
         if(players.size() == this.maxPlayers){
             mainHandler.hideGame(this.id);
         }

@@ -95,12 +95,8 @@ public class MainApp extends Application {
                 }
             }, 500);
         }
-        // On simule 3 parties que l'on peut rejoindre
-
 
     }
-
-
 
     public void updateParties(ArrayList<String> list){
         ArrayList<Integer> identifiants = new ArrayList<>();
@@ -259,6 +255,8 @@ public class MainApp extends Application {
      * @throws Exception an exception if displayConfigStage fails
      */
     public void quitMainScreen() throws Exception{
+        this.fetchPartiesListTimer.cancel();
+        this.getPartiesList().clear();
         // Gère l'appui sur le bouton Quitter de l'inteface
         this.connectionHandler.quitter();
         this.primaryStage.close();

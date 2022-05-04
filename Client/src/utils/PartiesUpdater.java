@@ -50,6 +50,7 @@ public class PartiesUpdater extends CallbackInstance {
             int id = commande[1].charAt(0);
             int h = commande[2].charAt(0);
             int w = commande[3].charAt(0);
+            System.out.println("Pour la partie " + id + " on a " + h + "x" + w);
             mainApp.getPartiesList().stream().filter(p -> p.getIdentifiant() == id).forEach(p -> p.setDimensions(h, w));
         } else if (commande[0].equals("LIST!") && commande.length == 3){
             int id = commande[1].charAt(0);
