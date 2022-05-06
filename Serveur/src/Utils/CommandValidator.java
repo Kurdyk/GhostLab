@@ -13,8 +13,8 @@ public class CommandValidator {
             "GAME?", 1
     );
 
-    public static boolean valiate(String command){
-        String[] args = command.split(" ");
+    public static boolean validate(String command){
+        String[] args = command.split("\\u0020");
         return sizes.containsKey(args[0]) && sizes.get(args[0]) == args.length;
     }
 }

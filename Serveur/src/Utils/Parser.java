@@ -71,7 +71,10 @@ public class Parser {
     //Méthode principale qui lit la commande envoyée par l'utilisateur et agit en fonction
     public void parse(String response_text){
         System.out.println("PROCESSING COMMAND : "+ response_text);
-        if (!CommandValidator.valiate(response_text)) illegalCommand();
+        if (!CommandValidator.validate(response_text)) {
+            illegalCommand();
+            return;
+        }
         String[] response = response_text.split("\\u0020");
         switch (response[0]){
             case "GAME?":

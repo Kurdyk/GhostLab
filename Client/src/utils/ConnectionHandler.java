@@ -4,7 +4,9 @@ import models.Config;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Timer;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * The type Connection handler.
@@ -12,12 +14,12 @@ import java.util.*;
 public class ConnectionHandler extends Thread{
     private Config config;
     private boolean running = true;
-    private Scanner scanner;
+    private MyScanner scanner;
     private MyPrintWriter printWriter;
     private Socket socket;
-    private Map<String, CallbackServer> callLinks = new HashMap<>();
-    private Map<String, CallbackInstance> callOwners = new HashMap<>();
-    private Map<String, ArrayList<String>> buffers = new HashMap<>();
+    private ConcurrentHashMap<String, CallbackServer> callLinks = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<String, CallbackInstance> callOwners = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<String, ArrayList<String>> buffers = new ConcurrentHashMap<>();
 
     /**
      * Instantiates a new Connection handler.
@@ -36,7 +38,7 @@ public class ConnectionHandler extends Thread{
      * Quitter.
      */
     public void quitter(){
-        send("102 QUIT");
+        send("QUITS");
         running = false;
         if (socket != null){
             try {
@@ -84,7 +86,7 @@ public class ConnectionHandler extends Thread{
      * @param callback       the callback
      * @param processBuffers the process buffers
      */
-    public void registerCallback(String code, CallbackInstance controller, CallbackServer callback, boolean processBuffers) {
+    public synchronized void registerCallback(String code, CallbackInstance controller, CallbackServer callback, boolean processBuffers) {
         if (processBuffers && buffers.get(code) != null) {
             for (String command : buffers.get(code)) {
                 callback.call(controller, command);
@@ -124,24 +126,32 @@ public class ConnectionHandler extends Thread{
         send("UPGD?");
     }
 
+    public void clearAll(){
+        callLinks.clear();
+        callOwners.clear();
+        buffers.clear();
+    }
+
     @Override
     public void run() {
         try {
             socket = new Socket(config.getAdresseServeur(), config.getPortServeur());
-            scanner = new Scanner(socket.getInputStream());
-            scanner.useDelimiter("\\s*\\*{3}\\s*");
+            this.scanner = new MyScanner(socket.getInputStream());
+            this.scanner.useDelimiter("\\s*\\*{3}\\s*");
             printWriter = new MyPrintWriter(socket.getOutputStream(), true);
         } catch (IOException e){
             e.printStackTrace();
+            System.out.println("Something went wrong...");
             return;
         }
+        System.out.println("Starting while loop !");
         if (this.config.isServeurAmeliore()){
             upgrade();
         }
         while (running && scanner.hasNext()){
             String command = scanner.next();
             System.out.println("RECU : "+command);
-            String[] response = command.split(" ");
+            String[] response = command.split("\\u0020");
             if (callLinks.containsKey(response[0])) {
                 callLinks.get(response[0]).call(callOwners.get(response[0]), command);
             } else {

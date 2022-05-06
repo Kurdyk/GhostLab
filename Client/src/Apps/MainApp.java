@@ -19,6 +19,7 @@ import utils.ConnectionHandler;
 import utils.PartiesUpdater;
 import utils.RecurrentServerRequest;
 import views.HomeController;
+import views.LobbyController;
 import views.WelcomeController;
 
 import java.util.ArrayList;
@@ -194,8 +195,8 @@ public class MainApp extends Application {
         this.lobbyStage.setScene(scene);
         this.lobbyStage.show();
 
-        //LobbyController controller = loader.getController();
-        //controller.setMainApp(this, p);
+        LobbyController controller = loader.getController();
+        controller.setMainApp(this, p);
 
         this.configStage.close();
     }
@@ -209,14 +210,13 @@ public class MainApp extends Application {
      * @param p the p
      */
 
-    /*
+
     public void startGame(Partie p){
-        GameApp game = new GameApp(this, p);
+        /*GameApp game = new GameApp(this, p);
         game.launch();
-        this.lobbyStage.close();
+        this.lobbyStage.close();*/
     }
 
-     */
 
     /**
      * Game stage closed.

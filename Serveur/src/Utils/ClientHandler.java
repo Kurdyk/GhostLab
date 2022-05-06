@@ -5,7 +5,6 @@ import Models.Client;
 
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Scanner;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -15,7 +14,7 @@ public class ClientHandler implements Runnable{
 
     private ConnectionHandler mainApp;
     private Socket socket;
-    private Scanner scanner;
+    private MyScanner scanner;
     private MyPrintWriter myPrintWriter;
     private Client client;
     private String username;
@@ -38,8 +37,8 @@ public class ClientHandler implements Runnable{
     public ClientHandler(Socket socket, ConnectionHandler mainApp) throws Exception{
         this.socket = socket;
         this.mainApp = mainApp;
-        this.scanner = new Scanner(socket.getInputStream());
-        scanner.useDelimiter("\\s*\\*{3}\\s*");
+        this.scanner = new MyScanner(socket.getInputStream());
+        this.scanner.useDelimiter("\\s*\\*{3}\\s*");
         this.myPrintWriter = new MyPrintWriter(socket.getOutputStream(), true);
         this.parser = new Parser(this, mainApp);
         this.client = new Client();
@@ -120,6 +119,7 @@ public class ClientHandler implements Runnable{
      * @param message the message
      */
     public synchronized void send(String message){
+        System.out.println("SENDING " + message + "***");
         this.myPrintWriter.println(message);
     }
 

@@ -111,6 +111,8 @@ public class HomeController extends CallbackInstance {
                 }
             });
         }
+
+        this.mainApp.getConnectionHandler().registerCallback("REGOK", this, CallbackInstance::partieCreationCallback);
     }
 
     /**
@@ -147,6 +149,7 @@ public class HomeController extends CallbackInstance {
         nombreDeTresorsSpinner.valueProperty().addListener((observable, oldValue, newValue) -> {
             updateValueFactories();
         });
+
     }
 
     private void updateValueFactories(){
@@ -177,11 +180,10 @@ public class HomeController extends CallbackInstance {
         try {
             Partie selectedPartie = partiesEnCoursTableView.getSelectionModel().getSelectedItem();
             if (selectedPartie!=null) {
-                //this.mainApp.joinGameLobby(selectedPartie);
+                this.mainApp.joinGameLobby(selectedPartie);
                 System.out.println(this.mainApp.getConnectionHandler().getSocketPort());
                 mainApp.getConnectionHandler().send("REGIS " + this.mainApp.getServerConfig().getUsername() + " "
-                        + this.mainApp.getConnectionHandler().getSocketPort() + " "
-                            + (char) selectedPartie.getIdentifiant());
+                        + "6942 " + (char) selectedPartie.getIdentifiant());
             }
         } catch (Exception e1) {
             e1.printStackTrace();
@@ -190,6 +192,7 @@ public class HomeController extends CallbackInstance {
 
     @FXML
     private void handleDefaultGameButtonClick() {
+        partieCreated = new Partie(-1, 1, true);
         mainApp.getConnectionHandler().send("NEWPL " + this.mainApp.getServerConfig().getUsername() + " "
                 + this.mainApp.getConnectionHandler().getSocketPort());
     }
@@ -216,8 +219,13 @@ public class HomeController extends CallbackInstance {
 
     @Override
     public void partieCreationCallback(String s) {
-        //this.partieCreated.setIdentifiant(Integer.parseInt(s.split(" ")[3]));
-        this.mainApp.getPartiesList().add(this.partieCreated);
+        int identifiant = s.split(" ")[1].charAt(0);
+        if (this.partieCreated == null) {
+            this.partieCreated = this.mainApp.getPartiesList().filtered(p -> p.getIdentifiant() == identifiant).get(0);
+        } else {
+            this.partieCreated.setIdentifiant(identifiant);
+            this.mainApp.getPartiesList().add(this.partieCreated);
+        }
         Platform.runLater(() -> {
             try {
                 this.mainApp.joinGameLobby(this.partieCreated);

@@ -4,10 +4,10 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import models.Config;
 import utils.MyPrintWriter;
+import utils.MyScanner;
 
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.util.Scanner;
 
 /**
  * The type Param serveur controller.
@@ -61,7 +61,7 @@ public class ParamServeurController {
         try {
             Socket socket = new Socket();
             socket.connect(new InetSocketAddress(url, port), 3*1000);
-            Scanner scanner = new Scanner(socket.getInputStream());
+            MyScanner scanner = new MyScanner(socket.getInputStream());
             scanner.useDelimiter("\\s*\\*{3}\\s*");
             MyPrintWriter printWriter = new MyPrintWriter(socket.getOutputStream(), true);
 
