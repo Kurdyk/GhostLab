@@ -26,6 +26,7 @@
 package Utils;
 
 import java.io.*;
+import java.nio.ByteOrder;
 import java.nio.charset.Charset;
 import java.nio.charset.IllegalCharsetNameException;
 import java.nio.charset.UnsupportedCharsetException;
@@ -54,6 +55,14 @@ public class MyPrintWriter extends Writer {
 
     public void udp(){
         this.delimiter = "+++";
+    }
+
+    public static int toLittleEndian(short n) {
+        if (ByteOrder.nativeOrder().equals(ByteOrder.LITTLE_ENDIAN)) {
+            return n;
+        } else {
+            return ((n >> 8) & 0xff) | ((n & 0xff) << 8);
+        }
     }
 
     /**

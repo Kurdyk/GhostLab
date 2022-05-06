@@ -20,7 +20,6 @@ public class ClientHandler implements Runnable{
     private String username;
     private Parser parser;
     private boolean loggedIn;
-    private final ArrayList<Integer> joinedGames = new ArrayList<>();
     private String start_buffer = null;
 
 
@@ -174,14 +173,6 @@ public class ClientHandler implements Runnable{
         this.loggedIn = loggedIn;
     }
 
-    /**
-     * Gets joined games.
-     *
-     * @return the joined games
-     */
-    public ArrayList<Integer> getJoinedGames() {
-        return joinedGames;
-    }
 
     /**
      * Is good client boolean.

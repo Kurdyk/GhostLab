@@ -2,7 +2,9 @@ package Models.Games;
 
 import Apps.ConnectionHandler;
 import Utils.ClientHandler;
+import Utils.MyPrintWriter;
 
+import java.net.*;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -11,17 +13,26 @@ public class Game {
     private final ConnectionHandler mainHandler;
     private final ClientHandler owner;
     private int nb_players;
+    private int nb_ready;
+    private int nb_fantoms;
     private final int id;
     private final int dimX;
     private final int dimY;
     private final CopyOnWriteArrayList<ClientHandler> players = new CopyOnWriteArrayList<>();
     private int maxPlayers;
 
+    ///Multicast
+    private InetAddress multicastIP;
+    private DatagramSocket multicastSocket;
+    private int multicastPort = 6789;
+
     public Game(ClientHandler owner,  ConnectionHandler mainHandler) {
 
         this.owner= owner;
         this.mainHandler = mainHandler;
         this.nb_players = 0;
+        this.nb_ready = 0;
+        this.nb_fantoms = 0;
         this.id = mainHandler.registerGameId(this);
         dimX = generate_dim();
         dimY = generate_dim();
@@ -85,5 +96,59 @@ public class Game {
             mainHandler.hideGame(this.id);
         }
     }
+
+    public synchronized void removePlayer(ClientHandler client) {
+        if (!players.remove(client)) {
+            client.send("DUNNO");
+            return;
+        }
+        nb_players--;
+        if (client.getClient().isReady()) {
+            client.getClient().setReady(false);
+            nb_ready--;
+        }
+        client.send("UNROK " + this.getId());
+
+    }
+
+    public synchronized void handleStart(ClientHandler client) {
+        if (client.getClient().isReady());
+        else {
+            client.getClient().setReady(true);
+            nb_ready++;
+            if (nb_ready == nb_players) {
+                startGame();
+            }
+        }
+    }
+
+    private void startGame() {
+        this.mainHandler.getAvailableGamesMap().remove(this.getId());
+        this.nb_fantoms = nb_ready * 3;
+
+        try {
+            this.multicastSocket = new DatagramSocket();
+        } catch (SocketException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            this.multicastIP = InetAddress.getByName("235.0.0." + this.getId());
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+
+        for (ClientHandler client : players) {
+            client.send("WELCO " + (char) this.getId() + " "
+                + MyPrintWriter.toLittleEndian((short) this.getDimY()) + " "
+                    + MyPrintWriter.toLittleEndian((short) this.getDimX()) + " "
+                        + (char) this.nb_fantoms + " "
+                            + multicastIP.toString() + " "
+                                + this.multicastPort);
+        }
+        return;
+    }
+
+
 
 }

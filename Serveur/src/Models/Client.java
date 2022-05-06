@@ -13,6 +13,7 @@ public class Client {
     private int score;
     private int port_udp;
     private String name;
+    private boolean ready = false;
 
 
     /**
@@ -112,4 +113,8 @@ public class Client {
     public void setName(String name) {
         this.name = name;
     }
+
+    public boolean isReady() { return ready;}
+
+    public void setReady(boolean ready) {this.ready = ready;}
 }

@@ -10,7 +10,9 @@ public class CommandValidator {
             "START", 1,
             "SIZE?", 2,
             "LIST?", 2,
-            "GAME?", 1
+            "GAME?", 1,
+            "UNREG", 1,
+            "QUITS", 1
     );
 
     public static boolean validate(String command){

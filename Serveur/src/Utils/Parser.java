@@ -36,8 +36,10 @@ public class Parser {
     //Méthodes
     private void illegalCommand(){
         client.send("FUCKU");
-        for (Integer id : client.getJoinedGames()){
-            //mainHandler.getAvailableGamesMap().get(id).removePlayer(client);
+        try {
+            this.client.getClient().getGameRunning().removePlayer(client);
+        } catch (Exception e) {
+            client.send("DUNNO");
         }
         client.closeConnection();
         if (client.isLoggedIn()){
@@ -110,7 +112,6 @@ public class Parser {
                 game.addPlayer(this.client);
                 System.out.println(pName + " crée la partie : " + game.getId() + " avec le port : " + pPort);
 
-                client.send("REGOK " + (char) game.getId());
                 break;
             case "REGIS":
                 pName = response[1];
@@ -129,6 +130,32 @@ public class Parser {
                     client.send("REGNO");
                 }
                 break;
+            case "UNREG":
+                try {
+                    this.client.getClient().getGameRunning().removePlayer(client);
+                } catch (Exception e) {
+                    client.send("DUNNO");
+                }
+                break;
+
+            case "QUITS":
+                try {
+                    this.client.getClient().getGameRunning().removePlayer(client);
+                } catch (Exception e) {
+                    client.send("DUNNO");
+                }
+                client.closeConnection();
+                if (client.isLoggedIn()){
+                    mainHandler.usernamesSet.remove(client.getUsername());
+                }
+                break;
+
+            case "START":
+                try {
+                    this.client.getClient().getGameRunning().handleStart(client);
+                } catch (NullPointerException e) {
+                    illegalCommand();
+                }
 
             default:
                 System.out.println("Commande non reconnue");
