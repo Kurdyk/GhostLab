@@ -21,10 +21,8 @@ public class Game {
     private final CopyOnWriteArrayList<ClientHandler> players = new CopyOnWriteArrayList<>();
     private int maxPlayers;
 
-    ///Multicast
-    private InetAddress multicastIP;
-    private DatagramSocket multicastSocket;
-    private int multicastPort = 6789;
+    ///Pour UDP et Multicast
+    Messagerie messagerie;
 
     public Game(ClientHandler owner,  ConnectionHandler mainHandler) {
 
@@ -32,11 +30,11 @@ public class Game {
         this.mainHandler = mainHandler;
         this.nb_players = 0;
         this.nb_ready = 0;
-        this.nb_fantoms = 0;
         this.id = mainHandler.registerGameId(this);
         dimX = generate_dim();
         dimY = generate_dim();
         maxPlayers = dimX * dimY / 5;
+        this.nb_fantoms = 2 * maxPlayers;
 
     }
 
@@ -80,6 +78,10 @@ public class Game {
         return this.players.stream().noneMatch(p -> Objects.equals(p.getClient().getName(), username));
     }
 
+    /**
+     * Ajoute un joueur à la partie
+     * @param client le joueur à ajouter
+     */
     public synchronized void addPlayer(ClientHandler client){
         if (!registerUsername(client.getClient().getName()) && this.players.size() < this.maxPlayers) {
             client.send("REGNO");
@@ -97,20 +99,28 @@ public class Game {
         }
     }
 
+    /**
+     * Retire un joueur d'une partie
+     * @param client
+     */
     public synchronized void removePlayer(ClientHandler client) {
         if (!players.remove(client)) {
             client.send("DUNNO");
             return;
         }
-        nb_players--;
         if (client.getClient().isReady()) {
             client.getClient().setReady(false);
             nb_ready--;
         }
+        nb_players--;
         client.send("UNROK " + this.getId());
 
     }
 
+    /**
+     * ajoute un joueur qui se dit pret à la liste des joueurs prets et peut lancer la partie.
+     * @param client
+     */
     public synchronized void handleStart(ClientHandler client) {
         if (client.getClient().isReady());
         else {
@@ -122,19 +132,16 @@ public class Game {
         }
     }
 
+    /**
+     * Lance une partie
+     */
     private void startGame() {
         this.mainHandler.getAvailableGamesMap().remove(this.getId());
         this.nb_fantoms = nb_ready * 3;
 
         try {
-            this.multicastSocket = new DatagramSocket();
-        } catch (SocketException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            this.multicastIP = InetAddress.getByName("235.0.0." + this.getId());
-        } catch (UnknownHostException e) {
+            this.messagerie = new Messagerie(this.getId(), players);
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -143,10 +150,9 @@ public class Game {
                 + MyPrintWriter.toLittleEndian((short) this.getDimY()) + " "
                     + MyPrintWriter.toLittleEndian((short) this.getDimX()) + " "
                         + (char) this.nb_fantoms + " "
-                            + multicastIP.toString() + " "
-                                + this.multicastPort);
+                            + this.messagerie.getIp() + " "
+                                + this.messagerie.getMulticastPort());
         }
-        return;
     }
 
 

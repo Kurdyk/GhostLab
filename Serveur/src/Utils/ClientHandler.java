@@ -3,6 +3,7 @@ package Utils;
 import Apps.ConnectionHandler;
 import Models.Client;
 
+import java.net.InetAddress;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -181,6 +182,10 @@ public class ClientHandler implements Runnable{
      */
     public boolean isGoodClient(){
         return parser.isGoodClient();
+    }
+
+    public InetAddress getIp() {
+        return this.socket.getInetAddress();
     }
 
 }
