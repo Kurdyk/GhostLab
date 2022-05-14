@@ -5,6 +5,7 @@ import Utils.ClientHandler;
 import Utils.MyPrintWriter;
 
 import java.net.*;
+import java.util.LinkedList;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -21,6 +22,8 @@ public class Game {
     private final CopyOnWriteArrayList<ClientHandler> players = new CopyOnWriteArrayList<>();
     private int maxPlayers;
 
+    private LinkedList<Ghost> ghosts;
+
     ///Pour UDP et Multicast
     Messagerie messagerie;
 
@@ -35,6 +38,7 @@ public class Game {
         dimY = generate_dim();
         maxPlayers = dimX * dimY / 5;
         this.nb_fantoms = 2 * maxPlayers;
+        this.ghosts = generateGhost(5, dimX, dimY);
 
     }
 
@@ -59,6 +63,7 @@ public class Game {
     public int getDimY() {
         return dimY;
     }
+
 
     private void sendAll(String message){
         for (ClientHandler player: this.players){
@@ -155,6 +160,16 @@ public class Game {
         }
     }
 
+    public LinkedList<Ghost> generateGhost(int n, int x, int y){
+        LinkedList<Ghost> res = new LinkedList<Ghost>();
+        Coordinates defaut = new Coordinates(0,0);
+        for (int i = 0; i<n ; i++){
+            Coordinates coordinate = new Coordinates(defaut.generateCoordinates(this.dimX,this.dimY));
+            //TODO vérifier que coordinate n'est pas celle d'un mur
+            res.add(new Ghost(coordinate));
+        }
+        return res;
+    }
 
 
 }
