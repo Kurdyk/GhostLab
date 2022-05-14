@@ -1,6 +1,7 @@
 package Models;
 
 import Models.Games.Game;
+import Utils.Coordinates;
 
 /**
  * The type Client.
@@ -8,7 +9,7 @@ import Models.Games.Game;
 public class Client {
 
     private Game gameRunning;
-    //private Coordinates coordonnees = new Coordinates(0,0);
+    private Coordinates coordonnees = new Coordinates(0,0);
     private boolean alive = true;
     private int score;
     private int port_udp;
@@ -25,21 +26,28 @@ public class Client {
      *
      * @return the coordonnees
      */
-    /*
+
     public Coordinates getCoordonnees() {
-        return coordonnees;
-    }*/
+        return coordonnees.copy();
+    }
 
     /**
      * Sets coordonnees.
      *
      * @param coordonnees the coordonnees
      */
-    /*
+
     public void setCoordonnees(Coordinates coordonnees) {
-        this.coordonnees = coordonnees;
+        this.coordonnees.setX(coordonnees.getX());
+        this.coordonnees.setY(coordonnees.getY());
     }
-    */
+    public void addToX(int x){
+        this.coordonnees.addToX(x);
+    }
+    public void addToY(int y){
+        this.coordonnees.addToY(y);
+    }
+
 
 
     /**

@@ -80,5 +80,31 @@ public class Game {
             mainHandler.hideGame(this.id);
         }
     }
+    public void move(char c,int i, ClientHandler client){
+        switch (c){
+            case 'u':
+                if((client.getClient().getCoordonnees().getX())-i>=0){
+                    client.getClient().addToX(-i);
+                }
+                break;
+            case 'd':
+                if((client.getClient().getCoordonnees().getX()+i)<=this.dimX){
+                    client.getClient().addToX(i);
+                }
+                break;
+            case 'r':
+                if((client.getClient().getCoordonnees().getY())-i>=0){
+                    client.getClient().addToY(-i);
+                }
+                break;
+            case 'l':
+                if((client.getClient().getCoordonnees().getX()+i)<=this.dimY){
+                    client.getClient().addToX(i);
+                }
+                break;
+            default:
+                break;
+        }
+    }
 
 }

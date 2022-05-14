@@ -104,6 +104,21 @@ public class Parser {
                 game.addPlayer(this.client);
                 client.send("REGOK " + (char) game.getId());
                 break;
+            case "UPMOV":
+                int mUP = Integer.parseInt(response[1]);
+                this.client.getClient().getGameRunning().move('u',mUP, client);
+                break;
+            case "DOMOV":
+                int mDO = Integer.parseInt(response[1]);
+                this.client.getClient().getGameRunning().move('d',mDO, client);
+                break;
+            case "RIMOV":
+                int mRI = Integer.parseInt(response[1]);
+                this.client.getClient().getGameRunning().move('r',mRI, client);
+                break;
+            case "LEMOV":
+                int mLE = Integer.parseInt(response[1]);
+                this.client.getClient().getGameRunning().move('l',mLE, client);
             default:
                 illegalCommand();
                 break;
