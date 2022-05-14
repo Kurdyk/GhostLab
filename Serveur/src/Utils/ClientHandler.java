@@ -3,6 +3,7 @@ package Utils;
 import Apps.ConnectionHandler;
 import Models.Client;
 
+import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -15,7 +16,7 @@ public class ClientHandler implements Runnable{
 
     private ConnectionHandler mainApp;
     private Socket socket;
-    private MyScanner scanner;
+    private MyBufferedReader scanner;
     private MyPrintWriter myPrintWriter;
     private Client client;
     private String username;
@@ -37,19 +38,19 @@ public class ClientHandler implements Runnable{
     public ClientHandler(Socket socket, ConnectionHandler mainApp) throws Exception{
         this.socket = socket;
         this.mainApp = mainApp;
-        this.scanner = new MyScanner(socket.getInputStream());
-        this.scanner.useDelimiter("\\s*\\*{3}\\s*");
+        this.scanner = new MyBufferedReader(new InputStreamReader(socket.getInputStream()), '*');
+//        this.scanner.useDelimiter("\\s*\\*{3}\\s*");
         this.myPrintWriter = new MyPrintWriter(socket.getOutputStream(), true);
         this.parser = new Parser(this, mainApp);
         this.client = new Client();
-        if (scanner.hasNext()){
-            String c = scanner.next();
-            if (c.equals("PING?")){
-                myPrintWriter.println("PING!");
-            } else {
-                firstParse(c);
-            }
+
+        String c = scanner.readInstruction();
+        if (c.equals("PING?")){
+            myPrintWriter.println("PING!");
+        } else {
+            firstParse(c);
         }
+
     }
 
     /**
@@ -89,9 +90,11 @@ public class ClientHandler implements Runnable{
             mainApp.getAvailableGamesMap().forEach((id, game)
                     -> myPrintWriter.println("OGAME " + (char) id.intValue() + " " + (char) (game.getNb_players())));
 
-            while (scanner.hasNext()) {
-                firstParse(scanner.next());
+            firstParse(scanner.readInstruction());
+            while(true) {
+                parser.parse(scanner.readInstruction());
             }
+
         } catch (Exception e){
             e.printStackTrace();
         }

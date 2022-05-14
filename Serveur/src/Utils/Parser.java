@@ -90,6 +90,7 @@ public class Parser {
                 Game g = mainHandler.getAvailableGamesMap().get(i);
                 if (g == null) {
                     client.send("DUNNO");
+                    break;
                 }
                 client.send("SIZE! " + (char) g.getId() + " " + (char) g.getDimX() + " " + (char) g.getDimY());
                 break;
@@ -139,11 +140,6 @@ public class Parser {
                 break;
 
             case "QUITS":
-                try {
-                    this.client.getClient().getGameRunning().removePlayer(client);
-                } catch (Exception e) {
-                    client.send("DUNNO");
-                }
                 client.closeConnection();
                 if (client.isLoggedIn()){
                     mainHandler.usernamesSet.remove(client.getUsername());

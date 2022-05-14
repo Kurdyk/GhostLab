@@ -801,6 +801,7 @@ public class MyPrintWriter extends Writer {
      */
     public void println(String x) {
         synchronized (lock) {
+            System.out.println("On envoie : " + x + this.delimiter);
             print(x);
             println();
         }

@@ -3,6 +3,7 @@ package utils;
 import models.Config;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Timer;
@@ -14,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ConnectionHandler extends Thread{
     private Config config;
     private boolean running = true;
-    private MyScanner scanner;
+    private MyBufferedReader scanner;
     private MyPrintWriter printWriter;
     private Socket socket;
     private ConcurrentHashMap<String, CallbackServer> callLinks = new ConcurrentHashMap<>();
@@ -136,8 +137,7 @@ public class ConnectionHandler extends Thread{
     public void run() {
         try {
             socket = new Socket(config.getAdresseServeur(), config.getPortServeur());
-            this.scanner = new MyScanner(socket.getInputStream());
-            this.scanner.useDelimiter("\\s*\\*{3}\\s*");
+            this.scanner = new MyBufferedReader(new InputStreamReader(socket.getInputStream()), '*');
             printWriter = new MyPrintWriter(socket.getOutputStream(), true);
         } catch (IOException e){
             e.printStackTrace();
@@ -148,8 +148,13 @@ public class ConnectionHandler extends Thread{
         if (this.config.isServeurAmeliore()){
             upgrade();
         }
-        while (running && scanner.hasNext()){
-            String command = scanner.next();
+        while (running){
+            String command = null;
+            try {
+                command = scanner.readInstruction();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             System.out.println("RECU : "+command);
             String[] response = command.split("\\u0020");
             if (callLinks.containsKey(response[0])) {

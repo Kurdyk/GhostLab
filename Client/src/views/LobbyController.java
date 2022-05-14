@@ -83,7 +83,7 @@ public class LobbyController extends CallbackInstance {
         if (!this.partie.isCreator())
             mainApp.getConnectionHandler().send("REGIS "+ (char) partie.getIdentifiant());
 
-
+        System.out.println("ID : " + this.partie.getIdentifiant());
         mainApp.getConnectionHandler().send("SIZE? " + (char) this.partie.getIdentifiant());
         mainApp.getConnectionHandler().send("LIST? " + (char) this.partie.getIdentifiant());
         // initialiser la partie
@@ -120,7 +120,7 @@ public class LobbyController extends CallbackInstance {
     @FXML
     private void handleQuitButtonClick(){
         if(this.mainApp.getServerConfig().isServeurAmeliore()){
-            this.mainApp.getConnectionHandler().send("135 LEAVE "+this.partie.getIdentifiant());
+            this.mainApp.getConnectionHandler().send("UNREG");
         }
         // Cette methode est appelée lorsque l'on clique sur le bouton quitter. Ce comportement est défini dans le fichier FXML
         try {
