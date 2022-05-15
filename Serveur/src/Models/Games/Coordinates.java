@@ -39,9 +39,10 @@ public class Coordinates {
     public void addToY(int diff){
         this.y += diff;
     }
+
     public Coordinates generateCoordinates(int h, int w){
         int x = (int) (Math.random() * h);
         int y = (int) (Math.random() * w);
-        return (x<=h && y<=w ? generateCoordinates(h,w) : new Coordinates(x,y));
+        return (x<=h && y<=w ? new Coordinates(x,y) : generateCoordinates(h,w));
     }
 }

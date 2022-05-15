@@ -150,8 +150,10 @@ public class Parser {
                 try {
                     this.client.getClient().getGameRunning().handleStart(client);
                 } catch (NullPointerException e) {
+                    System.out.println("Not in a game");
                     illegalCommand();
                 }
+                break;
 
             default:
                 System.out.println("Commande non reconnue");

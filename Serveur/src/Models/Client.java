@@ -1,5 +1,6 @@
 package Models;
 
+import Models.Games.Coordinates;
 import Models.Games.Game;
 
 /**
@@ -8,7 +9,7 @@ import Models.Games.Game;
 public class Client {
 
     private Game gameRunning;
-    //private Coordinates coordonnees = new Coordinates(0,0);
+    private Coordinates coordonnees = new Coordinates(0,0);
     private boolean alive = true;
     private int score;
     private int port_udp;
@@ -26,21 +27,21 @@ public class Client {
      *
      * @return the coordonnees
      */
-    /*
+
     public Coordinates getCoordonnees() {
         return coordonnees;
-    }*/
+    }
 
     /**
      * Sets coordonnees.
      *
      * @param coordonnees the coordonnees
      */
-    /*
+
     public void setCoordonnees(Coordinates coordonnees) {
         this.coordonnees = coordonnees;
     }
-    */
+
 
 
     /**

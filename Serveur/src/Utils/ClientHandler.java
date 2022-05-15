@@ -6,6 +6,7 @@ import Models.Client;
 import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -95,7 +96,11 @@ public class ClientHandler implements Runnable{
                 parser.parse(scanner.readInstruction());
             }
 
-        } catch (Exception e){
+        } catch(SocketException e) {
+            System.out.println("Socket closed");
+        }
+
+        catch (Exception e){
             e.printStackTrace();
         }
     }

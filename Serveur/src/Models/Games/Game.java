@@ -1,6 +1,7 @@
 package Models.Games;
 
 import Apps.ConnectionHandler;
+import Models.Plateau;
 import Utils.ClientHandler;
 import Utils.MyPrintWriter;
 
@@ -22,6 +23,8 @@ public class Game {
     private final CopyOnWriteArrayList<ClientHandler> players = new CopyOnWriteArrayList<>();
     private int maxPlayers;
 
+    private Plateau plateau;
+
     private LinkedList<Ghost> ghosts;
 
     ///Pour UDP et Multicast
@@ -37,7 +40,6 @@ public class Game {
         dimX = generate_dim();
         dimY = generate_dim();
         maxPlayers = dimX * dimY / 5;
-        this.nb_fantoms = 2 * maxPlayers;
         this.ghosts = generateGhost(5, dimX, dimY);
 
     }
@@ -64,6 +66,7 @@ public class Game {
         return dimY;
     }
 
+    public LinkedList<Ghost> getGhosts() { return this.ghosts; }
 
     private void sendAll(String message){
         for (ClientHandler player: this.players){
@@ -98,6 +101,7 @@ public class Game {
         }
         players.add(client);
         nb_players++;
+        client.getClient().setGameRunning(this);
         client.send("REGOK " + (char) this.getId());
         if(players.size() == this.maxPlayers){
             mainHandler.hideGame(this.id);
@@ -142,7 +146,8 @@ public class Game {
      */
     private void startGame() {
         this.mainHandler.getAvailableGamesMap().remove(this.getId());
-        this.nb_fantoms = nb_ready * 3;
+        this.nb_fantoms = (Math.max(10, 3 * nb_ready));
+        this.plateau = new Plateau(dimX, dimY, nb_fantoms, dimX * dimY / 3, this);
 
         try {
             this.messagerie = new Messagerie(this.getId(), players);

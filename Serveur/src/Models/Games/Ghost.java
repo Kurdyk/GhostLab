@@ -4,12 +4,12 @@ public class Ghost {
    private int values;
    private Coordinates coordinates;
 
-    Ghost(int v, Coordinates c){
+    public Ghost(int v, Coordinates c){
         this.values = v;
         this.coordinates = c;
     }
 
-    Ghost(Coordinates c){
+    public Ghost(Coordinates c){
         this.values=50;
         this.coordinates = c;
     }
