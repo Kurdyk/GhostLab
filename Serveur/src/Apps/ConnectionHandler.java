@@ -2,6 +2,7 @@ package Apps;
 
 import Models.Games.Game;
 import Utils.ClientHandler;
+import Utils.CommandValidator;
 
 import java.net.ServerSocket;
 import java.util.Map;
@@ -33,6 +34,7 @@ public class ConnectionHandler {
      * @throws Exception the exception
      */
     public ConnectionHandler() throws Exception{
+        CommandValidator.init();
         run();
     }
 

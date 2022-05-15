@@ -448,7 +448,7 @@ public class Plateau {
      */
     public Case getCase(int x, int y){
         if (horsLimite(x, y)){
-            return new ImaginaryCase();
+            return null;
         }
         return grille[x][y];
     }
@@ -553,7 +553,7 @@ public class Plateau {
      */
     private void placeGhost() {
 
-        LinkedList<Ghost> ghosts = this.game.getGhosts();
+        ArrayList<Ghost> ghosts = this.game.getGhosts();
 
         while (nbGhostInit > nbGhost) {
             int x = (int) (Math.random()*hor);
@@ -587,21 +587,28 @@ public class Plateau {
         return coordinatesMurs;
     }
 
-//    /**
-//     * Gets coordinates trous.
-//     *
-//     * @return the coordinates trous
-//     */
-//    public ArrayList<Coordinates> getCoordinatesTrous() {
-//        return coordinatesTrous;
-//    }
-//
-//    /**
-//     * Gets coordinates tresors.
-//     *
-//     * @return the coordinates tresors
-//     */
-//    public ArrayList<Coordinates> getCoordinatesTresors() {
-//        return coordinatesTresors;
-//    }
+    ///TODO : WIP
+    public int preshotMove(Client client, String direction, int n) throws Exception {
+        int x = client.getCoordinates().getX();
+        int y = client.getCoordinates().getY();
+        int i;
+        for (i = 1; i < n; i++) {
+            switch (direction) {
+                case "UP":
+                    if (horsLimite(x, y - i) || !this.grille[x][y - i].isFree()) {
+                        client.move(direction, i - 1);
+                        return i - 1;
+                    }
+                    break;
+                case "DOWN":
+                    if (horsLimite(x, y + i) || !this.grille[x][y + i].isFree()) {
+                        client.move(direction, i - 1);
+                        return i - 1;
+                    }
+            }
+        }
+
+        return 0;
+    }
+
 }

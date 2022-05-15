@@ -1,18 +1,19 @@
 package Models.Games;
 
-public class Ghost {
+import Models.Entity;
+
+public class Ghost extends Entity {
    private int values;
-   private Coordinates coordinates;
 
-    public Ghost(int v, Coordinates c){
-        this.values = v;
-        this.coordinates = c;
-    }
+   public Ghost(int v, Coordinates c) {
+       super(c);
+       this.values = v;
+   }
 
-    public Ghost(Coordinates c){
-        this.values=50;
-        this.coordinates = c;
-    }
+   public Ghost(Coordinates _coordinates) {
+       super(_coordinates);
+       this.values = 50;
+   }
 
     public int getValues() {
         return values;
@@ -23,11 +24,11 @@ public class Ghost {
     }
 
     public Coordinates getCoordinates() {
-        return coordinates;
+        return super.getCoordinates();
     }
 
     public void setCoordinates(Coordinates coordinates) {
-        this.coordinates = coordinates;
+        super.setCoordinates(coordinates);
     }
 
 }

@@ -6,7 +6,7 @@ import Models.Games.Game;
 /**
  * The type Client.
  */
-public class Client {
+public class Client extends Entity {
 
     private Game gameRunning;
     private Coordinates coordonnees = new Coordinates(0,0);
@@ -20,7 +20,9 @@ public class Client {
     /**
      * Instantiates a new Client.
      */
-    public Client(){}
+    public Client(){
+        super();
+    }
 
     /**
      * Gets coordonnees.
@@ -118,4 +120,5 @@ public class Client {
     public boolean isReady() { return ready;}
 
     public void setReady(boolean ready) {this.ready = ready;}
+
 }

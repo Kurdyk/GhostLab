@@ -1,19 +1,23 @@
 package Utils;
 
-import java.util.Map;
+import java.util.HashMap;
 
 public class CommandValidator {
 
-    public static Map<String, Integer> sizes = Map.of(
-            "NEWPL", 3,
-            "REGIS", 4,
-            "START", 1,
-            "SIZE?", 2,
-            "LIST?", 2,
-            "GAME?", 1,
-            "UNREG", 1,
-            "QUITS", 1
-    );
+    public static HashMap<String, Integer> sizes = new HashMap<>() {
+    };
+
+    public static void init() {
+        sizes.put("NEWPL", 3);
+        sizes.put("REGIS", 4);
+        sizes.put("START", 1);
+        sizes.put("SIZE?", 2);
+        sizes.put("LIST?", 2);
+        sizes.put("GAME?", 1);
+        sizes.put("UNREG", 1);
+        sizes.put("QUITS", 1);
+        sizes.put("MALL?", 2);
+    }
 
     public static boolean validate(String command){
         String[] args = command.split("\\u0020");

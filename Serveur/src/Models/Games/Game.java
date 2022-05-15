@@ -5,8 +5,7 @@ import Models.Plateau;
 import Utils.ClientHandler;
 import Utils.MyPrintWriter;
 
-import java.net.*;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -25,7 +24,7 @@ public class Game {
 
     private Plateau plateau;
 
-    private LinkedList<Ghost> ghosts;
+    private ArrayList<Ghost> ghosts;
 
     ///Pour UDP et Multicast
     Messagerie messagerie;
@@ -36,11 +35,11 @@ public class Game {
         this.mainHandler = mainHandler;
         this.nb_players = 0;
         this.nb_ready = 0;
+        this.ghosts = new ArrayList<Ghost>();
         this.id = mainHandler.registerGameId(this);
         dimX = generate_dim();
         dimY = generate_dim();
         maxPlayers = dimX * dimY / 5;
-        this.ghosts = generateGhost(5, dimX, dimY);
 
     }
 
@@ -66,7 +65,7 @@ public class Game {
         return dimY;
     }
 
-    public LinkedList<Ghost> getGhosts() { return this.ghosts; }
+    public ArrayList<Ghost> getGhosts() { return this.ghosts; }
 
     private void sendAll(String message){
         for (ClientHandler player: this.players){
@@ -97,7 +96,10 @@ public class Game {
         }
         sendGood("PLJND " + client.getUsername());
         for (ClientHandler c : players) {
-            if (c.equals(client)) return;
+            if (c.equals(client)) {
+                client.send("REGNO");
+                return;
+            }
         }
         players.add(client);
         nb_players++;
@@ -163,17 +165,6 @@ public class Game {
                             + this.messagerie.getIp() + " "
                                 + this.messagerie.getMulticastPort());
         }
-    }
-
-    public LinkedList<Ghost> generateGhost(int n, int x, int y){
-        LinkedList<Ghost> res = new LinkedList<Ghost>();
-        Coordinates defaut = new Coordinates(0,0);
-        for (int i = 0; i<n ; i++){
-            Coordinates coordinate = new Coordinates(defaut.generateCoordinates(this.dimX,this.dimY));
-            //TODO vérifier que coordinate n'est pas celle d'un mur
-            res.add(new Ghost(coordinate));
-        }
-        return res;
     }
 
 
