@@ -17,6 +17,10 @@ public class CommandValidator {
         sizes.put("UNREG", 1);
         sizes.put("QUITS", 1);
         sizes.put("MALL?", 2);
+        sizes.put("UPMOV", 2);
+        sizes.put("DOMOV", 2);
+        sizes.put("LEMOV", 2);
+        sizes.put("RIMOV", 2);
     }
 
     public static boolean validate(String command){

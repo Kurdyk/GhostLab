@@ -67,6 +67,10 @@ public class Game {
 
     public ArrayList<Ghost> getGhosts() { return this.ghosts; }
 
+    public Plateau getPlateau(){ return this.plateau;}
+
+    public Messagerie getMessagerie(){return this.messagerie;}
+
     private void sendAll(String message){
         for (ClientHandler player: this.players){
             player.send(message);
@@ -164,6 +168,23 @@ public class Game {
                         + (char) this.nb_fantoms + " "
                             + this.messagerie.getIp() + " "
                                 + this.messagerie.getMulticastPort());
+        }
+    }
+
+    public int ghostValue(int x, int y) throws Exception{
+        for (Ghost g: ghosts) {
+            if(Objects.equals(g.getCoordinates(), new Coordinates(x, y))){
+                return g.getValues();
+            }
+        }
+        return 0;
+    }
+
+    public void removeGhost(int x, int y) throws Exception{
+        for (Ghost g: ghosts) {
+            if(Objects.equals(g.getCoordinates(), new Coordinates(x, y))){
+                ghosts.remove(g);
+            }
         }
     }
 

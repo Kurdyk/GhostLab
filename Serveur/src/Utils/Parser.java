@@ -71,7 +71,7 @@ public class Parser {
      * @param response_text the response text
      */
     //Méthode principale qui lit la commande envoyée par l'utilisateur et agit en fonction
-    public void parse(String response_text){
+    public void parse(String response_text) {
         System.out.println("PROCESSING COMMAND : "+ response_text);
         if (!CommandValidator.validate(response_text)) {
             illegalCommand();
@@ -151,6 +151,42 @@ public class Parser {
                     this.client.getClient().getGameRunning().handleStart(client);
                 } catch (NullPointerException e) {
                     System.out.println("Not in a game");
+                    illegalCommand();
+                }
+                break;
+            case "UPMOV":
+                try {
+                    int mUP = Integer.parseInt(response[1]);
+                    this.client.getClient().getGameRunning().getPlateau().preshotMove(this.client.getClient(), "UP", mUP);
+                }catch (Exception e){
+                    System.out.println("Invalid move");
+                    illegalCommand();
+                }
+                break;
+            case "DOMOV":
+                try {
+                    int mDO = Integer.parseInt(response[1]);
+                    this.client.getClient().getGameRunning().getPlateau().preshotMove(this.client.getClient(), "DOWN", mDO);
+                }catch (Exception e){
+                    System.out.println("Invalid move");
+                    illegalCommand();
+                }
+                break;
+            case "RIMOV":
+                try {
+                    int mRI = Integer.parseInt(response[1]);
+                    this.client.getClient().getGameRunning().getPlateau().preshotMove(this.client.getClient(), "RIGHT", mRI);
+                }catch (Exception e){
+                    System.out.println("Invalid move");
+                    illegalCommand();
+                }
+                break;
+            case "LEMOV":
+                try {
+                    int mLE = Integer.parseInt(response[1]);
+                    this.client.getClient().getGameRunning().getPlateau().preshotMove(this.client.getClient(), "LEFT", mLE);
+                }catch (Exception e){
+                    System.out.println("Invalid move");
                     illegalCommand();
                 }
                 break;

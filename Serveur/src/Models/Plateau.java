@@ -597,18 +597,48 @@ public class Plateau {
                 case "UP":
                     if (horsLimite(x, y - i) || !this.grille[x][y - i].isFree()) {
                         client.move(direction, i - 1);
+                        collecte(client);
                         return i - 1;
                     }
                     break;
                 case "DOWN":
                     if (horsLimite(x, y + i) || !this.grille[x][y + i].isFree()) {
                         client.move(direction, i - 1);
+                        collecte(client);
                         return i - 1;
                     }
+                    break;
+                case "LEFT":
+                    if (horsLimite(x - i, y ) || !this.grille[x - i][y].isFree()) {
+                        client.move(direction, i - 1);
+                        collecte(client);
+                        return i - 1;
+                    }
+                    break;
+                case "RIGHT":
+                    if (horsLimite(x + i, y ) || !this.grille[x + i][y].isFree()) {
+                        client.move(direction, i - 1);
+                        collecte(client);
+                        return i - 1;
+                    }
+                    break;
             }
         }
 
         return 0;
+    }
+
+    //TODO WIP
+    public void collecte(Client client) throws Exception{
+        int x = client.getCoordonnees().getX();
+        int y = client.getCoordonnees().getY();
+        if(this.grille[x][y].getGhostOn() != null){
+            int score = this.game.ghostValue(x, y);
+            client.addScore(score);
+            this.game.getMessagerie().multicastMessage("SCORE "+client.getName()+" "+score+" "+x+" "+y);
+            this.game.removeGhost(x,y);
+            nbGhost --;
+        }
     }
 
 }
