@@ -13,23 +13,22 @@ public class MyBufferedReader {
         this.delim = _delim;
     }
 
-    public String readInstruction() throws IOException {
+    public synchronized String readInstruction() throws IOException {
         String res = "";
         boolean found = false;
         while (true) {
             char c = (char) this.inputStreamReader.read();
+            System.out.println(c);
             char d;
             char e;
             if (c == delim) {
                 d = (char) this.inputStreamReader.read();
                 e = (char) this.inputStreamReader.read();
-                for (int i = 0; i < 2; i++) {
-                    if (e == delim && d == delim) {
-                        found = true;
-                        break;
-                    }
+                if (e == delim && d == delim) {
+                    found = true;
                 }
                 if (found) {
+                    System.out.println("AU FINAL " + res);
                     return res;
                 } else {
                     res += c + d + e;

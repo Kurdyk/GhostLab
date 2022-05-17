@@ -92,7 +92,7 @@ public class MainApp extends Application {
             fetchPartiesListTimer = connectionHandler.registerRecurrentServerCall(new RecurrentServerRequest() {
                 @Override
                 public void run() {
-                    handler.send("GAME?");
+                    handler.getWriter().send("GAME?").end();
                 }
             }, 500);
         }
@@ -106,16 +106,16 @@ public class MainApp extends Application {
         }
         for (String message : list){
             String[] liste_commandes = message.split(" ");
-            int id = liste_commandes[1].charAt(0);
+            int id = Integer.parseInt(liste_commandes[1]);
             if (identifiants.contains(id)){
                 identifiants.remove((Integer) id);
-                connectionHandler.send("SIZE? " + (char) id);
-                connectionHandler.send("LIST? " + (char) id);
+                connectionHandler.getWriter().send("SIZE? ").send((byte) id).end();
+                connectionHandler.getWriter().send("LIST? ").send((byte) id).end();
             } else {
-                Partie nouvelle_partie = new Partie(id, liste_commandes[2].charAt(0));
+                Partie nouvelle_partie = new Partie(id, Integer.parseInt(liste_commandes[2]));
                 partiesList.add(nouvelle_partie);
-                connectionHandler.send("SIZE? " + (char) id);
-                connectionHandler.send("LIST? " + (char) id);
+                connectionHandler.getWriter().send("SIZE? ").send((byte) id).end();
+                connectionHandler.getWriter().send("LIST? ").send((byte) id).end();
             }
         }
         partiesList.removeIf(partie -> identifiants.contains(partie.getIdentifiant()));
@@ -126,7 +126,7 @@ public class MainApp extends Application {
     private void resumeMainStageStartup(){
         try {
             // On nomme le stage.
-            this.primaryStage.setTitle("Chasse au trésor");
+            this.primaryStage.setTitle("GhostLab");
             this.primaryStage.getIcons().add(new Image("logo2.png"));
             // On crée un nouveau Loader et on lui donne le fichier fxml qui correspond à la fenêtre d'acceuil
             FXMLLoader loader = new FXMLLoader();

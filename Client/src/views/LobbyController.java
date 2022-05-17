@@ -81,11 +81,21 @@ public class LobbyController extends CallbackInstance {
         mainApp.getConnectionHandler().registerCallback("PLAYR", this, CallbackInstance::addPlayer);
 
         if (!this.partie.isCreator())
-            mainApp.getConnectionHandler().send("REGIS "+ (char) partie.getIdentifiant());
+            mainApp.getConnectionHandler().getWriter()
+                    .send("REGIS ")
+                    .send((byte) partie.getIdentifiant())
+                    .end();
 
         System.out.println("ID : " + this.partie.getIdentifiant());
-        mainApp.getConnectionHandler().send("SIZE? " + (char) this.partie.getIdentifiant());
-        mainApp.getConnectionHandler().send("LIST? " + (char) this.partie.getIdentifiant());
+        mainApp.getConnectionHandler().getWriter()
+                .send("SIZE? ")
+                .send((byte) this.partie.getIdentifiant())
+                .end();
+
+        mainApp.getConnectionHandler().getWriter()
+                .send("LIST? ")
+                .send((byte) this.partie.getIdentifiant())
+                .end();
         // initialiser la partie
         populateScreen();
 
@@ -120,7 +130,7 @@ public class LobbyController extends CallbackInstance {
     @FXML
     private void handleQuitButtonClick(){
         if(this.mainApp.getServerConfig().isServeurAmeliore()){
-            this.mainApp.getConnectionHandler().send("UNREG");
+            this.mainApp.getConnectionHandler().getWriter().send("UNREG").end();
         }
         // Cette methode est appelée lorsque l'on clique sur le bouton quitter. Ce comportement est défini dans le fichier FXML
         try {
@@ -161,7 +171,7 @@ public class LobbyController extends CallbackInstance {
         statusLabel.setText("En attente de confirmation des autres joueurs...");
         statusLabel.setTextFill(Color.web("#800000"));
 
-        this.mainApp.getConnectionHandler().send("START");
+        this.mainApp.getConnectionHandler().getWriter().send("START").end();
     }
 
     @Override
@@ -179,8 +189,8 @@ public class LobbyController extends CallbackInstance {
 
     @Override
     public void updateGameDim(String s){
-        int x = s.split(" ")[2].charAt(0);
-        int y = s.split(" ")[3].charAt(0);
+        int x = Integer.parseInt(s.split(" ")[2]);
+        int y = Integer.parseInt(s.split(" ")[3]);
         this.partie.setDimensions(x, y);
         Platform.runLater(() -> {dimensionsLabel.setText(this.partie.getDimensions());});
 

@@ -542,7 +542,14 @@ public class Plateau {
             System.out.println("ON AFFECTE LES COORDONEES ("+x+", "+y+") AU CLIENT : "+client.getClient().getName());
             client.getClient().getCoordonnees().setX(x);
             client.getClient().getCoordonnees().setY(y);
-            client.send("POSIT " + client.getClient().getName() + " " + fillCoordinate(x) + " " + fillCoordinate(y));
+            client.getWriter()
+                    .send("POSIT ")
+                    .send(client.getClient().getName())
+                    .send(" ")
+                    .send(fillCoordinate((short) x))
+                    .send(" ")
+                    .send(fillCoordinate((short) y))
+                    .end();
         } else {
             placerJoueurs(client);
         }
@@ -570,7 +577,7 @@ public class Plateau {
         }
     }
 
-    private String fillCoordinate(int n) {
+    public static String fillCoordinate(short n) {
         String res = "" + n;
         while (res.length() < 3) {
             res = "0" + res;

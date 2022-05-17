@@ -6,6 +6,7 @@ import Utils.CommandValidator;
 
 import java.net.ServerSocket;
 import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
@@ -45,7 +46,7 @@ public class ConnectionHandler {
      * @return the int
      */
     public int registerGameId(Game game){
-        int id = (int) (Math.random() * (254) + 1);
+        int id = (int) Math.round(Math.random() * 126) + 1;
         if (id == 42 || gamesMap.containsKey(id)){
             return registerGameId(game);
         } else {

@@ -182,8 +182,11 @@ public class HomeController extends CallbackInstance {
             if (selectedPartie!=null) {
                 this.mainApp.joinGameLobby(selectedPartie);
                 System.out.println(this.mainApp.getConnectionHandler().getSocketPort());
-                mainApp.getConnectionHandler().send("REGIS " + this.mainApp.getServerConfig().getUsername() + " "
-                        + "6942 " + (char) selectedPartie.getIdentifiant());
+                mainApp.getConnectionHandler().getWriter().send("REGIS ")
+                        .send(this.mainApp.getServerConfig().getUsername() + " ")
+                        .send("6942 ")
+                        .send((byte) selectedPartie.getIdentifiant())
+                        .end();
             }
         } catch (Exception e1) {
             e1.printStackTrace();
@@ -193,8 +196,11 @@ public class HomeController extends CallbackInstance {
     @FXML
     private void handleDefaultGameButtonClick() {
         partieCreated = new Partie(-1, 1, true);
-        mainApp.getConnectionHandler().send("NEWPL " + this.mainApp.getServerConfig().getUsername() + " "
-                + this.mainApp.getConnectionHandler().getSocketPort());
+        mainApp.getConnectionHandler().getWriter()
+                .send("NEWPL ")
+                .send(this.mainApp.getServerConfig().getUsername() + " ")
+                .send(String.valueOf(this.mainApp.getConnectionHandler().getSocketPort()))
+                .end();
     }
 
     @FXML
@@ -219,7 +225,7 @@ public class HomeController extends CallbackInstance {
 
     @Override
     public void partieCreationCallback(String s) {
-        int identifiant = s.split(" ")[1].charAt(0);
+        int identifiant = Integer.parseInt(s.split(" ")[1]);
         if (this.partieCreated == null) {
             this.partieCreated = this.mainApp.getPartiesList().filtered(p -> p.getIdentifiant() == identifiant).get(0);
         } else {

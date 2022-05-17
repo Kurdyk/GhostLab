@@ -666,6 +666,7 @@ public class MyPrintWriter extends Writer {
      * @param      s   The {@code String} to be printed
      */
     public void print(String s) {
+        System.out.println("True :" + String.valueOf(s));
         write(String.valueOf(s));
     }
 

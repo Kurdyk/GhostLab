@@ -73,14 +73,14 @@ public class Game {
 
     private void sendAll(String message){
         for (ClientHandler player: this.players){
-            player.send(message);
+            player.getWriter().send(message).end();
         }
     }
 
     private void sendGood(String message){
         for (ClientHandler player: this.players){
             if (player.isGoodClient()){
-                player.send(message);
+                player.getWriter().send(message).end();
             }
         }
     }
@@ -95,20 +95,20 @@ public class Game {
      */
     public synchronized void addPlayer(ClientHandler client){
         if (!registerUsername(client.getClient().getName()) && this.players.size() < this.maxPlayers) {
-            client.send("REGNO");
+            client.getWriter().send("REGNO").end();
             return;
         }
         sendGood("PLJND " + client.getUsername());
         for (ClientHandler c : players) {
             if (c.equals(client)) {
-                client.send("REGNO");
+                client.getWriter().send("REGNO").end();
                 return;
             }
         }
         players.add(client);
         nb_players++;
         client.getClient().setGameRunning(this);
-        client.send("REGOK " + (char) this.getId());
+        client.getWriter().send("REGOK ").send((byte) this.getId()).end();
         if(players.size() == this.maxPlayers){
             mainHandler.hideGame(this.id);
         }
@@ -120,7 +120,7 @@ public class Game {
      */
     public synchronized void removePlayer(ClientHandler client) {
         if (!players.remove(client)) {
-            client.send("DUNNO");
+            client.getWriter().send("DUNNO").end();
             return;
         }
         if (client.getClient().isReady()) {
@@ -128,7 +128,7 @@ public class Game {
             nb_ready--;
         }
         nb_players--;
-        client.send("UNROK " + this.getId());
+        client.getWriter().send("UNROK ").send((byte) this.getId()).end();
 
     }
 
@@ -162,12 +162,20 @@ public class Game {
         }
 
         for (ClientHandler client : players) {
-            client.send("WELCO " + (char) this.getId() + " "
-                + MyPrintWriter.toLittleEndian((short) this.getDimY()) + " "
-                    + MyPrintWriter.toLittleEndian((short) this.getDimX()) + " "
-                        + (char) this.nb_fantoms + " "
-                            + this.messagerie.getIp() + " "
-                                + this.messagerie.getMulticastPort());
+            client.getWriter()
+                    .send("WELCO ")
+                    .send((byte) this.getId())
+                    .send(" ")
+                    .send((short) this.getDimY())
+                    .send(" ")
+                    .send((short) this.getDimX())
+                    .send(" ")
+                    .send((byte) this.nb_fantoms)
+                    .send(" ")
+                    .send(this.messagerie.getIp())
+                    .send(" ")
+                    .send(this.messagerie.getMulticastPort())
+                    .end();
         }
     }
 

@@ -34,7 +34,7 @@ public class PartiesUpdater extends CallbackInstance {
         String[] commande = message.split("\\u0020");
         System.out.println("parse de PartiesUpdater = Message en "+commande.length + " morceaux");
         if (commande[0].equals("GAMES") && commande.length == 2){
-            this.totalParties = commande[1].charAt(0);
+            this.totalParties = Integer.parseInt(commande[1]);
             System.out.println("On va recevoir " + this.totalParties + " parties.");
             partiesListBrute.clear();
             if(totalParties == 0){
@@ -47,14 +47,14 @@ public class PartiesUpdater extends CallbackInstance {
                 mainApp.updateParties(partiesListBrute);
             }
         } else if (commande[0].equals("SIZE!") && commande.length == 4){
-            int id = commande[1].charAt(0);
-            int h = commande[2].charAt(0);
-            int w = commande[3].charAt(0);
+            int id = Integer.parseInt(commande[1]);
+            int h = Integer.parseInt(commande[2]);
+            int w = Integer.parseInt(commande[3]);
             System.out.println("Pour la partie " + id + " on a " + h + "x" + w);
             mainApp.getPartiesList().stream().filter(p -> p.getIdentifiant() == id).forEach(p -> p.setDimensions(h, w));
         } else if (commande[0].equals("LIST!") && commande.length == 3){
-            int id = commande[1].charAt(0);
-            int nb = commande[2].charAt(0);
+            int id = Integer.parseInt(commande[1]);
+            int nb = Integer.parseInt(commande[2]);
             mainApp.getPartiesList().stream().filter(p -> p.getIdentifiant() == id).forEach(p -> p.setNbPlayers(nb));
         }
     }

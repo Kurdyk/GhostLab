@@ -4,7 +4,9 @@ import models.Config;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.concurrent.ConcurrentHashMap;
@@ -15,8 +17,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ConnectionHandler extends Thread{
     private Config config;
     private boolean running = true;
-    private MyBufferedReader scanner;
-    private MyPrintWriter printWriter;
+    private RepParser scanner;
+    private TestWriter writer;
     private Socket socket;
     private ConcurrentHashMap<String, CallbackServer> callLinks = new ConcurrentHashMap<>();
     private ConcurrentHashMap<String, CallbackInstance> callOwners = new ConcurrentHashMap<>();
@@ -39,7 +41,7 @@ public class ConnectionHandler extends Thread{
      * Quitter.
      */
     public void quitter(){
-        send("QUITS");
+        writer.send("QUITS").end();
         running = false;
         if (socket != null){
             try {
@@ -48,20 +50,25 @@ public class ConnectionHandler extends Thread{
         }
     }
 
-    /**
-     * Send.
-     *
-     * @param message the message
-     */
-    public void send(String message){
-        if (printWriter != null) {
-            printWriter.println(message);
-        } else {
-            try {
-                Thread.sleep(500);
-                send(message);
-            } catch (InterruptedException ignored){}
-        }
+//    /**
+//     * Send.
+//     *
+//     * @param message the message
+//     */
+//    public void send(String message){
+//        if (printWriter != null) {
+//            printWriter.println(message);
+//            printWriter.flush();
+//        } else {
+//            try {
+//                Thread.sleep(500);
+//                send(message);
+//            } catch (InterruptedException ignored){}
+//        }
+//    }
+
+    public TestWriter getWriter() {
+        return this.writer;
     }
 
     /**
@@ -124,7 +131,7 @@ public class ConnectionHandler extends Thread{
      * Upgrade.
      */
     public void upgrade(){
-        send("UPGD?");
+        writer.send("UPGD?").end();
     }
 
     public void clearAll(){
@@ -137,8 +144,8 @@ public class ConnectionHandler extends Thread{
     public void run() {
         try {
             socket = new Socket(config.getAdresseServeur(), config.getPortServeur());
-            this.scanner = new MyBufferedReader(new InputStreamReader(socket.getInputStream()), '*');
-            printWriter = new MyPrintWriter(socket.getOutputStream(), true);
+            this.scanner = new RepParser(socket.getInputStream(), "***");
+            writer = new TestWriter(socket.getOutputStream(), "***");
         } catch (IOException e){
             e.printStackTrace();
             System.out.println("Something went wrong...");
@@ -151,16 +158,18 @@ public class ConnectionHandler extends Thread{
         while (running){
             String command = null;
             try {
-                command = scanner.readInstruction();
+                command = scanner.parse();
             } catch (IOException e) {
-                e.printStackTrace();
+                System.out.println("Socket closed by host");
+                System.exit(1);
+            } catch (IllegalArgumentException e) {
+                continue;
             }
-            System.out.println("RECU : "+command);
+            System.out.println("RECU : " + command);
             String[] response = command.split("\\u0020");
             if (callLinks.containsKey(response[0])) {
                 callLinks.get(response[0]).call(callOwners.get(response[0]), command);
             } else {
-                //TODO: TRAITER L'INFORMATION DU SERVEUR
                 buffers.computeIfAbsent(response[0], k -> new ArrayList<>());
                 buffers.get(response[0]).add(command);
             }

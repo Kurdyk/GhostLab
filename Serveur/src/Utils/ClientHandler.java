@@ -3,6 +3,7 @@ package Utils;
 import Apps.ConnectionHandler;
 import Models.Client;
 
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.Socket;
@@ -13,15 +14,15 @@ import java.util.concurrent.CopyOnWriteArrayList;
 /**
  * The type Client handler.
  */
-public class ClientHandler implements Runnable{
+public class ClientHandler implements Runnable {
 
     private ConnectionHandler mainApp;
     private Socket socket;
-    private MyBufferedReader scanner;
-    private MyPrintWriter myPrintWriter;
+//    private MyBufferedReader scanner;
+    private TestWriter writer;
     private Client client;
     private String username;
-    private Parser parser;
+    private RequestParser parser;
     private boolean loggedIn;
     private String start_buffer = null;
 
@@ -39,18 +40,9 @@ public class ClientHandler implements Runnable{
     public ClientHandler(Socket socket, ConnectionHandler mainApp) throws Exception{
         this.socket = socket;
         this.mainApp = mainApp;
-        this.scanner = new MyBufferedReader(new InputStreamReader(socket.getInputStream()), '*');
-//        this.scanner.useDelimiter("\\s*\\*{3}\\s*");
-        this.myPrintWriter = new MyPrintWriter(socket.getOutputStream(), true);
-        this.parser = new Parser(this, mainApp);
+        this.writer = new TestWriter(socket.getOutputStream(), "***");
+        this.parser = new RequestParser(socket.getInputStream(), this, mainApp);
         this.client = new Client();
-
-        String c = scanner.readInstruction();
-        if (c.equals("PING?")){
-            myPrintWriter.println("PING!");
-        } else {
-            firstParse(c);
-        }
 
     }
 
@@ -61,46 +53,32 @@ public class ClientHandler implements Runnable{
 
     }
 
-    private void illegalCommand(){
-        send("FUCKU");
-        closeConnection();
-        if (loggedIn){
-            mainApp.usernamesSet.remove(username);
-        }
-    }
-
-    private void firstParse(String command){
-        System.out.println("PARSING " + command);
-        switch (command){
-            case "UPGD?":
-                parser.setGoodClient(true);
-                send("UPGD!");
-                break;
-            default:
-                parser.parse(command);
-                break;
-        }
-    }
-
     @Override
     public void run(){
         try {
             System.out.println("Connected from " + socket);
             int nb_parties = mainApp.getAvailableGamesNumber();
-            myPrintWriter.println("GAMES " + (char) nb_parties);
+            writer.send("GAMES ").send((byte) nb_parties).end();
             mainApp.getAvailableGamesMap().forEach((id, game)
-                    -> myPrintWriter.println("OGAME " + (char) id.intValue() + " " + (char) (game.getNb_players())));
+                    -> writer.send("OGAME ")
+                            .send((byte) id.intValue())
+                            .send(" ")
+                            .send((byte) game.getNb_players())
+                            .end());
 
-            firstParse(scanner.readInstruction());
+
+
             while(true) {
-                parser.parse(scanner.readInstruction());
+                try {
+                    parser.parse();
+                } catch (IOException e) {
+                    System.out.println("Socket closed by client");
+                    socket.close();
+                    return;
+                }
             }
 
-        } catch(SocketException e) {
-            System.out.println("Socket closed");
-        }
-
-        catch (Exception e){
+        } catch (Exception e){
             e.printStackTrace();
         }
     }
@@ -121,15 +99,15 @@ public class ClientHandler implements Runnable{
         this.client = new Client();
     }
 
-    /**
-     * Send.
-     *
-     * @param message the message
-     */
-    public synchronized void send(String message){
-        System.out.println("SENDING " + message + "***");
-        this.myPrintWriter.println(message);
-    }
+//    /**
+//     * Send.
+//     *
+//     * @param message the message
+//     */
+//    public synchronized void send(String message){
+//        System.out.println("SENDING " + message + "***");
+//        this.myPrintWriter.println(message);
+//    }
 
 
     /**
@@ -196,4 +174,7 @@ public class ClientHandler implements Runnable{
         return this.socket.getInetAddress();
     }
 
+    public TestWriter getWriter() {
+        return writer;
+    }
 }
