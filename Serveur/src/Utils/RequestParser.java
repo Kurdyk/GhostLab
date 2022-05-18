@@ -270,6 +270,8 @@ public class RequestParser {
                 Game gameToMessage = client.getClient().getGameRunning();
                 gameToMessage.getMessagerie().multicastMessage(mall.getMessage());
                 // TODO: REPONSE
+                client.getWriter().send("MALL!")
+                        .end();
                 break;
 
             case "SEND?":
@@ -281,17 +283,46 @@ public class RequestParser {
                     gameToMP.getMessagerie().sendToOne(send.getMessage(), send.getId());
                 } catch (Exception e) {
                     e.printStackTrace();
+                    // TODO: REPONSE
+                    if(e.getMessage().equals("Player not found in this game.")){
+                        client.getWriter().send("NSEND")
+                                .end();
+                        break;
+                    }
+
                 }
-                // TODO: REPONSE
+                client.getWriter().send("SEND!")
+                        .end();
+
                 break;
 
             case "GLIS?":
-                // TODO: traiter
+                //TODO WIP
+                Game gameToScoot = client.getClient().getGameRunning();
+                int n= gameToScoot.getNb_players();
+                client.getWriter().send("GLIS! ")
+                        .send(n)
+                        .end();
+
+                for (ClientHandler player : gameToScoot.getPlayers()){
+                    client.getWriter().send("GPLYR ")
+                            .send(player.getClient().getName())
+                            .send(" ")
+                            .send(player.getClient().getCoordonnees().getX())
+                            .send(" ")
+                            .send(player.getClient().getCoordonnees().getY())
+                            .send(" ")
+                            .send(player.getClient().getScore())
+                            .end();
+                }
                 break;
 
             case "IQUIT":
+                client.getWriter().send("GOBYE")
+                        .end();
                 endLine();
                 // TODO: traiter
+                client.closeConnection();
 
             case "UPMOV":
                 XMOVE upMove = parseXMOVE();
