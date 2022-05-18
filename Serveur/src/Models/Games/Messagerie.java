@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Messagerie {
@@ -51,7 +52,7 @@ public class Messagerie {
         }
 
         String all = message + "+++";
-        byte[] data = all.getBytes();
+        byte[] data = all.getBytes(StandardCharsets.UTF_8);
 
         DatagramPacket packet = new DatagramPacket(data, data.length, cible.getIp(), cible.getClient().getPort_udp());
         this.datagramSocket.send(packet);
@@ -63,7 +64,7 @@ public class Messagerie {
      */
     public void multicastMessage(String message) {
         String all = message + "+++";
-        byte[] data = all.getBytes();
+        byte[] data = all.getBytes(StandardCharsets.UTF_8);
 
         DatagramPacket packet = new DatagramPacket(data, data.length, this.multicastIP, this.multicastPort);
         try {

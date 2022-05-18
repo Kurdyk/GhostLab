@@ -9,6 +9,8 @@ import javafx.scene.control.*;
 import models.Partie;
 import utils.CallbackInstance;
 
+import java.nio.charset.StandardCharsets;
+
 /**
  * The type Home controller.
  */
@@ -182,8 +184,10 @@ public class HomeController extends CallbackInstance {
             if (selectedPartie!=null) {
                 this.mainApp.joinGameLobby(selectedPartie);
                 System.out.println(this.mainApp.getConnectionHandler().getSocketPort());
+                System.out.println(this.mainApp.getServerConfig().getUsername().getBytes(StandardCharsets.UTF_8).length);
                 mainApp.getConnectionHandler().getWriter().send("REGIS ")
-                        .send(this.mainApp.getServerConfig().getUsername() + " ")
+                        .send(this.mainApp.getServerConfig().getUsername().getBytes(StandardCharsets.UTF_8))
+                        .send(" ")
                         .send("6942 ")
                         .send((byte) selectedPartie.getIdentifiant())
                         .end();

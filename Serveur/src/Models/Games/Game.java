@@ -5,6 +5,7 @@ import Models.Plateau;
 import Utils.ClientHandler;
 import Utils.MyPrintWriter;
 
+import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -153,7 +154,6 @@ public class Game {
     private void startGame() {
         this.mainHandler.getAvailableGamesMap().remove(this.getId());
         this.nb_fantoms = (Math.max(10, 3 * nb_ready));
-        this.plateau = new Plateau(dimX, dimY, nb_fantoms, dimX * dimY / 3, this);
 
         try {
             this.messagerie = new Messagerie(this.getId(), players);
@@ -177,24 +177,36 @@ public class Game {
                     .send(this.messagerie.getMulticastPort())
                     .end();
         }
+
+        this.plateau = new Plateau(dimX, dimY, nb_fantoms, dimX * dimY / 3, this);
+
     }
 
-    public int ghostValue(int x, int y) throws Exception{
-        for (Ghost g: ghosts) {
-            if(Objects.equals(g.getCoordinates(), new Coordinates(x, y))){
-                return g.getValues();
+
+    public void removeGhost(Ghost g) throws Exception{
+        ghosts.remove(g);
+        if (ghosts.isEmpty()) endGame();
+    }
+
+    public static String fillScore(int n) {
+        String res = String.valueOf(n);
+        while (res.length() < 4) {
+            res = "0" + res;
+        }
+        return res;
+    }
+
+    private void endGame() {
+        String winnerId = "";
+        int winnerScore = -1;
+        for (ClientHandler client : players) {
+            if (client.getClient().getScore() > winnerScore) {
+                winnerScore = client.getClient().getScore();
+                winnerId = client.getUsername();
             }
         }
-        return 0;
-    }
 
-    public void removeGhost(int x, int y) throws Exception{
-        for (Ghost g: ghosts) {
-            if(Objects.equals(g.getCoordinates(), new Coordinates(x, y))){
-                ghosts.remove(g);
-            }
-        }
+        this.getMessagerie().multicastMessage("ENDGA " + winnerId + " " + Game.fillScore(winnerScore));
     }
-
 
 }

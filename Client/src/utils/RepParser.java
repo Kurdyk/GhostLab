@@ -236,7 +236,7 @@ public class RepParser {
                 return "SIZE! " + size.getM() + " " + size.getH() + " " + size.getW();
             case "LIST!":
                 LIST list = parseLIST();
-                return "LIST " + list.getM() + " " + list.getS();
+                return "LIST! " + list.getM() + " " + list.getS();
             case "PLAYR":
                 PLAYR playr = parsePLAYR();
                 return "PLAYR " + playr.getId();
