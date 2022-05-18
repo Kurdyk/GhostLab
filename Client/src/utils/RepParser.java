@@ -240,6 +240,15 @@ public class RepParser {
             case "PLAYR":
                 PLAYR playr = parsePLAYR();
                 return "PLAYR " + playr.getId();
+            case "PLJND":
+                PLAYR pljnd = parsePLAYR();
+                return "PLJND " + pljnd.getId();
+            case "PQUIT":
+                PLAYR pquit = parsePLAYR();
+                return "PQUIT " + pquit.getId();
+            case "PSTAT":
+                PLAYR pstat = parsePLAYR();
+                return "PSTAT " + pstat.getId();
             case "WELCO":
                 WELCO welco = parseWELCO();
                 return "WELCO " + welco.getM() + " " + welco.getH() + " " + welco.getW() + " " + welco.getF()
@@ -269,6 +278,7 @@ public class RepParser {
                 endLine();
                 return type;
             default:
+                endLine();
                 throw new IllegalArgumentException("Unrecognized response");
 
         }

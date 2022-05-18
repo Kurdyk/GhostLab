@@ -112,7 +112,7 @@ public class HomeController extends CallbackInstance {
             });
         }
 
-        this.mainApp.getConnectionHandler().registerCallback("REGOK", this, CallbackInstance::partieCreationCallback);
+
     }
 
     /**
@@ -182,11 +182,6 @@ public class HomeController extends CallbackInstance {
             if (selectedPartie!=null) {
                 this.mainApp.joinGameLobby(selectedPartie);
                 System.out.println(this.mainApp.getConnectionHandler().getSocketPort());
-                mainApp.getConnectionHandler().getWriter().send("REGIS ")
-                        .send(this.mainApp.getServerConfig().getUsername() + " ")
-                        .send("6942 ")
-                        .send((byte) selectedPartie.getIdentifiant())
-                        .end();
             }
         } catch (Exception e1) {
             e1.printStackTrace();
@@ -195,11 +190,11 @@ public class HomeController extends CallbackInstance {
 
     @FXML
     private void handleDefaultGameButtonClick() {
+        this.mainApp.getConnectionHandler().registerCallback("REGOK", this, CallbackInstance::partieCreationCallback);
         partieCreated = new Partie(-1, 1, true);
         mainApp.getConnectionHandler().getWriter()
                 .send("NEWPL ")
-                .send(this.mainApp.getServerConfig().getUsername() + " ")
-                .send(String.valueOf(this.mainApp.getConnectionHandler().getSocketPort()))
+                .send(this.mainApp.getServerConfig().getUsername() + " 6942")
                 .end();
     }
 
@@ -225,11 +220,13 @@ public class HomeController extends CallbackInstance {
 
     @Override
     public void partieCreationCallback(String s) {
+        this.mainApp.getConnectionHandler().releaseCallback("REGOK");
         int identifiant = Integer.parseInt(s.split(" ")[1]);
         if (this.partieCreated == null) {
             this.partieCreated = this.mainApp.getPartiesList().filtered(p -> p.getIdentifiant() == identifiant).get(0);
         } else {
             this.partieCreated.setIdentifiant(identifiant);
+            this.partieCreated.setConnected(true);
             this.mainApp.getPartiesList().add(this.partieCreated);
         }
         Platform.runLater(() -> {

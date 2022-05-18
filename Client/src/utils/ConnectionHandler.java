@@ -3,10 +3,7 @@ package utils;
 import models.Config;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.net.Socket;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.concurrent.ConcurrentHashMap;
@@ -137,7 +134,11 @@ public class ConnectionHandler extends Thread{
     public void clearAll(){
         callLinks.clear();
         callOwners.clear();
-        buffers.clear();
+    }
+
+    public void clearAll(boolean clearbuffers){
+        clearAll();
+        if (clearbuffers) buffers.clear();
     }
 
     @Override

@@ -52,6 +52,8 @@ public class MyPrintWriter extends Writer {
 
     private String delimiter = "***";
 
+    private OutputStream myOutputStream;
+
 
     public void udp(){
         this.delimiter = "+++";
@@ -127,6 +129,11 @@ public class MyPrintWriter extends Writer {
      */
     public MyPrintWriter(OutputStream out, boolean autoFlush) {
         this(out, autoFlush, Charset.defaultCharset());
+        myOutputStream = out;
+    }
+
+    public OutputStream getMyOutputStream() {
+        return myOutputStream;
     }
 
     /**
@@ -522,6 +529,10 @@ public class MyPrintWriter extends Writer {
         try {
             synchronized (lock) {
                 ensureOpen();
+                System.out.println("Writing " + s + " from " + off + " to " + off+len);
+                char[] cbuf = new char[len];
+                s.getChars(off, (off + len), cbuf, 0);
+                System.out.println("cbuf := " + String.valueOf(cbuf));
                 out.write(s, off, len);
             }
         }
