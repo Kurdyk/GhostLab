@@ -88,14 +88,12 @@ public class MainApp extends Application {
         connectionHandler.registerCallback("SIZE!", this.partiesUpdater, CallbackInstance::parse, true);
         connectionHandler.registerCallback("LIST!", this.partiesUpdater, CallbackInstance::parse, true);
 
-        if (this.serverConfig.isServeurAmeliore()) {
-            fetchPartiesListTimer = connectionHandler.registerRecurrentServerCall(new RecurrentServerRequest() {
-                @Override
-                public void run() {
-                    handler.getWriter().send("GAME?").end();
-                }
-            }, 500);
-        }
+        fetchPartiesListTimer = connectionHandler.registerRecurrentServerCall(new RecurrentServerRequest() {
+            @Override
+            public void run() {
+                handler.getWriter().send("GAME?").end();
+            }
+        }, 500);
 
     }
 

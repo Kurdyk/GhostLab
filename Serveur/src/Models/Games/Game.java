@@ -3,7 +3,6 @@ package Models.Games;
 import Apps.ConnectionHandler;
 import Models.Plateau;
 import Utils.ClientHandler;
-import Utils.MyPrintWriter;
 
 import java.lang.ref.SoftReference;
 import java.util.ArrayList;
@@ -99,13 +98,13 @@ public class Game {
             client.getWriter().send("REGNO").end();
             return;
         }
-        sendGood("PLJND " + client.getUsername());
         for (ClientHandler c : players) {
             if (c.equals(client)) {
                 client.getWriter().send("REGNO").end();
                 return;
             }
         }
+        sendGood("PLJND " + client.getClient().getName());
         players.add(client);
         nb_players++;
         client.getClient().setGameRunning(this);
@@ -130,6 +129,8 @@ public class Game {
         }
         nb_players--;
         client.getWriter().send("UNROK ").send((byte) this.getId()).end();
+        this.players.remove(client);
+        this.sendGood("PQUIT " + client.getClient().getName());
 
     }
 
@@ -142,6 +143,7 @@ public class Game {
         else {
             client.getClient().setReady(true);
             nb_ready++;
+            sendGood("PSTAT " + client.getClient().getName());
             if (nb_ready == nb_players) {
                 startGame();
             }

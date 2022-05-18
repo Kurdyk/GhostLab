@@ -23,6 +23,8 @@ public class Partie {
 
     private IntegerProperty nbGhosts = new SimpleIntegerProperty();
 
+    private boolean connected = false;
+
 
     public Partie(int identifiant, int nbPlayers) {
         this.identifiant = new SimpleIntegerProperty(identifiant);
@@ -95,5 +97,17 @@ public class Partie {
 
     public boolean isCreator() {
         return creator;
+    }
+
+    public void setCreator(boolean creator) {
+        this.creator = creator;
+    }
+
+    public boolean isConnected() {
+        return connected;
+    }
+
+    public void setConnected(boolean connected) {
+        this.connected = connected;
     }
 }

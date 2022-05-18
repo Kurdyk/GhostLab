@@ -55,12 +55,6 @@ public class RequestParser {
         byte[] port = new byte[4];
         byte[] m = new byte[1];
 
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
         this.inputStream.read(); //space
         this.inputStream.read(id);
         this.inputStream.read(); //space

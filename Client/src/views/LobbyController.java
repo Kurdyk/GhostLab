@@ -6,7 +6,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
-import javafx.util.Callback;
 import models.Partie;
 import utils.CallbackInstance;
 
@@ -69,22 +68,26 @@ public class LobbyController extends CallbackInstance {
 
         mainApp.getConnectionHandler().clearAll();
 
-        mainApp.getConnectionHandler().registerCallback("PJOIN", this, CallbackInstance::addPlayer);
-        mainApp.getConnectionHandler().registerCallback("REGOK", this, CallbackInstance::updateConnexionStatus);
-        mainApp.getConnectionHandler().registerCallback("PQUIT", this, CallbackInstance::removePlayer);
+        mainApp.getConnectionHandler().registerCallback("PLJND", this, CallbackInstance::addPlayer); // ok
+        mainApp.getConnectionHandler().registerCallback("REGOK", this, CallbackInstance::updateConnexionStatus, true); // ok
+        mainApp.getConnectionHandler().registerCallback("PQUIT", this, CallbackInstance::removePlayer); // ok
 
-        mainApp.getConnectionHandler().registerCallback("PSTAT", this, CallbackInstance::updateStartGameStatus);
+        mainApp.getConnectionHandler().registerCallback("PSTAT", this, CallbackInstance::updateStartGameStatus); // ok
 
         mainApp.getConnectionHandler().registerCallback("WELCO", this, CallbackInstance::gameStart);
 
         mainApp.getConnectionHandler().registerCallback("SIZE!", this, CallbackInstance::updateGameDim);
         mainApp.getConnectionHandler().registerCallback("PLAYR", this, CallbackInstance::addPlayer);
 
+        mainApp.getConnectionHandler().registerCallback("START", this, CallbackInstance::gameStart);
+
         if (!this.partie.isCreator())
-            mainApp.getConnectionHandler().getWriter()
-                    .send("REGIS ")
-                    .send((byte) partie.getIdentifiant())
+            mainApp.getConnectionHandler().getWriter().send("REGIS ")
+                    .send(this.mainApp.getServerConfig().getUsername() + " ")
+                    .send("6942 ")
+                    .send((byte) this.partie.getIdentifiant())
                     .end();
+
 
         System.out.println("ID : " + this.partie.getIdentifiant());
         mainApp.getConnectionHandler().getWriter()
@@ -113,18 +116,17 @@ public class LobbyController extends CallbackInstance {
         nombreGhostLabel.setText(String.valueOf(this.partie.getNbGhosts()));
         //nombreTresorsLabel.setText(String.valueOf(this.partie.getNombreDeTresors()));
         playersInListView.setItems(partie.getPlayersNames());
-        playersInListView.setCellFactory(new Callback<ListView<String>, ListCell<String>>() {
-            @Override
-            public ListCell<String> call(ListView<String> stringListView) {
-                return new ColoredListCellFormat();
-            }
-        });
+        playersInListView.setCellFactory(stringListView -> new ColoredListCellFormat());
         lancerPartieButton.requestFocus();
         leftAnchorPane.maxWidthProperty().bind(lobbySplitPane.widthProperty().multiply(0.25));
         leftAnchorPane.minWidthProperty().bind(lobbySplitPane.widthProperty().multiply(0.25));
         identifantLabel.setText(String.valueOf(this.partie.getIdentifiant()));
 
         lancerPartieButton.setDisable(false);
+
+        if (this.partie.isConnected()){
+            this.updateConnexionStatus("REGOK");
+        }
 
     }
     @FXML
@@ -134,6 +136,8 @@ public class LobbyController extends CallbackInstance {
         }
         // Cette methode est appelée lorsque l'on clique sur le bouton quitter. Ce comportement est défini dans le fichier FXML
         try {
+            this.partie.setCreator(false);
+            this.partie.setConnected(false);
             this.mainApp.quitLobby();
         } catch (Exception e1){
             e1.printStackTrace();
@@ -142,24 +146,34 @@ public class LobbyController extends CallbackInstance {
 
     @Override
     public void addPlayer(String s) {
+        if (this.partie.getPlayersNames().contains(s.split(" ")[1])) return;
+        if (!this.playersRefusedToStartGame.contains(s.split(" ")[1])) this.playersRefusedToStartGame.add(s.split(" ")[1]);
         Platform.runLater(() -> {
             this.partie.getPlayersNames().add(s.split(" ")[1]);
+            this.playersInListView.refresh();
         });
     }
 
     @Override
     public void removePlayer(String s) {
+        if (!this.partie.getPlayersNames().contains(s.split(" ")[1])) return;
         Platform.runLater(() -> {
             this.partie.getPlayersNames().remove(s.split(" ")[1]);
+            this.playersInListView.refresh();
         });
     }
 
     @Override
     public void updateConnexionStatus(String s) {
-        if (s.split(" ")[1].equals("MAP") && s.split(" ")[3].equals("JOINED")){
+        System.out.println("Updating connection status...");
+        if (s.split(" ")[0].equals("REGOK")){
             Platform.runLater(() -> {
                 statusLabel.setText("Connecté");
                 statusLabel.setTextFill(Color.web("#008000"));
+            });
+        } else if (s.split(" ")[0].equals("REGNO")){
+            Platform.runLater(() -> {
+                statusLabel.setText("Impossible de rejoindre la partie");
             });
         }
     }
@@ -168,6 +182,7 @@ public class LobbyController extends CallbackInstance {
     private void startGameButtonPressed(){
         hasPressedStartButton = true;
         this.lancerPartieButton.setDisable(true);
+        this.quitterButton.setDisable(true);
         statusLabel.setText("En attente de confirmation des autres joueurs...");
         statusLabel.setTextFill(Color.web("#800000"));
 
@@ -196,26 +211,6 @@ public class LobbyController extends CallbackInstance {
 
     }
 
-  /*  @Override
-    public void gameStartAborted(String s) {
-        String[] command = s.split(" ");
-        if(!command[2].equals("ABORTED")) {
-            for (int i = 4; i < command.length; i += 1) {
-                playersRefusedToStartGame.add(command[i]);
-                playersInListView.refresh();
-
-            }
-
-        } else {
-            playersRefusedToStartGame.clear();
-            Platform.runLater(() -> {
-                statusLabel.setText("Connecté");
-                statusLabel.setTextFill(Color.web("#008000"));
-            });
-        }
-
-    }
-*/
     /**
      * The type Colored list cell format.
      */
@@ -224,11 +219,8 @@ public class LobbyController extends CallbackInstance {
         protected void updateItem(String item, boolean empty) {
             super.updateItem(item, empty);
             setText(item);
-            if (item == null || !hasPressedStartButton){
-                setStyle("");
-            } else {
-                setStyle("-fx-background-color: "+((playersRefusedToStartGame.contains(item))?"red;":"green;")+" -fx-text-fill: white;");
-            }
+            if (item == null) setStyle("");
+            else setStyle("-fx-background-color: "+((playersRefusedToStartGame.contains(item))?"red;":"green;")+" -fx-text-fill: white;");
             //setBackground(new Background( new BackgroundFill(playersRefusedToStartGame.contains(item) ? Color.RED:Color.GREEN, CornerRadii.EMPTY, Insets.EMPTY)));
         }
     }

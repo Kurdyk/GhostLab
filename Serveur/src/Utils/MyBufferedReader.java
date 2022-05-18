@@ -14,7 +14,7 @@ public class MyBufferedReader {
     }
 
     public synchronized String readInstruction() throws IOException {
-        String res = "";
+        StringBuilder res = new StringBuilder();
         boolean found = false;
         while (true) {
             char c = (char) this.inputStreamReader.read();
@@ -29,12 +29,12 @@ public class MyBufferedReader {
                 }
                 if (found) {
                     System.out.println("AU FINAL " + res);
-                    return res;
+                    return res.toString();
                 } else {
-                    res += c + d + e;
+                    res.append(c + d + e);
                 }
             } else {
-                res += c;
+                res.append(c);
             }
         }
     }
