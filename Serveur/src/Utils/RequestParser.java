@@ -7,7 +7,6 @@ import Utils.Request.*;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Queue;
 
 public class RequestParser {
 
@@ -290,13 +289,15 @@ public class RequestParser {
 
             case "GLIS?":
                 System.out.println("GLIS?");
+                endLine();
                 Game currentGame = client.getClient().getGameRunning();
                 byte s = (byte) currentGame.getNb_players();
                 client.getWriter().send("GLIS! ").send(s).end();
                 for (ClientHandler c : currentGame.getPlayers()) {
-                    String id = c.getUsername();
-                    String x = Plateau.fillCoordinate(c.getClient().getCoordinates().getX());
-                    String y = Plateau.fillCoordinate(c.getClient().getCoordinates().getY());
+                    String id = c.getClient().getName();
+                    System.out.println(id + " : " + c.getClient().getCoordonnees());
+                    String x = Plateau.fillCoordinate(c.getClient().getCoordonnees().getX());
+                    String y = Plateau.fillCoordinate(c.getClient().getCoordonnees().getY());
                     String p = Game.fillScore(c.getClient().getScore());
 
                     client.getWriter()

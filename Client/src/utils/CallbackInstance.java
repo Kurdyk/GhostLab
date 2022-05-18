@@ -10,5 +10,9 @@ public class CallbackInstance {
     public void updateStartGameStatus(String s) {}
     public void gameStart(String s) {}
     public void updateGameDim(String s){}
+    public void updatePlayerPosition(String s) {}
+    public void handleMove(String s) {}
+    public void handleMoveCapture(String s) {}
+    public void partieFinie(String s) {}
 
 }

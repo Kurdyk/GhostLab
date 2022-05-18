@@ -1,16 +1,19 @@
 package Models;
 
 //import java.util.ArrayList;
-import Models.Cases.*;
+
+import Models.Cases.Case;
+import Models.Cases.CaseMur;
+import Models.Cases.CaseVide;
 import Models.Games.Coordinates;
 import Models.Games.Game;
 import Models.Games.Ghost;
 import Utils.ClientHandler;
 import Utils.Tracker;
 
-import java.util.*;
-
-import static java.lang.Math.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * The type Plateau.
@@ -571,18 +574,18 @@ public class Plateau {
                 this.grille[x][y].setGhostOn(toPlace);
                 ghosts.add(toPlace);
                 this.nbGhost++;
-            } else {
-                continue;
             }
         }
     }
 
     public static String fillCoordinate(int n) {
-        String res = String.valueOf(n);
+        System.out.println("Remplissage de : " + n);
+        StringBuilder res = new StringBuilder(String.valueOf(n));
         while (res.length() < 3) {
-            res = "0" + res;
+            System.out.println(res);
+            res.insert(0, "0");
         }
-        return res;
+        return res.toString();
     }
 
     /**
@@ -594,10 +597,12 @@ public class Plateau {
         return coordinatesMurs;
     }
 
+    // TODO: J'ai l'impression que ça ne fonctionne pas...
+    //  @assign kurdyk
     public synchronized void preshotMove(ClientHandler clientHandler, String direction, int n) throws Exception {
         Client client = clientHandler.getClient();
-        int x = client.getCoordinates().getX();
-        int y = client.getCoordinates().getY();
+        int x = client.getCoordonnees().getX();
+        int y = client.getCoordonnees().getY();
         Ghost ghost;
         int i;
         for (i = 1; i < n; i++) {
@@ -650,9 +655,9 @@ public class Plateau {
         }
         clientHandler.getWriter()
                 .send("MOVE! ")
-                .send(Plateau.fillCoordinate(client.getCoordinates().getX()))
+                .send(Plateau.fillCoordinate(client.getCoordonnees().getX()))
                 .send(" ")
-                .send(Plateau.fillCoordinate(client.getCoordinates().getY()))
+                .send(Plateau.fillCoordinate(client.getCoordonnees().getY()))
                 .end();
     }
 
@@ -667,9 +672,9 @@ public class Plateau {
         nbGhost --;
         clientHandler.getWriter()
                 .send("MOVEF ")
-                .send(Plateau.fillCoordinate(client.getCoordinates().getX()))
+                .send(Plateau.fillCoordinate(client.getCoordonnees().getX()))
                 .send(" ")
-                .send(Plateau.fillCoordinate(client.getCoordinates().getY()))
+                .send(Plateau.fillCoordinate(client.getCoordonnees().getY()))
                 .send(" ")
                 .send(Game.fillScore(client.getScore()))
                 .end();

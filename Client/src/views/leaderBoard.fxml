@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="views.LeaderBoardController">
+   <children>
+      <Label prefHeight="70.0" prefWidth="590.0" text="Leader Board" textAlignment="CENTER" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0">
+         <font>
+            <Font name="Chilanka Regular" size="18.0" />
+         </font>
+      </Label>
+      <ListView fx:id="leaderBoardListView" layoutY="88.0" prefHeight="312.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="88.0" />
+   </children>
+</AnchorPane>

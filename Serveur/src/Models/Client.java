@@ -30,6 +30,7 @@ public class Client extends Entity {
      * @return the coordonnees
      */
 
+    @Override
     public Coordinates getCoordonnees() {
         return coordonnees;
     }

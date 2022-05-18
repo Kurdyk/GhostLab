@@ -210,9 +210,9 @@ public class MainApp extends Application {
 
 
     public void startGame(Partie p){
-        /*GameApp game = new GameApp(this, p);
+        GameApp game = new GameApp(this, p);
         game.launch();
-        this.lobbyStage.close();*/
+        this.lobbyStage.close();
     }
 
 

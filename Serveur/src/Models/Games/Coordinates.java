@@ -45,4 +45,8 @@ public class Coordinates {
         int y = (int) (Math.random() * w);
         return (x<=h && y<=w ? new Coordinates(x,y) : generateCoordinates(h,w));
     }
+
+    public String toString(){
+        return "(" + this.x + ", " + this.y + ")";
+    }
 }

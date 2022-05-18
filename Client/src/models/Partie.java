@@ -110,4 +110,12 @@ public class Partie {
     public void setConnected(boolean connected) {
         this.connected = connected;
     }
+
+    public int getDimensionX(){
+        return Integer.parseInt(this.dimensions.get().split("x")[0]);
+    }
+
+    public int getDimensionY(){
+        return Integer.parseInt(this.dimensions.get().split("x")[1]);
+    }
 }

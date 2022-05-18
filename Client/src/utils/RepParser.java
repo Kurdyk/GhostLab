@@ -261,7 +261,7 @@ public class RepParser {
                 return "GLIS " + glis.getS();
             case "GPLYR" :
                 GPLYR gplyr = parseGPLYR();
-                return "GPLYR " + gplyr.getId() + " " + gplyr.getX() + " " + gplyr.getY();
+                return "GPLYR " + gplyr.getId() + " " + gplyr.getX() + " " + gplyr.getY() + " " + gplyr.getP();
             case "MOVE!":
                 MOVE move = parseMOVE();
                 return "MOVE! " + move.getX() + " " + move.getY();

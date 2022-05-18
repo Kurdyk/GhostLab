@@ -15,6 +15,9 @@ public abstract class Entity {
     }
 
     public void move(String direction, int n) throws Exception {
+
+        // TODO: VERIFIER CE FONCTIONNEMENT
+        //  @assign kurdyk
         switch (direction) {
             case "UP":
                 this.coordinates = new Coordinates(this.coordinates.getX(), this.coordinates.getY() - n);
@@ -33,7 +36,7 @@ public abstract class Entity {
         }
     }
 
-    public Coordinates getCoordinates() {
+    public Coordinates getCoordonnees() {
         return this.coordinates;
     }
 
