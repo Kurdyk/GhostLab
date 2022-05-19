@@ -74,7 +74,6 @@ public class RepParser {
     }
 
     private SIZE parseSIZE() throws IOException {
-        /// TODO : s'assurer de l'ENDIANNESS
         byte[] m = new byte[1];
         byte[] h = new byte[2];
         byte[] w = new byte[2];
@@ -114,7 +113,6 @@ public class RepParser {
     }
 
     private WELCO parseWELCO() throws IOException {
-        // TODO : endianness
         byte[] m = new byte[1];
         byte[] h = new byte[2];
         byte[] w = new byte[2];

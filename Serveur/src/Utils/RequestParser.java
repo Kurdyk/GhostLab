@@ -319,6 +319,7 @@ public class RequestParser {
                 client.getWriter().send("GOBYE").end();
                 client.getClient().getGameRunning().removePlayer(client);
                 client.closeConnection();
+                break;
 
             case "UPMOV":
                 XMOVE upMove = parseXMOVE();

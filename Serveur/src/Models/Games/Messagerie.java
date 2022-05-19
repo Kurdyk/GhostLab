@@ -25,8 +25,20 @@ public class Messagerie {
         this.players = players;
     }
 
-    public String getIp() {
-        return this.multicastIP.getHostAddress();
+
+
+    public String getIpProto(){
+        String s= fillIP(multicastIP.getHostAddress());
+        return s;
+    }
+
+    public static String fillIP(String s) {
+        System.out.println("Remplissage de : " + s);
+        while (s.length() < 15) {
+            System.out.println(s);
+            s+="#";
+        }
+        return s;
     }
 
     public int getMulticastPort() {

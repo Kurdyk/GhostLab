@@ -195,6 +195,7 @@ public class GameApp {
                     windowEvent.consume();
                 }
                 else {
+                    this.mainApp.getConnectionHandler().getWriter().send("IQUIT").end();
                     timer.stop();
                     fetchPlayersPositionsTimer.cancel();
                     leaderBoardStage.close();

@@ -176,7 +176,7 @@ public class Game {
                     .send(" ")
                     .send((byte) this.nb_fantoms)
                     .send(" ")
-                    .send(this.messagerie.getIp())
+                    .send(this.messagerie.getIpProto())
                     .send(" ")
                     .send(String.valueOf(this.messagerie.getMulticastPort()))
                     .end();
