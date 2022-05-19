@@ -271,10 +271,11 @@ public class RepParser {
             case "SEND!":
             case "NSEND":
             case "MALL!":
-            case "GOBYE":
             case "UPGD!":
                 endLine();
                 return type;
+            case "GOBYE":
+                System.exit(0);
             default:
                 endLine();
                 throw new IllegalArgumentException("Unrecognized response");

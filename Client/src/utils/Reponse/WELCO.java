@@ -61,7 +61,7 @@ public class WELCO extends Response {
         while (s.charAt(i)!='#'){
             i++;
         }
-        return s.substring(0,i-1);
+        return s.substring(0,i);
 
     }
 }

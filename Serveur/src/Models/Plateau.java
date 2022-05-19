@@ -579,10 +579,8 @@ public class Plateau {
     }
 
     public static String fillCoordinate(int n) {
-        System.out.println("Remplissage de : " + n);
         StringBuilder res = new StringBuilder(String.valueOf(n));
         while (res.length() < 3) {
-            System.out.println(res);
             res.insert(0, "0");
         }
         return res.toString();
@@ -595,69 +593,6 @@ public class Plateau {
      */
     public ArrayList<Coordinates> getCoordinatesMurs() {
         return coordinatesMurs;
-    }
-
-    public synchronized void preshotMove(ClientHandler clientHandler, String direction, int n) throws Exception {
-        Client client = clientHandler.getClient();
-        int x = client.getCoordonnees().getX();
-        int y = client.getCoordonnees().getY();
-
-        System.out.println("Coordonnées : " + x + " " + y);
-
-        int i;
-        testing:
-        for (i = 0; i < n; i++) {
-            System.out.println("On test : i = " + i + " " + direction);
-            switch (direction) {
-                case "UP":
-                    Ghost ghostUp = this.grille[x][y - i - 1].getGhostOn();
-                    if (ghostUp != null) {
-//                        collecte(clientHandler, ghost);
-                    }
-                    if (horsLimite(x, y - i - 1) || !this.grille[x][y - i - 1].isFree() || i == n - 1) {
-                        client.move(direction, i);
-                        break testing;
-                    }
-                    break;
-                case "DOWN":
-                    Ghost ghostDown = this.grille[x][y + i + 1].getGhostOn();
-                    if (ghostDown != null) {
-//                        collecte(clientHandler, ghost);
-                    }
-                    if (horsLimite(x, y + i + 1) || !this.grille[x][y + i + 1].isFree() || i == n - 1) {
-                        client.move(direction, i);
-                        break testing;
-                    }
-                    break;
-                case "LEFT":
-                    Ghost ghostLeft = this.grille[x - i - 1][y].getGhostOn();
-                    if (ghostLeft != null) {
-//                        collecte(clientHandler, ghost);
-                    }
-                    if (horsLimite(x - i - 1, y) || !this.grille[x - i - 1][y].isFree() || i == n - 1) {
-                        client.move(direction, i);
-                        break testing;
-                    }
-                    break;
-                case "RIGHT":
-                    Ghost ghostRight = this.grille[x + i + 1][y].getGhostOn();
-                    if (ghostRight != null) {
-//                        collecte(clientHandler, ghost);
-                    }
-                    if (horsLimite(x + i + 1, y) || !this.grille[x + i + 1][y].isFree() || i == n - 1) {
-                        client.move(direction, i);
-                        break testing;
-                    }
-                    break;
-            }
-        }
-
-        clientHandler.getWriter()
-                .send("MOVE! ")
-                .send(Plateau.fillCoordinate(client.getCoordonnees().getX()))
-                .send(" ")
-                .send(Plateau.fillCoordinate(client.getCoordonnees().getY()))
-                .end();
     }
 
     public synchronized void moveN(ClientHandler client, String direction, int n) {
@@ -744,9 +679,16 @@ public class Plateau {
         int y = ghost.getCoordonnees().getY();
         int score = ghost.getValues();
         client.addScore(score);
-        this.game.getMessagerie().multicastMessage("SCORE " + client.getName() + " " + score + " " + x + " " + y);
+        System.out.println("ICIIII\n\n");
+        this.game.getMessagerie().multicastMessage("SCORE " +
+                client.getName() + " " +
+                score + " " +
+                Plateau.fillCoordinate(x) + " " +
+                Plateau.fillCoordinate(y));
         this.game.removeGhost(ghost);
         nbGhost --;
+
+
 //        clientHandler.getWriter()
 //                .send("MOVEF ")
 //                .send(Plateau.fillCoordinate(client.getCoordonnees().getX()))

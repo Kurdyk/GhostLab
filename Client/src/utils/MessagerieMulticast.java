@@ -1,9 +1,11 @@
 package utils;
 
+import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
+import java.nio.charset.StandardCharsets;
 
 public class MessagerieMulticast implements Runnable {
 
@@ -34,8 +36,11 @@ public class MessagerieMulticast implements Runnable {
                     break;
                 }
                 String received = new String(
-                        packet.getData(), 0, packet.getLength());
-                this.connectionHandler.exec(received);
+                        packet.getData(), 0, packet.getLength(), StandardCharsets.UTF_8);
+                System.out.println(received);
+                String command = received.substring(0, received.length() - 3);
+                System.out.println("RECU PAR MULTICAST : " + command);
+                this.connectionHandler.exec(command);
             }
             multicastSocket.leaveGroup(multicastIP);
             multicastSocket.close();
@@ -44,4 +49,13 @@ public class MessagerieMulticast implements Runnable {
         }
     }
 
+    @Override
+    public String toString() {
+        return "MessagerieMulticast{" +
+                "multicastIP=" + multicastIP +
+                ", multicastSocket=" + multicastSocket +
+                ", multicastPort=" + multicastPort +
+                ", connectionHandler=" + connectionHandler +
+                '}';
+    }
 }
