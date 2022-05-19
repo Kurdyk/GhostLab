@@ -8,7 +8,10 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import models.Partie;
 import utils.CallbackInstance;
+import utils.MessagerieMulticast;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 
@@ -198,6 +201,15 @@ public class LobbyController extends CallbackInstance {
     @Override
     public void gameStart(String s) {
         Platform.runLater(() -> {
+            try {
+                this.mainApp.getConnectionHandler().setMessagerieMulticast(
+                        new MessagerieMulticast(InetAddress.getByName(s.split(" ")[5]),
+                                Integer.parseInt(s.split(" ")[6]),
+                                this.mainApp.getConnectionHandler()));
+            } catch (UnknownHostException e) {
+                System.out.println("Messagerie down");
+                e.printStackTrace();
+            }
             this.mainApp.startGame(this.partie);
         });
     }

@@ -17,6 +17,7 @@ public class ConnectionHandler extends Thread{
     private RepParser scanner;
     private TestWriter writer;
     private Socket socket;
+    private MessagerieMulticast messagerieMulticast;
     private ConcurrentHashMap<String, CallbackServer> callLinks = new ConcurrentHashMap<>();
     private ConcurrentHashMap<String, CallbackInstance> callOwners = new ConcurrentHashMap<>();
     private ConcurrentHashMap<String, ArrayList<String>> buffers = new ConcurrentHashMap<>();
@@ -167,14 +168,22 @@ public class ConnectionHandler extends Thread{
                 continue;
             }
             System.out.println("RECU : " + command);
-            String[] response = command.split("\\u0020");
-            if (callLinks.containsKey(response[0])) {
-                callLinks.get(response[0]).call(callOwners.get(response[0]), command);
-            } else {
-                buffers.computeIfAbsent(response[0], k -> new ArrayList<>());
-                buffers.get(response[0]).add(command);
-            }
+            exec(command);
         }
+    }
 
+    public void exec(String command) {
+        String[] response = command.split("\\u0020");
+        if (callLinks.containsKey(response[0])) {
+            callLinks.get(response[0]).call(callOwners.get(response[0]), command);
+        } else {
+            buffers.computeIfAbsent(response[0], k -> new ArrayList<>());
+            buffers.get(response[0]).add(command);
+        }
+    }
+
+    public void setMessagerieMulticast(MessagerieMulticast _messagerieMulticast) {
+        this.messagerieMulticast = _messagerieMulticast;
+        new Thread(messagerieMulticast).start();
     }
 }

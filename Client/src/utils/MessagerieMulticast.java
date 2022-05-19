@@ -11,10 +11,12 @@ public class MessagerieMulticast implements Runnable {
     private final InetAddress multicastIP;
     private MulticastSocket multicastSocket;
     private final int multicastPort;
+    private ConnectionHandler connectionHandler;
 
-    public MessagerieMulticast(InetAddress multicastIP, int multicastPort) {
+    public MessagerieMulticast(InetAddress multicastIP, int multicastPort, ConnectionHandler connectionHandler) {
         this.multicastIP = multicastIP;
         this.multicastPort = multicastPort;
+        this.connectionHandler = connectionHandler;
     }
 
     @Override
@@ -33,6 +35,7 @@ public class MessagerieMulticast implements Runnable {
                 }
                 String received = new String(
                         packet.getData(), 0, packet.getLength());
+                this.connectionHandler.exec(received);
             }
             multicastSocket.leaveGroup(multicastIP);
             multicastSocket.close();

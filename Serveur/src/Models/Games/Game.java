@@ -178,7 +178,7 @@ public class Game {
                     .send(" ")
                     .send(this.messagerie.getIp())
                     .send(" ")
-                    .send(this.messagerie.getMulticastPort())
+                    .send(String.valueOf(this.messagerie.getMulticastPort()))
                     .end();
         }
 
