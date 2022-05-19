@@ -4,7 +4,6 @@ import Apps.ConnectionHandler;
 import Models.Plateau;
 import Utils.ClientHandler;
 
-import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -131,6 +130,9 @@ public class Game {
         client.getWriter().send("UNROK ").send((byte) this.getId()).end();
         this.players.remove(client);
         this.sendGood("PQUIT " + client.getClient().getName());
+        if (nb_players == 0){
+            this.mainHandler.hideGame(this.id);
+        }
 
     }
 

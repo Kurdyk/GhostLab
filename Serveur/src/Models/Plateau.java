@@ -662,19 +662,20 @@ public class Plateau {
 
     public synchronized void moveN(ClientHandler client, String direction, int n) {
         int r;
+        boolean ghost = false;
         for (int i = 0; i < n; i++) {
             r = movePlayer(client, direction);
-            if (r == -1) {
-                return;
-            }
+            if (r == 1) ghost = true;
+            if (r == -1) break;
         }
 
         client.getWriter()
-                .send("MOVE! ")
+                .send(ghost ? "MOVEF " : "MOVE! ")
                 .send(Plateau.fillCoordinate(client.getClient().getCoordonnees().getX()))
                 .send(" ")
-                .send(Plateau.fillCoordinate(client.getClient().getCoordonnees().getY()))
-                .end();
+                .send(Plateau.fillCoordinate(client.getClient().getCoordonnees().getY()));
+        if (ghost) client.getWriter().send(" ").send(Game.fillScore(client.getClient().getScore()));
+        client.getWriter().end();
 
     }
 
@@ -719,13 +720,14 @@ public class Plateau {
         }
 
         Case currentCase = getCase(c.getX(), c.getY());
-        currentCase.setPlayerOn(client);
+        //currentCase.setPlayerOn(client);
 
         if (currentCase instanceof CaseVide) {
             Ghost ghost = currentCase.getGhostOn();
             if (ghost == null) return 0;
             try {
                 collecte(client, ghost);
+                return 1;
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -745,14 +747,14 @@ public class Plateau {
         this.game.getMessagerie().multicastMessage("SCORE " + client.getName() + " " + score + " " + x + " " + y);
         this.game.removeGhost(ghost);
         nbGhost --;
-        clientHandler.getWriter()
-                .send("MOVEF ")
-                .send(Plateau.fillCoordinate(client.getCoordonnees().getX()))
-                .send(" ")
-                .send(Plateau.fillCoordinate(client.getCoordonnees().getY()))
-                .send(" ")
-                .send(Game.fillScore(client.getScore()))
-                .end();
+//        clientHandler.getWriter()
+//                .send("MOVEF ")
+//                .send(Plateau.fillCoordinate(client.getCoordonnees().getX()))
+//                .send(" ")
+//                .send(Plateau.fillCoordinate(client.getCoordonnees().getY()))
+//                .send(" ")
+//                .send(Game.fillScore(client.getScore()))
+//                .end();
 
     }
 

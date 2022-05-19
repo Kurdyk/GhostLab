@@ -73,11 +73,7 @@ public abstract class Case {
      * @param player the player
      */
     public void setPlayerOn(ClientHandler player){
-        if(playerOn == null) {
-            playerOn = player;
-        } else {
-            throw new IllegalStateException();
-        }
+
     }
 
     /**

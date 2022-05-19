@@ -325,7 +325,7 @@ public class RequestParser {
                 System.out.println("UPMOVE " + upMove.getD());
                 try {
                     this.client.getClient().getGameRunning().getPlateau()
-                                .preshotMove(this.client, "UP", upMove.getDValue());
+                                .moveN(this.client, "UP", upMove.getDValue());
                 } catch (Exception e){
                     System.out.println("Invalid move");
                     illegalCommand();
@@ -336,7 +336,7 @@ public class RequestParser {
                 System.out.println("DOMOV " + downMove.getD());
                 try {
                     this.client.getClient().getGameRunning().getPlateau()
-                            .preshotMove(this.client, "DOWN", downMove.getDValue());
+                            .moveN(this.client, "DOWN", downMove.getDValue());
                 } catch (Exception e){
                     System.out.println("Invalid move");
                     illegalCommand();
@@ -347,7 +347,7 @@ public class RequestParser {
                 System.out.println("LEMOV " + leftMove.getD());
                 try {
                     this.client.getClient().getGameRunning().getPlateau()
-                            .preshotMove(this.client, "LEFT", leftMove.getDValue());
+                            .moveN(this.client, "LEFT", leftMove.getDValue());
                 } catch (Exception e){
                     System.out.println("Invalid move");
                     illegalCommand();
@@ -359,7 +359,7 @@ public class RequestParser {
                 System.out.println("RIMOV " + rightMove.getD());
                 try {
                     this.client.getClient().getGameRunning().getPlateau()
-                            .preshotMove(this.client, "RIGHT", rightMove.getDValue());
+                            .moveN(this.client, "RIGHT", rightMove.getDValue());
                 } catch (Exception e){
                     System.out.println("Invalid move");
                     illegalCommand();

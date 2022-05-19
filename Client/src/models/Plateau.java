@@ -70,6 +70,10 @@ public class Plateau extends CallbackInstance {
         }
     }
 
+    public void setCase(int x, int y, Case c){
+        if (!horsLimite(x, y)) this.plateau.get(x).set(y, c);
+    }
+
     /**
      * Gets plateau.
      *
@@ -178,10 +182,10 @@ public class Plateau extends CallbackInstance {
         int x = Integer.parseInt(s.split(" ")[1]);
         int y = Integer.parseInt(s.split(" ")[2]);
         switch(code){
-            case UP -> this.plateau.get(x).set(y-1, new CaseMur(x, y-1, listeImages));
-            case DOWN -> this.plateau.get(x).set(y+1, new CaseMur(x, y+1, listeImages));
-            case LEFT -> this.plateau.get(x-1).set(y, new CaseMur(x-1, y, listeImages));
-            case RIGHT -> this.plateau.get(x+1).set(y, new CaseMur(x+1, y, listeImages));
+            case UP -> this.setCase(x, y-1, new CaseMur(x, y-1, listeImages));
+            case DOWN -> this.setCase(x,y+1, new CaseMur(x, y+1, listeImages));
+            case LEFT -> this.setCase(x-1 ,y, new CaseMur(x-1, y, listeImages));
+            case RIGHT -> this.setCase(x+1 ,y, new CaseMur(x+1, y, listeImages));
             default -> handleMoveBlocked(s);
         }
     }
