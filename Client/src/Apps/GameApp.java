@@ -25,10 +25,8 @@ import javafx.stage.StageStyle;
 import models.Config;
 import models.Partie;
 import models.Plateau;
-import utils.CallbackInstance;
-import utils.ConnectionHandler;
-import utils.LeaderBoardItem;
-import utils.RecurrentServerRequest;
+import utils.*;
+import views.ChatController;
 import views.LeaderBoardController;
 
 import java.io.IOException;
@@ -47,6 +45,7 @@ public class GameApp {
     public MainApp mainApp;
     private Stage gameStage;
     private Stage leaderBoardStage;
+    private Stage chatStage;
     private final Partie partie;
     private final Plateau plateau;
     /**
@@ -65,8 +64,10 @@ public class GameApp {
     private double dragOffsetY;
 
     private final ObservableList<LeaderBoardItem> leaderBoardItems = FXCollections.observableArrayList(LeaderBoardItem.extractor());
+    private final ObservableList<ChatItem> chatItems = FXCollections.observableArrayList(ChatItem.extractor());
 
     private LeaderBoardController leaderBoardController;
+    private ChatController chatController;
 
     Timer fetchPlayersPositionsTimer;
 
@@ -197,6 +198,7 @@ public class GameApp {
                     timer.stop();
                     fetchPlayersPositionsTimer.cancel();
                     leaderBoardStage.close();
+                    chatStage.close();
                     this.releaseAllCallbacks();
                     mainApp.gameStageClosed();
                 }
@@ -204,6 +206,9 @@ public class GameApp {
 
         });
 
+
+        this.chatItems.add(new ChatItem("De Victorjo, à tout le monde", "Ceci est un message de test, assez court !"));
+        this.chatItems.add(new ChatItem("De louiskur, à moi", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi. Proin porttitor, orci nec nonummy molestie, enim est eleifend mi, non fermentum diam nisl sit amet erat. Duis semper. Duis arcu massa, scelerisque vitae, consequat in, pretium a, enim. Pellentesque congue. Ut in risus volutpat libero pharetra tempor. Cras vestibulum bibendum augue. Praesent egestas leo in pede. Praesent blandit odio eu enim. Pellentesque sed dui ut augue blandit sodales. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Aliquam nibh. Mauris ac mauris sed pede pellentesque fermentum. Maecenas adipiscing ante non diam sodales hendrerit."));
 
         this.leaderBoardStage = new Stage();
         this.leaderBoardStage.getIcons().add(new Image("logo2.png"));
@@ -232,11 +237,43 @@ public class GameApp {
         leaderBoardController = loader.getController();
         leaderBoardController.setGameApp(this);
 
+
+        this.chatStage = new Stage();
+        this.chatStage.getIcons().add(new Image("logo2.png"));
+        FXMLLoader loader2 = new FXMLLoader();
+        loader2.setLocation(getClass().getResource("/views/chat.fxml"));
+        AnchorPane chatPane = null;
+        try {
+            chatPane = loader2.load();
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+        assert chatPane != null;
+        Scene chatScene = new Scene(chatPane, bounds.getWidth() * 0.15 - 5, partie.getDimensionY() * COEFF_IMAGE);
+
+        this.chatStage.setScene(chatScene);
+        this.chatStage.initStyle(StageStyle.UNDECORATED);
+        this.chatStage.setX(x + (partie.getDimensionX() * COEFF_IMAGE + 5) + bounds.getWidth() * 0.15);
+        this.chatStage.setTitle("Chat en direct");
+        this.chatStage.setResizable(false);
+
+        chatScene.setOnMousePressed(this::handleMousePressedChat);
+        chatScene.setOnMouseDragged(this::handleMouseDraggedChat);
+
+        chatController = loader2.getController();
+        chatController.setGameApp(this);
+
+
+
+
+
         this.gameStage.setResizable(false);
-        this.gameStage.show();
         this.leaderBoardStage.show();
+        this.chatStage.show();
+        this.gameStage.show();
         int enc = (int) (this.gameStage.getHeight() - partie.getDimensionY()*this.COEFF_IMAGE);
         this.leaderBoardStage.setY(y + enc);
+        this.chatStage.setY(y + enc);
     }
 
     private void releaseAllCallbacks(){
@@ -329,6 +366,29 @@ public class GameApp {
         this.leaderBoardStage.setY(e.getScreenY() - this.dragOffsetY);
     }
 
+
+    /**
+     * Handle mouse pressed.
+     *
+     * @param e the e
+     */
+    protected void handleMousePressedChat(MouseEvent e)
+    {
+        this.dragOffsetX = e.getScreenX() - this.chatStage.getX();
+        this.dragOffsetY = e.getScreenY() - this.chatStage.getY();
+    }
+
+    /**
+     * Handle mouse dragged.
+     *
+     * @param e the e
+     */
+    protected void handleMouseDraggedChat(MouseEvent e)
+    {
+        this.chatStage.setX(e.getScreenX() - this.dragOffsetX);
+        this.chatStage.setY(e.getScreenY() - this.dragOffsetY);
+    }
+
     /**
      * Gets directions.
      *
@@ -363,6 +423,10 @@ public class GameApp {
      */
     public ObservableList<LeaderBoardItem> getLeaderBoardItems() {
         return leaderBoardItems;
+    }
+
+    public ObservableList<ChatItem> getChatItems() {
+        return chatItems;
     }
 
     /**
