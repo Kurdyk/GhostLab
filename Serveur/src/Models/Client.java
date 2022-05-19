@@ -9,7 +9,6 @@ import Models.Games.Game;
 public class Client extends Entity {
 
     private Game gameRunning;
-    private Coordinates coordonnees = new Coordinates(0,0);
     private boolean alive = true;
     private int score;
     private int port_udp;
@@ -23,28 +22,6 @@ public class Client extends Entity {
     public Client(){
         super();
     }
-
-    /**
-     * Gets coordonnees.
-     *
-     * @return the coordonnees
-     */
-
-    @Override
-    public Coordinates getCoordonnees() {
-        return coordonnees;
-    }
-
-    /**
-     * Sets coordonnees.
-     *
-     * @param coordonnees the coordonnees
-     */
-
-    public void setCoordonnees(Coordinates coordonnees) {
-        this.coordonnees = coordonnees;
-    }
-
 
 
     /**

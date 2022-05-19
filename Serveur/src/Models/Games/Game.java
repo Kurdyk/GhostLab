@@ -181,7 +181,7 @@ public class Game {
         }
 
         this.plateau = new Plateau(dimX, dimY, nb_fantoms, dimX * dimY / 3, this);
-
+        System.out.println(plateau);
     }
 
 

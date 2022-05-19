@@ -597,62 +597,61 @@ public class Plateau {
         return coordinatesMurs;
     }
 
-    // TODO: J'ai l'impression que ça ne fonctionne pas...
-    //  @assign kurdyk
     public synchronized void preshotMove(ClientHandler clientHandler, String direction, int n) throws Exception {
         Client client = clientHandler.getClient();
         int x = client.getCoordonnees().getX();
         int y = client.getCoordonnees().getY();
-        Ghost ghost;
+
+        System.out.println("Coordonnées : " + x + " " + y);
+
         int i;
-        for (i = 1; i < n; i++) {
+        testing:
+        for (i = 0; i < n; i++) {
+            System.out.println("On test : i = " + i + " " + direction);
             switch (direction) {
                 case "UP":
-                    ghost = this.grille[x][y - i].getGhostOn();
-                    if(ghost != null) {
-                        collecte(clientHandler, ghost);
+                    Ghost ghostUp = this.grille[x][y - i - 1].getGhostOn();
+                    if (ghostUp != null) {
+//                        collecte(clientHandler, ghost);
                     }
-                    if (horsLimite(x, y - i) || !this.grille[x][y - i].isFree()) {
-                        client.move(direction, i - 1);
-
+                    if (horsLimite(x, y - i - 1) || !this.grille[x][y - i - 1].isFree() || i == n - 1) {
+                        client.move(direction, i);
+                        break testing;
                     }
                     break;
                 case "DOWN":
-                    ghost = this.grille[x][y + i].getGhostOn();
-                    if(ghost != null) {
-                        collecte(clientHandler, ghost);
+                    Ghost ghostDown = this.grille[x][y + i + 1].getGhostOn();
+                    if (ghostDown != null) {
+//                        collecte(clientHandler, ghost);
                     }
-                    if (horsLimite(x, y + i) || !this.grille[x][y + i].isFree()) {
-                        client.move(direction, i - 1);
-                        if(ghost != null) {
-                            collecte(clientHandler, ghost);
-                        }
+                    if (horsLimite(x, y + i + 1) || !this.grille[x][y + i + 1].isFree() || i == n - 1) {
+                        client.move(direction, i);
+                        break testing;
                     }
                     break;
                 case "LEFT":
-                    ghost = this.grille[x - i][y].getGhostOn();
-                    if(ghost != null) {
-                        collecte(clientHandler, ghost);
+                    Ghost ghostLeft = this.grille[x - i - 1][y].getGhostOn();
+                    if (ghostLeft != null) {
+//                        collecte(clientHandler, ghost);
                     }
-                    if (horsLimite(x - i, y ) || !this.grille[x - i][y].isFree()) {
-                        client.move(direction, i - 1);
-                        if(ghost != null) {
-                            collecte(clientHandler, ghost);
-                        }
+                    if (horsLimite(x - i - 1, y) || !this.grille[x - i - 1][y].isFree() || i == n - 1) {
+                        client.move(direction, i);
+                        break testing;
                     }
                     break;
                 case "RIGHT":
-                    ghost = this.grille[x + i][y].getGhostOn();
-                    if(ghost != null) {
-                        collecte(clientHandler, ghost);
+                    Ghost ghostRight = this.grille[x + i + 1][y].getGhostOn();
+                    if (ghostRight != null) {
+//                        collecte(clientHandler, ghost);
                     }
-                    if (horsLimite(x + i, y ) || !this.grille[x + i][y].isFree()) {
-                        client.move(direction, i - 1);
-
+                    if (horsLimite(x + i + 1, y) || !this.grille[x + i + 1][y].isFree() || i == n - 1) {
+                        client.move(direction, i);
+                        break testing;
                     }
                     break;
             }
         }
+
         clientHandler.getWriter()
                 .send("MOVE! ")
                 .send(Plateau.fillCoordinate(client.getCoordonnees().getX()))
@@ -661,10 +660,86 @@ public class Plateau {
                 .end();
     }
 
-    public void collecte(ClientHandler clientHandler, Ghost ghost) throws Exception{
+    public synchronized void moveN(ClientHandler client, String direction, int n) {
+        int r;
+        for (int i = 0; i < n; i++) {
+            r = movePlayer(client, direction);
+            if (r == -1) {
+                return;
+            }
+        }
+
+        client.getWriter()
+                .send("MOVE! ")
+                .send(Plateau.fillCoordinate(client.getClient().getCoordonnees().getX()))
+                .send(" ")
+                .send(Plateau.fillCoordinate(client.getClient().getCoordonnees().getY()))
+                .end();
+
+    }
+
+    public int movePlayer(ClientHandler client, String direction) {
+        if (!client.getClient().isAlive()) {
+            return -1;
+        }
+        Coordinates c = client.getClient().getCoordonnees();
+        switch (direction) {
+            case "UP":
+                if (!horsLimite(c.getX(), c.getY() - 1) && getCase(c.getX(), c.getY() - 1).isFree()) {
+                    getCase(c.getX(), c.getY()).free();
+                    c.addToY(-1);
+                } else {
+                    return -1;
+                }
+                break;
+            case "DOWN":
+                if (!horsLimite(c.getX(), c.getY() + 1) && getCase(c.getX(), c.getY() + 1).isFree()) {
+                    getCase(c.getX(), c.getY()).free();
+                    c.addToY(1);
+                } else {
+                    return -1;
+                }
+                break;
+            case "LEFT":
+                if (!horsLimite(c.getX() - 1, c.getY()) && getCase(c.getX() - 1, c.getY()).isFree()) {
+                    getCase(c.getX(), c.getY()).free();
+                    c.addToX(-1);
+                } else {
+                    return -1;
+                }
+                break;
+            case "RIGHT":
+                if (!horsLimite(c.getX() + 1, c.getY()) && getCase(c.getX() + 1, c.getY()).isFree()) {
+                    getCase(c.getX(), c.getY()).free();
+                    c.addToX(1);
+                } else {
+                    return -1;
+                }
+                break;
+        }
+
+        Case currentCase = getCase(c.getX(), c.getY());
+        currentCase.setPlayerOn(client);
+
+        if (currentCase instanceof CaseVide) {
+            Ghost ghost = currentCase.getGhostOn();
+            if (ghost == null) return 0;
+            try {
+                collecte(client, ghost);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return 0;
+        }
+        return 0;
+    }
+
+
+
+    public void collecte(ClientHandler clientHandler, Ghost ghost) throws Exception {
         Client client = clientHandler.getClient();
-        int x = client.getCoordonnees().getX();
-        int y = client.getCoordonnees().getY();
+        int x = ghost.getCoordonnees().getX();
+        int y = ghost.getCoordonnees().getY();
         int score = ghost.getValues();
         client.addScore(score);
         this.game.getMessagerie().multicastMessage("SCORE " + client.getName() + " " + score + " " + x + " " + y);
@@ -679,6 +754,22 @@ public class Plateau {
                 .send(Game.fillScore(client.getScore()))
                 .end();
 
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder res = new StringBuilder();
+        for (int i = 0; i < this.hor; i++) {
+            for (int j = 0; j < this.vert; j++) {
+                if (this.grille[i][j] instanceof CaseMur) {
+                    res.append("0 ");
+                } else {
+                    res.append("1 ");
+                }
+            }
+            res.append("\n");
+        }
+        return res.toString();
     }
 
 }

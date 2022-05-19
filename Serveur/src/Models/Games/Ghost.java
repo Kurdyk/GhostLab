@@ -23,12 +23,5 @@ public class Ghost extends Entity {
         this.values = values;
     }
 
-    public Coordinates getCoordonnees() {
-        return super.getCoordonnees();
-    }
-
-    public void setCoordinates(Coordinates coordinates) {
-        super.setCoordinates(coordinates);
-    }
 
 }

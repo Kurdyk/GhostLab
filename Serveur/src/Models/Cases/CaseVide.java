@@ -29,7 +29,7 @@ public class CaseVide extends Case{
 
     @Override
     public boolean isFree() {
-        return playerOn == null;
+        return true;
     }
 
     @Override

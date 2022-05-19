@@ -15,9 +15,7 @@ public abstract class Entity {
     }
 
     public void move(String direction, int n) throws Exception {
-
-        // TODO: VERIFIER CE FONCTIONNEMENT
-        //  @assign kurdyk
+        System.out.println("On bouge vers " + direction + " de " + n);
         switch (direction) {
             case "UP":
                 this.coordinates = new Coordinates(this.coordinates.getX(), this.coordinates.getY() - n);
@@ -26,12 +24,13 @@ public abstract class Entity {
                 this.coordinates = new Coordinates(this.coordinates.getX(), this.coordinates.getY() + n);
                 break;
             case "LEFT":
-                this.coordinates = new Coordinates(this.coordinates.getX() + n, this.coordinates.getY());
-                break;
-            case "RIGHT":
                 this.coordinates = new Coordinates(this.coordinates.getX() - n, this.coordinates.getY());
                 break;
+            case "RIGHT":
+                this.coordinates = new Coordinates(this.coordinates.getX() + n, this.coordinates.getY());
+                break;
             default:
+                System.out.println("Unrecognized direction");
                 throw new Exception("Unrecognized direction");
         }
     }
