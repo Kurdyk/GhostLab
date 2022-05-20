@@ -12,7 +12,7 @@ public class Ghost extends Entity {
 
    public Ghost(Coordinates _coordinates) {
        super(_coordinates);
-       this.values = 50;
+       this.values = 10;
    }
 
     public int getValues() {

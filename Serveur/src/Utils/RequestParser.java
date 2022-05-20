@@ -205,6 +205,7 @@ public class RequestParser {
                 System.out.println("UNREG");
                 try {
                     this.client.getClient().getGameRunning().removePlayer(client);
+                    this.client.getClient().kill();
                 } catch (Exception e) {
                     client.getWriter().send("DUNNO").end();
                 }
@@ -256,6 +257,11 @@ public class RequestParser {
             case "MALL?" -> {
                 MALL mall = parseMall();
                 System.out.println("MALL? " + mall.getMessage());
+                if (!client.getClient().isAlive()) {
+                    client.getWriter().send("GOBYE").end();
+                    client.closeConnection();
+                    break;
+                }
                 Game gameToMessage = client.getClient().getGameRunning();
                 gameToMessage.getMessagerie().multicastMessage("MESSA " + this.client.getClient().getName() + " " + mall.getMessage());
                 client.getWriter().send("MALL!").end();
@@ -263,6 +269,11 @@ public class RequestParser {
             case "SEND?" -> {
                 SEND send = parseSEND();
                 System.out.println("SEND? " + send.getId() + " " + send.getMessage());
+                if (!client.getClient().isAlive()) {
+                    client.getWriter().send("GOBYE").end();
+                    client.closeConnection();
+                    break;
+                }
                 Game gameToMP = client.getClient().getGameRunning();
                 try {
                     gameToMP.getMessagerie().sendToOne("MESSP " + this.client.getClient().getName() + " " + send.getMessage(), send.getId());
@@ -275,6 +286,13 @@ public class RequestParser {
             case "GLIS?" -> {
                 System.out.println("GLIS?");
                 endLine();
+
+                if (!client.getClient().isAlive()) {
+                    client.getWriter().send("GOBYE").end();
+                    client.closeConnection();
+                    break;
+                }
+
                 Game currentGame = client.getClient().getGameRunning();
                 byte s = (byte) currentGame.getNb_players();
                 client.getWriter().send("GLIS! ").send(s).end();

@@ -208,6 +208,7 @@ public class Game {
                 winnerScore = client.getClient().getScore();
                 winnerId = client.getUsername();
             }
+            client.getClient().kill();
         }
 
         this.getMessagerie().multicastMessage("ENDGA " + winnerId + " " + Game.fillScore(winnerScore));

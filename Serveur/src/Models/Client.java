@@ -72,12 +72,6 @@ public class Client extends Entity {
      */
     public void addScore(int val) {score+=val;}
 
-    /**
-     * Low score.
-     *
-     * @param val the val
-     */
-    public void lowScore(int val) {score-=val;}
 
     public int getPort_udp() {
         return port_udp;
