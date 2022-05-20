@@ -82,7 +82,8 @@ public class LobbyController extends CallbackInstance {
         mainApp.getConnectionHandler().registerCallback("SIZE!", this, CallbackInstance::updateGameDim);
         mainApp.getConnectionHandler().registerCallback("PLAYR", this, CallbackInstance::addPlayer);
 
-        mainApp.getConnectionHandler().registerCallback("START", this, CallbackInstance::gameStart);
+        mainApp.getConnectionHandler().registerCallback("ENDGA", this, CallbackInstance::partieFinie);
+
 
         if (!this.partie.isCreator())
             mainApp.getConnectionHandler().getWriter().send("REGIS ")

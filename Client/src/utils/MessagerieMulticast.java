@@ -37,7 +37,6 @@ public class MessagerieMulticast implements Runnable {
                 }
                 String received = new String(
                         packet.getData(), 0, packet.getLength(), StandardCharsets.UTF_8);
-                System.out.println(received);
                 String command = received.substring(0, received.length() - 3);
                 System.out.println("RECU PAR MULTICAST : " + command);
                 this.connectionHandler.exec(command);

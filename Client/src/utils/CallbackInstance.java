@@ -15,4 +15,5 @@ public class CallbackInstance {
     public void handleMoveCapture(String s) {}
     public void partieFinie(String s) {}
 
+
 }
