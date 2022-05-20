@@ -564,8 +564,10 @@ public class Plateau {
     private void placeGhost() {
 
         ArrayList<Ghost> ghosts = this.game.getGhosts();
+        System.out.println("nb de fantome : " + nbGhostInit);
 
         while (nbGhostInit > nbGhost) {
+            System.out.println("on en est à : " + nbGhost);
             int x = (int) (Math.random()*hor);
             int y = (int) (Math.random()*vert);
             if(this.grille[x][y] instanceof CaseVide && this.grille[x][y].getPlayerOn() == null
@@ -712,15 +714,6 @@ public class Plateau {
         this.game.removeGhost(ghost);
         nbGhost --;
 
-
-//        clientHandler.getWriter()
-//                .send("MOVEF ")
-//                .send(Plateau.fillCoordinate(client.getCoordonnees().getX()))
-//                .send(" ")
-//                .send(Plateau.fillCoordinate(client.getCoordonnees().getY()))
-//                .send(" ")
-//                .send(Game.fillScore(client.getScore()))
-//                .end();
 
     }
 

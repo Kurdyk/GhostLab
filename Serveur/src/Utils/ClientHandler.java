@@ -100,16 +100,6 @@ public class ClientHandler implements Runnable {
         this.client = new Client();
     }
 
-//    /**
-//     * Send.
-//     *
-//     * @param message the message
-//     */
-//    public synchronized void send(String message){
-//        System.out.println("SENDING " + message + "***");
-//        this.myPrintWriter.println(message);
-//    }
-
 
     /**
      * Close connection.

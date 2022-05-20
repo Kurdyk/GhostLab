@@ -47,13 +47,10 @@ public class ConnectionHandler {
      */
     public int registerGameId(Game game){
         int id = (int) Math.round(Math.random() * 126) + 1;
-        if (id == 42 || gamesMap.containsKey(id)){
-            return registerGameId(game);
-        } else {
-            gamesMap.put(id, game);
-            availableGamesMap.put(id, game);
-            return id;
-        }
+        gamesMap.put(id, game);
+        availableGamesMap.put(id, game);
+        return id;
+
     }
 
     private void run() throws Exception{
@@ -81,21 +78,6 @@ public class ConnectionHandler {
         }
     }
 
-    /**
-     * Show game boolean.
-     *
-     * @param id the id
-     * @return the boolean
-     */
-    public boolean showGame(int id){
-        if (this.availableGamesMap.containsKey(id)){
-            return false;
-        }
-        else{
-            this.availableGamesMap.put(id, this.gamesMap.get(id));
-            return true;
-        }
-    }
 
     /**
      * Gets available games map.
@@ -113,12 +95,4 @@ public class ConnectionHandler {
      */
     public int getAvailableGamesNumber() { return availableGamesMap.size(); }
 
-    /**
-     * Gets games map.
-     *
-     * @return the games map
-     */
-    public Map<Integer, Game> getGamesMap() {
-        return gamesMap;
-    }
 }
