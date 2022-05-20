@@ -106,7 +106,7 @@ public class GameApp {
      */
     public void launch(){
         this.gameStage = new Stage();
-        this.gameStage.getIcons().add(new Image("logo2.png"));
+        this.gameStage.getIcons().add(new Image("Fantomes_Logo.png"));
         Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
         double x = bounds.getMinX() + 5;
         double y = bounds.getMinY() + 5;
@@ -189,7 +189,7 @@ public class GameApp {
         this.chatItems.add(new ChatItem("De louiskur, à moi", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi. Proin porttitor, orci nec nonummy molestie, enim est eleifend mi, non fermentum diam nisl sit amet erat. Duis semper. Duis arcu massa, scelerisque vitae, consequat in, pretium a, enim. Pellentesque congue. Ut in risus volutpat libero pharetra tempor. Cras vestibulum bibendum augue. Praesent egestas leo in pede. Praesent blandit odio eu enim. Pellentesque sed dui ut augue blandit sodales. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Aliquam nibh. Mauris ac mauris sed pede pellentesque fermentum. Maecenas adipiscing ante non diam sodales hendrerit."));
 
         this.leaderBoardStage = new Stage();
-        this.leaderBoardStage.getIcons().add(new Image("logo2.png"));
+        this.leaderBoardStage.getIcons().add(new Image("Fantomes_Logo.png"));
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(getClass().getResource("/views/leaderBoard.fxml"));
         AnchorPane rootPane = null;
@@ -217,7 +217,7 @@ public class GameApp {
 
 
         this.chatStage = new Stage();
-        this.chatStage.getIcons().add(new Image("logo2.png"));
+        this.chatStage.getIcons().add(new Image("Fantomes_Logo.png"));
         FXMLLoader loader2 = new FXMLLoader();
         loader2.setLocation(getClass().getResource("/views/chat.fxml"));
         AnchorPane chatPane = null;
