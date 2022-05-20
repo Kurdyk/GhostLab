@@ -18,6 +18,7 @@ public class ConnectionHandler extends Thread{
     private TestWriter writer;
     private Socket socket;
     private MessagerieMulticast messagerieMulticast;
+    private MessageriePrivee messageriePrivee;
     private ConcurrentHashMap<String, CallbackServer> callLinks = new ConcurrentHashMap<>();
     private ConcurrentHashMap<String, CallbackInstance> callOwners = new ConcurrentHashMap<>();
     private ConcurrentHashMap<String, ArrayList<String>> buffers = new ConcurrentHashMap<>();
@@ -148,6 +149,8 @@ public class ConnectionHandler extends Thread{
             socket = new Socket(config.getAdresseServeur(), config.getPortServeur());
             this.scanner = new RepParser(socket.getInputStream(), "***");
             writer = new TestWriter(socket.getOutputStream(), "***");
+            messageriePrivee = new MessageriePrivee(this);
+            new Thread(messageriePrivee).start();
         } catch (IOException e){
             e.printStackTrace();
             System.out.println("Something went wrong...");
@@ -185,5 +188,9 @@ public class ConnectionHandler extends Thread{
     public void setMessagerieMulticast(MessagerieMulticast _messagerieMulticast) {
         this.messagerieMulticast = _messagerieMulticast;
         new Thread(messagerieMulticast).start();
+    }
+
+    public MessageriePrivee getMessageriePrivee() {
+        return this.messageriePrivee;
     }
 }

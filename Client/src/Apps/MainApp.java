@@ -125,7 +125,7 @@ public class MainApp extends Application {
         try {
             // On nomme le stage.
             this.primaryStage.setTitle("GhostLab");
-            this.primaryStage.getIcons().add(new Image("logo2.png"));
+            this.primaryStage.getIcons().add(new Image("Fantomes_Logo.png"));
             // On crée un nouveau Loader et on lui donne le fichier fxml qui correspond à la fenêtre d'acceuil
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(getClass().getResource("/views/home.fxml"));
@@ -160,7 +160,7 @@ public class MainApp extends Application {
         // Meme procédure que pour resumeMainStageStartup
         this.configStage = new Stage();
         this.configStage.setTitle("Configuration du jeu");
-        this.configStage.getIcons().add(new Image("logo2.png"));
+        this.configStage.getIcons().add(new Image("Fantomes_Logo.png"));
 
         FXMLLoader configLoader = new FXMLLoader();
         configLoader.setLocation(getClass().getResource("/views/welcome.fxml"));
@@ -183,7 +183,7 @@ public class MainApp extends Application {
         fetchPartiesListTimer.cancel();
         this.lobbyStage = new Stage();
         this.lobbyStage.setTitle("Lobby");
-        this.lobbyStage.getIcons().add(new Image("logo2.png"));
+        this.lobbyStage.getIcons().add(new Image("Fantomes_Logo.png"));
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(getClass().getResource("/views/lobby.fxml"));
 

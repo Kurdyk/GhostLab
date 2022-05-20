@@ -619,6 +619,8 @@ public class Plateau {
             return -1;
         }
         Coordinates c = client.getClient().getCoordonnees();
+        int i = (int) (Math.random() * 99);
+        if(i < 5){ moveGhost();}
         switch (direction) {
             case "UP":
                 if (!horsLimite(c.getX(), c.getY() - 1) && getCase(c.getX(), c.getY() - 1).isFree()) {
@@ -673,16 +675,38 @@ public class Plateau {
 
 
 
+    public void moveGhost() {
+        int random = (int) (Math.random() * game.getGhosts().size());
+        Ghost g = this.game.getGhosts().get(random);
+
+        int gx = g.getCoordonnees().getX();
+        int gy = g.getCoordonnees().getY();
+        int x = (int) (Math.random() * hor);
+        int y = (int) (Math.random() * vert);
+
+        while(!(this.grille[x][y] instanceof CaseVide
+                && this.grille[x][y].getPlayerOn() == null
+                && this.grille[x][y].getGhostOn() == null)) {
+            x = (int) (Math.random() * hor);
+            y = (int) (Math.random() * vert);
+        }
+        this.grille[gx][gy] = new CaseVide(gx, gy);
+        this.grille[x][y].setGhostOn(g);
+        this.game.getMessagerie().multicastMessage("GHOST " +
+                Plateau.fillCoordinate(x) +
+                " "+
+                Plateau.fillCoordinate(y));
+    }
+
     public void collecte(ClientHandler clientHandler, Ghost ghost) throws Exception {
         Client client = clientHandler.getClient();
         int x = ghost.getCoordonnees().getX();
         int y = ghost.getCoordonnees().getY();
         int score = ghost.getValues();
         client.addScore(score);
-        System.out.println("ICIIII\n\n");
         this.game.getMessagerie().multicastMessage("SCORE " +
                 client.getName() + " " +
-                score + " " +
+                Game.fillScore(client.getScore())+ " " +
                 Plateau.fillCoordinate(x) + " " +
                 Plateau.fillCoordinate(y));
         this.game.removeGhost(ghost);

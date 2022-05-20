@@ -6,7 +6,7 @@
 <?import javafx.scene.text.*?>
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="278.0" prefWidth="559.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="views.WelcomeController">
    <top>
-      <Label ellipsisString="" text="Bienvenue dans le jeu de Chasse au trésor en réseau !" underline="true" BorderPane.alignment="CENTER">
+      <Label ellipsisString="" text="Bienvenue dans GHOSTLAB en réseau !" underline="true" BorderPane.alignment="CENTER">
          <BorderPane.margin>
             <Insets top="5.0" />
          </BorderPane.margin>

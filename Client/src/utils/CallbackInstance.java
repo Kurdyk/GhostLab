@@ -18,4 +18,5 @@ public class CallbackInstance {
     public void receivePrivateMessage(String s) {}
     public void messageSentConfirmed(String s) {}
 
+
 }

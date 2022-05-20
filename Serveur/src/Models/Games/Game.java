@@ -211,6 +211,7 @@ public class Game {
         }
 
         this.getMessagerie().multicastMessage("ENDGA " + winnerId + " " + Game.fillScore(winnerScore));
+
     }
 
 }

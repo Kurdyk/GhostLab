@@ -134,7 +134,7 @@ public class GameApp {
      */
     public void launch(){
         this.gameStage = new Stage();
-        this.gameStage.getIcons().add(new Image("logo2.png"));
+        this.gameStage.getIcons().add(new Image("Fantomes_Logo.png"));
         Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
         double x = bounds.getMinX() + 5;
         double y = bounds.getMinY() + 5;
@@ -177,11 +177,14 @@ public class GameApp {
         root.setOnKeyPressed(this::handleKeyPressed);
 
         fetchPlayersPositionsTimer = this.mainApp.getConnectionHandler().registerRecurrentServerCall(new RecurrentServerRequest() {
+            private final ConnectionHandler lock = mainApp.getConnectionHandler();
             @Override
             public void run() {
-                handler.getWriter().send("GLIS?").end();
+                synchronized (lock) {
+                    handler.getWriter().send("GLIS?").end();
+                }
             }
-        }, 10000);
+        }, 50);
 
 
         this.gameStage.setOnCloseRequest(windowEvent -> {
@@ -211,9 +214,8 @@ public class GameApp {
 
 
 
-
         this.leaderBoardStage = new Stage();
-        this.leaderBoardStage.getIcons().add(new Image("logo2.png"));
+        this.leaderBoardStage.getIcons().add(new Image("Fantomes_Logo.png"));
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(getClass().getResource("/views/leaderBoard.fxml"));
         AnchorPane rootPane = null;
@@ -241,7 +243,7 @@ public class GameApp {
 
 
         this.chatStage = new Stage();
-        this.chatStage.getIcons().add(new Image("logo2.png"));
+        this.chatStage.getIcons().add(new Image("Fantomes_Logo.png"));
         FXMLLoader loader2 = new FXMLLoader();
         loader2.setLocation(getClass().getResource("/views/chat.fxml"));
         AnchorPane chatPane = null;
@@ -276,10 +278,6 @@ public class GameApp {
         int enc = (int) (this.gameStage.getHeight() - partie.getDimensionY()*this.COEFF_IMAGE);
         this.leaderBoardStage.setY(y + enc);
         this.chatStage.setY(y + enc);
-
-        this.chatItems.add(new ChatItem("De Victorjo, à tout le monde", "Ceci est un message de test, assez court !"));
-        this.chatItems.add(new ChatItem("De louiskur, à moi", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam. s FIN MESSAGE"));
-
     }
 
     private void releaseAllCallbacks(){
@@ -289,12 +287,14 @@ public class GameApp {
     private void processKeyEvent(KeyEvent keyEvent){
         System.out.println("TOUCHE PRESSEE : " + keyEvent.getCode().getName());
         this.directions.add(keyEvent.getCode());
-        switch (keyEvent.getCode()) {
-            case UP -> this.mainApp.getConnectionHandler().getWriter().send("UPMOV 001").end();
-            case DOWN -> this.mainApp.getConnectionHandler().getWriter().send("DOMOV 001").end();
-            case LEFT -> this.mainApp.getConnectionHandler().getWriter().send("LEMOV 001").end();
-            case RIGHT -> this.mainApp.getConnectionHandler().getWriter().send("RIMOV 001").end();
-            default -> {
+        synchronized (this.mainApp.getConnectionHandler()) {
+            switch (keyEvent.getCode()) {
+                case UP -> this.mainApp.getConnectionHandler().getWriter().send("UPMOV 001").end();
+                case DOWN -> this.mainApp.getConnectionHandler().getWriter().send("DOMOV 001").end();
+                case LEFT -> this.mainApp.getConnectionHandler().getWriter().send("LEMOV 001").end();
+                case RIGHT -> this.mainApp.getConnectionHandler().getWriter().send("RIMOV 001").end();
+                default -> {
+                }
             }
         }
     }

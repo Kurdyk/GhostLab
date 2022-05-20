@@ -196,7 +196,8 @@ public class HomeController extends CallbackInstance {
         partieCreated = new Partie(-1, 1, true);
         mainApp.getConnectionHandler().getWriter()
                 .send("NEWPL ")
-                .send(this.mainApp.getServerConfig().getUsername() + " 6942")
+                .send(this.mainApp.getServerConfig().getUsername() + " ")
+                .send(String.valueOf(this.mainApp.getConnectionHandler().getMessageriePrivee().getPort()))
                 .end();
     }
 
