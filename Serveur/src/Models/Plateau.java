@@ -679,7 +679,6 @@ public class Plateau {
         int y = ghost.getCoordonnees().getY();
         int score = ghost.getValues();
         client.addScore(score);
-        System.out.println("ICIIII\n\n");
         this.game.getMessagerie().multicastMessage("SCORE " +
                 client.getName() + " " +
                 score + " " +

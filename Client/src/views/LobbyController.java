@@ -87,7 +87,8 @@ public class LobbyController extends CallbackInstance {
         if (!this.partie.isCreator())
             mainApp.getConnectionHandler().getWriter().send("REGIS ")
                     .send(this.mainApp.getServerConfig().getUsername() + " ")
-                    .send("6942 ")
+                    .send(String.valueOf(this.mainApp.getConnectionHandler().getMessageriePrivee().getPort()))
+                    .send(" ")
                     .send((byte) this.partie.getIdentifiant())
                     .end();
 
