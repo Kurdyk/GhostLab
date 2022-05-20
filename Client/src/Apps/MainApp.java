@@ -258,7 +258,6 @@ public class MainApp extends Application {
         // Gère l'appui sur le bouton Quitter de l'inteface
         this.connectionHandler.quitter();
         this.primaryStage.close();
-        //this.partiesList.clear();
         this.displayConfigStage();
     }
 

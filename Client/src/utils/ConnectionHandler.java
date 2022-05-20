@@ -49,22 +49,6 @@ public class ConnectionHandler extends Thread{
         }
     }
 
-//    /**
-//     * Send.
-//     *
-//     * @param message the message
-//     */
-//    public void send(String message){
-//        if (printWriter != null) {
-//            printWriter.println(message);
-//            printWriter.flush();
-//        } else {
-//            try {
-//                Thread.sleep(500);
-//                send(message);
-//            } catch (InterruptedException ignored){}
-//        }
-//    }
 
     public TestWriter getWriter() {
         return this.writer;

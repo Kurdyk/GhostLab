@@ -123,22 +123,7 @@ public class Plateau extends CallbackInstance {
             }
         }
     }
-//
-//    @Override
-//    public void updatePlayerTresor(String s) {
-//        coordonneesJoueurs.get(s.split(" ")[1]).addToValue(Integer.parseInt(s.split(" ")[6]));
-//        LeaderBoardItem item = gameApp.getLeaderBoardItems().stream().filter(i -> s.split(" ")[1].equals(i.getUsername())).findAny().orElse(null);
-//        assert item != null;
-//        Platform.runLater(() -> {
-//                    item.setScore(item.getScore() + Integer.parseInt(s.split(" ")[6]));
-//                    trierLeaderBoard();
-//                });
-//        updatePlayerPosition(s);
-//        int x = coordonneesJoueurs.get(s.split(" ")[1]).getX();
-//        int y = coordonneesJoueurs.get(s.split(" ")[1]).getY();
-//        plateau.get(x).set(y, new CaseVide(x, y, listeImages));
-//        gameApp.getConnectionHandler().send("512 "+s.split(" ")[1]+" UPDATED");
-//    }
+
 
 
     @Override

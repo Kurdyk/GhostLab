@@ -99,29 +99,7 @@ public class GameApp {
         mainApp.getConnectionHandler().registerCallback("MESSP", plateau, CallbackInstance::receivePrivateMessage);
         mainApp.getConnectionHandler().registerCallback("SEND!", plateau, CallbackInstance::messageSentConfirmed);
         mainApp.getConnectionHandler().registerCallback("NSEND", plateau, CallbackInstance::messageSentConfirmed);
-//        mainApp.getConnectionHandler().registerCallback("201", plateau, CallbackInstance::handleMoveAllowed);
-//        mainApp.getConnectionHandler().registerCallback("202", plateau, CallbackInstance::handleMoveBlocked);
-//        mainApp.getConnectionHandler().registerCallback("203", plateau, CallbackInstance::handleMoveTresor);
-//        mainApp.getConnectionHandler().registerCallback("401", plateau, CallbackInstance::getHoles);
-//        mainApp.getConnectionHandler().registerCallback("411", plateau, CallbackInstance::getTresors);
-//        mainApp.getConnectionHandler().registerCallback("421", plateau, CallbackInstance::getWalls);
-//        mainApp.getConnectionHandler().registerCallback("666", plateau, CallbackInstance::handleMoveDead);
-//        mainApp.getConnectionHandler().registerCallback("902", plateau, CallbackInstance::handleNotYourTurn);
-//
-//
-//        mainApp.getConnectionHandler().registerCallback("301", plateau, CallbackInstance::updateRevealHole);
-//        mainApp.getConnectionHandler().registerCallback("320", plateau, CallbackInstance::getNearHoles, true);
-//        mainApp.getConnectionHandler().registerCallback("330", plateau, CallbackInstance::getNearWall,true);
-//        mainApp.getConnectionHandler().registerCallback("340", plateau, CallbackInstance::getTresors, true);
-//        mainApp.getConnectionHandler().registerCallback("311", plateau, CallbackInstance::updateRevealMap);
-//
-//        if (partie.getModeDeJeu().equals("3")) {
-//            mainApp.getConnectionHandler().registerCallback("500", plateau, CallbackInstance::handleTurnChanged, true);
-//            mainApp.getConnectionHandler().registerCallback("510", plateau, CallbackInstance::updatePlayerPosition, true);
-//            mainApp.getConnectionHandler().registerCallback("511", plateau, CallbackInstance::updatePlayerTresor, true);
-//            mainApp.getConnectionHandler().registerCallback("520", plateau, CallbackInstance::declareDead, true);
-//            mainApp.getConnectionHandler().registerCallback("530", plateau, CallbackInstance::partieFinie, true);
-//        }
+
 
 
 

@@ -9,8 +9,6 @@ import java.util.ArrayList;
  */
 public class CaseMur extends Case{
 
-    private int durabilite = 100;
-
     /**
      * Instantiates a new Case mur.
      *
@@ -28,14 +26,4 @@ public class CaseMur extends Case{
     public void free() {}
 
 
-    /**
-     * Damage int.
-     *
-     * @param damages the damages
-     * @return the int
-     */
-    public int damage(int damages){
-        durabilite -= damages;
-        return Math.max(durabilite, 0);
-    }
 }
