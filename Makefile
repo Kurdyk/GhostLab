@@ -1,16 +1,26 @@
 ifeq ($(OS),Windows_NT)
 	jfx = Windows
+	url = https://download2.gluonhq.com/openjfx/18.0.1/openjfx-18.0.1_windows-x64_bin-sdk.zip
 else
 	UNAME_S := $(shell uname -s)
 	ifeq ($(UNAME_S),Darwin)
 		jfx = Mac
+		url = https://download2.gluonhq.com/openjfx/18.0.1/openjfx-18.0.1_osx-x64_bin-sdk.zip
 	else
 		jfx = Linux
+		url = https://download2.gluonhq.com/openjfx/18.0.1/openjfx-18.0.1_linux-x64_bin-sdk.zip
 	endif
 endif
 
 configure:
 	./univ.sh
+
+dependencies:
+	mkdir -p Dependencies/$(jfx)
+	wget -O openjfx.zip $(url)
+	unzip openjfx.zip
+	mv javafx-sdk-18.0.1/lib Dependencies/$(jfx)/
+	rm -r javafx-sdk-18.0.1
 
 
 client: build_client run_client
@@ -31,3 +41,7 @@ build_server:
 
 run_server:
 	java -Dfile.encoding=UTF-8 -classpath out/production/Serveur GhostLabServer
+
+clean:
+	rm -r Dependencies/
+	rm -r out/
