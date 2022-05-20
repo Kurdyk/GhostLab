@@ -54,7 +54,7 @@ public class Messagerie {
     public void sendToOne(String message, String playerId) throws Exception {
         ClientHandler cible = null;
         for (ClientHandler client : players) {
-            if (client.getUsername().equals(playerId)) {
+            if (client.getClient().getName().equals(playerId)) {
                 cible = client;
                 break;
             }

@@ -30,10 +30,7 @@ import views.ChatController;
 import views.LeaderBoardController;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Optional;
-import java.util.Timer;
+import java.util.*;
 
 /**
  * The type Game app.
@@ -65,6 +62,7 @@ public class GameApp {
 
     private final ObservableList<LeaderBoardItem> leaderBoardItems = FXCollections.observableArrayList(LeaderBoardItem.extractor());
     private final ObservableList<ChatItem> chatItems = FXCollections.observableArrayList(ChatItem.extractor());
+    private final ArrayList<ChatItem> pendingMessages = new ArrayList<>();
 
     private LeaderBoardController leaderBoardController;
     private ChatController chatController;
@@ -97,6 +95,10 @@ public class GameApp {
         mainApp.getConnectionHandler().registerCallback("MOVE!", plateau, CallbackInstance::handleMove);
         mainApp.getConnectionHandler().registerCallback("MOVEF", plateau, CallbackInstance::handleMoveCapture);
         mainApp.getConnectionHandler().registerCallback("GOBYE", plateau, CallbackInstance::partieFinie);
+        mainApp.getConnectionHandler().registerCallback("MESSA", plateau, CallbackInstance::receivePublicMessage);
+        mainApp.getConnectionHandler().registerCallback("MESSP", plateau, CallbackInstance::receivePrivateMessage);
+        mainApp.getConnectionHandler().registerCallback("SEND!", plateau, CallbackInstance::messageSentConfirmed);
+        mainApp.getConnectionHandler().registerCallback("NSEND", plateau, CallbackInstance::messageSentConfirmed);
 //        mainApp.getConnectionHandler().registerCallback("201", plateau, CallbackInstance::handleMoveAllowed);
 //        mainApp.getConnectionHandler().registerCallback("202", plateau, CallbackInstance::handleMoveBlocked);
 //        mainApp.getConnectionHandler().registerCallback("203", plateau, CallbackInstance::handleMoveTresor);
@@ -179,7 +181,7 @@ public class GameApp {
             public void run() {
                 handler.getWriter().send("GLIS?").end();
             }
-        }, 50);
+        }, 10000);
 
 
         this.gameStage.setOnCloseRequest(windowEvent -> {
@@ -208,8 +210,7 @@ public class GameApp {
         });
 
 
-        this.chatItems.add(new ChatItem("De Victorjo, à tout le monde", "Ceci est un message de test, assez court !"));
-        this.chatItems.add(new ChatItem("De louiskur, à moi", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi. Proin porttitor, orci nec nonummy molestie, enim est eleifend mi, non fermentum diam nisl sit amet erat. Duis semper. Duis arcu massa, scelerisque vitae, consequat in, pretium a, enim. Pellentesque congue. Ut in risus volutpat libero pharetra tempor. Cras vestibulum bibendum augue. Praesent egestas leo in pede. Praesent blandit odio eu enim. Pellentesque sed dui ut augue blandit sodales. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Aliquam nibh. Mauris ac mauris sed pede pellentesque fermentum. Maecenas adipiscing ante non diam sodales hendrerit."));
+
 
         this.leaderBoardStage = new Stage();
         this.leaderBoardStage.getIcons().add(new Image("logo2.png"));
@@ -275,6 +276,10 @@ public class GameApp {
         int enc = (int) (this.gameStage.getHeight() - partie.getDimensionY()*this.COEFF_IMAGE);
         this.leaderBoardStage.setY(y + enc);
         this.chatStage.setY(y + enc);
+
+        this.chatItems.add(new ChatItem("De Victorjo, à tout le monde", "Ceci est un message de test, assez court !"));
+        this.chatItems.add(new ChatItem("De louiskur, à moi", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam. s FIN MESSAGE"));
+
     }
 
     private void releaseAllCallbacks(){
@@ -497,5 +502,7 @@ public class GameApp {
         return plateau;
     }
 
-
+    public ArrayList<ChatItem> getPendingMessages() {
+        return pendingMessages;
+    }
 }

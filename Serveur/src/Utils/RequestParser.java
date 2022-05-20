@@ -30,9 +30,12 @@ public class RequestParser {
         }
     }
 
-    private String typeReq() throws IOException {
+    private String typeReq() throws IOException, SocketClosedException {
         byte[] request = new byte[5];
-        this.inputStream.read(request);
+        int r = this.inputStream.read(request);
+        if (r == -1) {
+            throw new SocketClosedException();
+        }
         return new String(request);
     }
 
@@ -157,24 +160,21 @@ public class RequestParser {
         return new XMOVE(new String(d));
     }
 
-    public void parse() throws IOException {
+    public void parse() throws IOException, SocketClosedException {
         String type = typeReq();
         System.out.print("PARSING : ");
         switch (type) {
-            case "NEWPL":
+            case "NEWPL" -> {
                 NEWPL newpl = parseNEWPL();
                 System.out.println("NEWPL " + newpl.getId() + " " + newpl.getPort());
-
                 this.client.newClient();
                 this.client.getClient().setPort_udp(newpl.getPortValue());
                 this.client.getClient().setName(newpl.getId());
-
                 Game game = new Game(this.client, this.mainHandler);
                 game.addPlayer(this.client);
                 System.out.println(newpl.getId() + " crée la partie : " + game.getId() + " avec le port : " + newpl.getPort());
-                break;
-
-            case "START":
+            }
+            case "START" -> {
                 endLine();
                 System.out.println("START");
                 try {
@@ -183,28 +183,22 @@ public class RequestParser {
                     System.out.println("Not in a game");
                     illegalCommand();
                 }
-                break;
-
-            case "REGIS":
-
+            }
+            case "REGIS" -> {
                 REGIS regis = parseREGIS();
                 System.out.println("REGIS " + regis.getId() + " " + regis.getPort() + " " + regis.getM());
-
                 this.client.newClient();
                 this.client.getClient().setPort_udp(regis.getPortValue());
                 this.client.getClient().setName(regis.getId());
-
                 System.out.println(regis.getId() + " s'inscrit dans la partie : " + (int) regis.getM() + " avec le port : " + regis.getPortValue());
-
                 try {
                     Game wantedGame = mainHandler.getAvailableGamesMap().get((int) regis.getM());
                     wantedGame.addPlayer(this.client);
                 } catch (Exception e) {
                     client.getWriter().send("REGNO").end();
                 }
-                break;
-
-            case "UNREG":
+            }
+            case "UNREG" -> {
                 endLine();
                 System.out.println("UNREG");
                 try {
@@ -212,25 +206,22 @@ public class RequestParser {
                 } catch (Exception e) {
                     client.getWriter().send("DUNNO").end();
                 }
-                break;
-
-            case "GAME?":
+            }
+            case "GAME?" -> {
                 endLine();
                 System.out.println("GAME?");
                 client.getWriter().send("GAMES ").send((byte) mainHandler.getAvailableGamesNumber()).end();
-                for (Game g: mainHandler.getAvailableGamesMap().values()){
+                for (Game g : mainHandler.getAvailableGamesMap().values()) {
                     client.getWriter().send("OGAME ")
                             .send((byte) g.getId())
                             .send(" ")
                             .send((byte) g.getNb_players())
                             .end();
                 }
-                break;
-
-            case "SIZE?":
+            }
+            case "SIZE?" -> {
                 SIZE size = parseSIZE();
                 System.out.println("SIZE? " + size.getM());
-
                 Game g = mainHandler.getAvailableGamesMap().get((int) size.getM());
                 if (g == null) {
                     client.getWriter().send("DUNNO").end();
@@ -244,50 +235,42 @@ public class RequestParser {
                         .send(" ")
                         .send((short) g.getDimY())
                         .end();
-                break;
-
-            case "LIST?":
+            }
+            case "LIST?" -> {
                 LIST list = parseLIST();
                 System.out.println("LIST? " + list.getM());
-
                 Game ga = mainHandler.getAvailableGamesMap().get((int) list.getM());
                 client.getWriter().send("LIST! ")
                         .send(list.getM())
                         .send(" ")
                         .send((byte) ga.getNb_players())//(ga.getNb_players() == 42 ? 41 : ga.getNb_players() ));
                         .end();
-
-                for (ClientHandler player: ga.getPlayers()){
+                for (ClientHandler player : ga.getPlayers()) {
                     client.getWriter().send("PLAYR ")
                             .send(player.getClient().getName())
                             .end();
                 }
-                break;
-
-            case "MALL?":
+            }
+            case "MALL?" -> {
                 MALL mall = parseMall();
                 System.out.println("MALL? " + mall.getMessage());
-
                 Game gameToMessage = client.getClient().getGameRunning();
-                gameToMessage.getMessagerie().multicastMessage(mall.getMessage());
+                gameToMessage.getMessagerie().multicastMessage("MESSA " + this.client.getClient().getName() + " " + mall.getMessage());
                 client.getWriter().send("MALL!").end();
-                break;
-
-            case "SEND?":
+            }
+            case "SEND?" -> {
                 SEND send = parseSEND();
                 System.out.println("SEND? " + send.getId() + " " + send.getMessage());
-
                 Game gameToMP = client.getClient().getGameRunning();
                 try {
-                    gameToMP.getMessagerie().sendToOne(send.getMessage(), send.getId());
+                    gameToMP.getMessagerie().sendToOne("MESSP " + this.client.getClient().getName() + " " + send.getMessage(), send.getId());
                 } catch (Exception e) {
                     client.getWriter().send("NSEND").end();
                     break;
                 }
                 client.getWriter().send("SEND!").end();
-                break;
-
-            case "GLIS?":
+            }
+            case "GLIS?" -> {
                 System.out.println("GLIS?");
                 endLine();
                 Game currentGame = client.getClient().getGameRunning();
@@ -311,100 +294,90 @@ public class RequestParser {
                             .send(p)
                             .end();
                 }
-                break;
-
-            case "IQUIT":
+            }
+            case "IQUIT" -> {
                 System.out.println("IQUIT");
                 endLine();
                 client.getWriter().send("GOBYE").end();
                 client.getClient().getGameRunning().removePlayer(client);
                 client.closeConnection();
-                break;
-
-            case "UPMOV":
+            }
+            case "UPMOV" -> {
                 XMOVE upMove = parseXMOVE();
                 System.out.println("UPMOVE " + upMove.getD());
                 try {
                     this.client.getClient().getGameRunning().getPlateau()
-                                .moveN(this.client, "UP", upMove.getDValue());
-                } catch (Exception e){
+                            .moveN(this.client, "UP", upMove.getDValue());
+                } catch (Exception e) {
                     System.out.println("Invalid move");
                     illegalCommand();
                 }
-                break;
-            case "DOMOV":
+            }
+            case "DOMOV" -> {
                 XMOVE downMove = parseXMOVE();
                 System.out.println("DOMOV " + downMove.getD());
                 try {
                     this.client.getClient().getGameRunning().getPlateau()
                             .moveN(this.client, "DOWN", downMove.getDValue());
-                } catch (Exception e){
+                } catch (Exception e) {
                     System.out.println("Invalid move");
                     illegalCommand();
                 }
-                break;
-            case "LEMOV":
+            }
+            case "LEMOV" -> {
                 XMOVE leftMove = parseXMOVE();
                 System.out.println("LEMOV " + leftMove.getD());
                 try {
                     this.client.getClient().getGameRunning().getPlateau()
                             .moveN(this.client, "LEFT", leftMove.getDValue());
-                } catch (Exception e){
+                } catch (Exception e) {
                     System.out.println("Invalid move");
                     illegalCommand();
                 }
-                break;
-
-            case "RIMOV":
+            }
+            case "RIMOV" -> {
                 XMOVE rightMove = parseXMOVE();
                 System.out.println("RIMOV " + rightMove.getD());
                 try {
                     this.client.getClient().getGameRunning().getPlateau()
                             .moveN(this.client, "RIGHT", rightMove.getDValue());
-                } catch (Exception e){
+                } catch (Exception e) {
                     System.out.println("Invalid move");
                     illegalCommand();
                 }
-                break;
-
-            case "QUITS":
+            }
+            case "QUITS" -> {
                 endLine();
                 System.out.println("QUITS");
                 client.closeConnection();
-                if (client.isLoggedIn()){
+                if (client.isLoggedIn()) {
                     mainHandler.usernamesSet.remove(client.getUsername());
                 }
-                break;
-
-
-            case "PING?":
+            }
+            case "PING?" -> {
                 endLine();
                 System.out.println("PING?");
                 client.getWriter().send("PING!").end();
-                break;
-
-            case "UPGD?":
+            }
+            case "UPGD?" -> {
                 endLine();
                 System.out.println("UPGD?");
                 setGoodClient(true);
                 client.getWriter().send("UPGD!").end();
-                break;
-
-
-            default:
+            }
+            case "" -> throw new SocketClosedException();
+            default -> {
                 System.out.println(type + " is illegal, calling the cops");
+                System.out.println("TYPE DE reponse := " + type.getClass());
+                System.out.println("TAILLE = " + type.length());
                 illegalCommand();
-
+            }
         }
     }
 
 
     private void illegalCommand(){
-        try {
-            client.getWriter().send("FUCKU").end();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        client.getWriter().send("FUCKU").end();
         try {
             this.client.getClient().getGameRunning().removePlayer(client);
         } catch (Exception ignored) {}

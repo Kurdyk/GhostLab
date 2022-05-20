@@ -13,6 +13,7 @@ public class ChatItem {
     public ChatItem(String fromAndTo, String message) {
         this.fromAndTo = new SimpleStringProperty(fromAndTo);
         this.message = new SimpleStringProperty(message);
+        System.out.println("A new ChatItem has been initialized !");
     }
 
     public ChatItem(){

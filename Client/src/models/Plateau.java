@@ -10,6 +10,7 @@ import models.Game.CaseInconnue;
 import models.Game.CaseMur;
 import models.Game.CaseVide;
 import utils.CallbackInstance;
+import utils.ChatItem;
 import utils.Coordinates;
 import utils.LeaderBoardItem;
 
@@ -218,6 +219,28 @@ public class Plateau extends CallbackInstance {
     }
 
 
+    @Override
+    public void receivePublicMessage(String s) {
+        String exp = s.split(" ")[1];
+        String message = String.join(" ", Arrays.copyOfRange(s.split(" "), 2, s.split(" ").length));
+        Platform.runLater(() -> this.gameApp.getChatItems().add(new ChatItem(exp, message)));
+    }
+
+    @Override
+    public void receivePrivateMessage(String s) {
+        String exp = s.split(" ")[1];
+        String message = String.join(" ", Arrays.copyOfRange(s.split(" "), 2, s.split(" ").length));
+        Platform.runLater(() -> this.gameApp.getChatItems().add(new ChatItem(exp + " (PRIVE)", message)));
+    }
+
+    @Override
+    public void messageSentConfirmed(String s) {
+        if (s.equals("SEND!")){
+            Platform.runLater(() -> this.gameApp.getChatItems().add(this.gameApp.getPendingMessages().remove(0)));
+        } else {
+            this.gameApp.getPendingMessages().remove(0);
+        }
+    }
 
     @Override
     public void partieFinie(String s) {

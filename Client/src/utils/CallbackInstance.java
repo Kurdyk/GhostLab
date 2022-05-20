@@ -14,5 +14,8 @@ public class CallbackInstance {
     public void handleMove(String s) {}
     public void handleMoveCapture(String s) {}
     public void partieFinie(String s) {}
+    public void receivePublicMessage(String s) {}
+    public void receivePrivateMessage(String s) {}
+    public void messageSentConfirmed(String s) {}
 
 }

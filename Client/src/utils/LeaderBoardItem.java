@@ -50,12 +50,7 @@ public class LeaderBoardItem implements Comparable<LeaderBoardItem> {
      * @return the callback
      */
     public static Callback<LeaderBoardItem, Observable[]> extractor() {
-        return new Callback<LeaderBoardItem, Observable[]>() {
-            @Override
-            public Observable[] call(LeaderBoardItem param) {
-                return new Observable[]{param.username, param.rank, param.score, param.alive};
-            }
-        };
+        return param -> new Observable[]{param.username, param.rank, param.score, param.alive};
     }
 
     /**

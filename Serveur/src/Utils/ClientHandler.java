@@ -4,11 +4,8 @@ import Apps.ConnectionHandler;
 import Models.Client;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.net.SocketException;
-import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -66,20 +63,25 @@ public class ClientHandler implements Runnable {
                             .send((byte) game.getNb_players())
                             .end());
 
-
-
-            while(true) {
-                try {
-                    parser.parse();
-                } catch (IOException e) {
-                    System.out.println("Socket closed by client");
-                    socket.close();
-                    return;
-                }
-            }
-
         } catch (Exception e){
             e.printStackTrace();
+        }
+
+        boolean running = true;
+        while(running) {
+            try {
+                parser.parse();
+            } catch (IOException e) {
+                System.out.println("ON EST BIEN DANS LE CATCH");
+                //System.out.println("Socket closed by client");
+                try {
+                    socket.close();
+                } catch (IOException ignored) {}
+                running = false;
+            } catch (SocketClosedException e){
+                System.out.println("ON A REMARQUE QUE LA SOCKET ETAIT FERMEE BORDEL DE MERDE");
+                running = false;
+            }
         }
     }
 
