@@ -279,6 +279,9 @@ public class RepParser {
                 //System.exit(0);
             case "FUCKU":
                 System.exit(1);
+            case "PING!":
+                endLine();
+                return "PING!";
             default:
                 endLine();
                 throw new IllegalArgumentException("Unrecognized response");

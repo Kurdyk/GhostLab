@@ -3,6 +3,8 @@ package views;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import models.Config;
+import utils.RepParser;
+import utils.TestWriter;
 
 import java.net.InetSocketAddress;
 import java.net.Socket;
@@ -59,8 +61,14 @@ public class ParamServeurController {
         try {
             Socket socket = new Socket();
             socket.connect(new InetSocketAddress(url, port), 3*1000);
-            socket.close();
-            return true;
+            TestWriter writer = new TestWriter(socket.getOutputStream(), "***");
+            RepParser parser = new RepParser(socket.getInputStream(), "***");
+            parser.parse(); //Le GAMES 0 envoyé à la connexion
+            writer.send("PING?").end();
+            String rep = parser.parse();
+            System.out.println(rep);
+            return rep.equals("PING!");
+
         } catch (Exception e){
             return false;
         }

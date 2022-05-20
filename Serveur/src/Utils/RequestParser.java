@@ -378,6 +378,7 @@ public class RequestParser {
                 endLine();
                 System.out.println("PING?");
                 client.getWriter().send("PING!").end();
+                client.closeConnection();
             }
             case "UPGD?" -> {
                 endLine();
