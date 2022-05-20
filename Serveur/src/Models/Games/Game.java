@@ -22,12 +22,19 @@ public class Game {
     private int maxPlayers;
 
     private Plateau plateau;
-
+    /**
+     * Game's ghosts' list
+     */
     private ArrayList<Ghost> ghosts;
 
     ///Pour UDP et Multicast
     Messagerie messagerie;
 
+    /**
+     * Game's constructor
+     * @param owner
+     * @param mainHandler
+     */
     public Game(ClientHandler owner,  ConnectionHandler mainHandler) {
 
         this.owner= owner;
@@ -42,40 +49,84 @@ public class Game {
 
     }
 
+    /**
+     *
+     * @return random dimension
+     */
+
     public static int generate_dim(){
         int d = (int) (Math.random() * 80) + 10;
         return (d == 42 ? generate_dim() : d);
     }
 
-
+    /**
+     *
+     * @return players
+     */
     public CopyOnWriteArrayList<ClientHandler> getPlayers() {
         return players;
     }
 
+    /**
+     *
+     * @return nb_players
+     */
     public int getNb_players() { return this.nb_players; }
 
+    /**
+     *
+     * @return id
+     */
     public int getId() { return this.id; }
 
+    /**
+     *
+     * @return dimX
+     */
     public int getDimX() {
         return dimX;
     }
 
+    /**
+     *
+     * @return dimY
+     */
     public int getDimY() {
         return dimY;
     }
 
+    /**
+     *
+     * @return ghosts
+     */
     public ArrayList<Ghost> getGhosts() { return this.ghosts; }
 
+    /**
+     *
+     * @return plateau
+     */
     public Plateau getPlateau(){ return this.plateau;}
 
+    /**
+     *
+     * @return messagerie
+     */
     public Messagerie getMessagerie(){return this.messagerie;}
 
+    /**
+     * send multicast message to all subscribers
+     * @param message
+     */
     private void sendAll(String message){
         for (ClientHandler player: this.players){
             player.getWriter().send(message).end();
         }
     }
 
+    /**
+     * send multicast message to all GoodClient subscribers
+     * @param message
+     */
     private void sendGood(String message){
         for (ClientHandler player: this.players){
             if (player.isGoodClient()){
@@ -186,12 +237,22 @@ public class Game {
         System.out.println(plateau);
     }
 
-
+    /**
+     * remove a ghost from ghost's list
+     * and terminate the game if there is no ghost left
+     * @param g
+     * @throws Exception
+     */
     public void removeGhost(Ghost g) throws Exception{
         ghosts.remove(g);
         if (ghosts.isEmpty()) endGame();
     }
 
+    /**
+     *
+     * @param n
+     * @return the score
+     */
     public static String fillScore(int n) {
         String res = String.valueOf(n);
         while (res.length() < 4) {
@@ -200,6 +261,9 @@ public class Game {
         return res;
     }
 
+    /**
+     * terminate the game
+     */
     private void endGame() {
         String winnerId = "";
         int winnerScore = -1;

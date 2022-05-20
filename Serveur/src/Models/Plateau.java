@@ -676,7 +676,9 @@ public class Plateau {
     }
 
 
-
+    /**
+     * make a random ghost move to new coordinates on the game board
+     */
     public void moveGhost() {
         int random = (int) (Math.random() * game.getGhosts().size());
         Ghost g = this.game.getGhosts().get(random);
@@ -700,6 +702,12 @@ public class Plateau {
                 Plateau.fillCoordinate(y));
     }
 
+    /**
+     * add ghost's values to client score and remove the ghost from board game
+     * @param clientHandler who collect the ghost
+     * @param ghost collected ghost
+     * @throws Exception
+     */
     public void collecte(ClientHandler clientHandler, Ghost ghost) throws Exception {
         Client client = clientHandler.getClient();
         int x = ghost.getCoordonnees().getX();

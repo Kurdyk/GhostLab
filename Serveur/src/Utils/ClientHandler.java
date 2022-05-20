@@ -49,6 +49,9 @@ public class ClientHandler implements Runnable {
 
     }
 
+    /**
+     * send to the client socket the server's game's list
+     */
     @Override
     public void run(){
         try {
@@ -161,10 +164,18 @@ public class ClientHandler implements Runnable {
         return parser.isGoodClient();
     }
 
+    /**
+     * get ipaddress links to the socket
+     * @return InetAddress links to socket
+     */
     public InetAddress getIp() {
         return this.socket.getInetAddress();
     }
 
+    /**
+     * get writer
+     * @return a TestWriter
+     */
     public TestWriter getWriter() {
         return writer;
     }

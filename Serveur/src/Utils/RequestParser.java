@@ -15,13 +15,22 @@ public class RequestParser {
     private ConnectionHandler mainHandler;
     private boolean goodClient = false;
 
-
+    /**
+     * constructor
+     * @param inputStream
+     * @param client
+     * @param mainHandler
+     */
     public RequestParser(InputStream inputStream, ClientHandler client, ConnectionHandler mainHandler) {
         this.inputStream = inputStream;
         this.client = client;
         this.mainHandler = mainHandler;
     }
 
+    /**
+     * read the 3 last special char
+     * @throws IOException
+     */
     private void endLine() throws IOException {
         for (int i = 0; i < 3; i++) {
             if (this.inputStream.read() < 0) {
@@ -30,6 +39,12 @@ public class RequestParser {
         }
     }
 
+    /**
+     * read request's type
+     * @return
+     * @throws IOException
+     * @throws SocketClosedException
+     */
     private String typeReq() throws IOException, SocketClosedException {
         byte[] request = new byte[5];
         int r = this.inputStream.read(request);
@@ -39,6 +54,11 @@ public class RequestParser {
         return new String(request);
     }
 
+    /**
+     * parse NEWPL request
+     * @return
+     * @throws IOException
+     */
     private NEWPL parseNEWPL() throws IOException {
         byte[] id = new byte[8];
         byte[] port = new byte[4];
@@ -52,6 +72,11 @@ public class RequestParser {
         return new NEWPL(new String(id), new String(port));
     }
 
+    /**
+     * parse REGIS request
+     * @return
+     * @throws IOException
+     */
     private REGIS parseREGIS() throws IOException {
         byte[] id = new byte[8];
         byte[] port = new byte[4];
@@ -68,6 +93,11 @@ public class RequestParser {
         return new REGIS(new String(id), new String(port), m[0]);
     }
 
+    /**
+     * parse SIZE request
+     * @return
+     * @throws IOException
+     */
     private SIZE parseSIZE() throws IOException {
         byte[] m = new byte[1];
 
@@ -78,6 +108,11 @@ public class RequestParser {
         return new SIZE(m[0]);
     }
 
+    /**
+     * parse LIST request
+     * @return
+     * @throws IOException
+     */
     private LIST parseLIST() throws IOException {
         byte[] m = new byte[1];
 
@@ -88,6 +123,11 @@ public class RequestParser {
         return new LIST(m[0]);
     }
 
+    /**
+     * parse MALL request
+     * @return
+     * @throws IOException
+     */
     private MALL parseMall() throws IOException {
         StringBuilder message = new StringBuilder();
         byte[] current = new byte[1];
@@ -118,6 +158,11 @@ public class RequestParser {
 
     }
 
+    /**
+     * parse END request
+     * @return
+     * @throws IOException
+     */
     private SEND parseSEND() throws IOException {
         byte[] id = new byte[8];
         StringBuilder message = new StringBuilder();
@@ -150,6 +195,11 @@ public class RequestParser {
         }
     }
 
+    /**
+     * parse **MOVE request
+     * @return
+     * @throws IOException
+     */
     private XMOVE parseXMOVE() throws IOException {
         byte[] d = new byte[3];
 
@@ -160,6 +210,11 @@ public class RequestParser {
         return new XMOVE(new String(d));
     }
 
+    /**
+     * parse request and use associate fonction
+     * @throws IOException
+     * @throws SocketClosedException
+     */
     public void parse() throws IOException, SocketClosedException {
         String type = typeReq();
         System.out.print("PARSING : ");

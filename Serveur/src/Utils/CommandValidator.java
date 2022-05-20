@@ -7,6 +7,9 @@ public class CommandValidator {
     public static HashMap<String, Integer> sizes = new HashMap<>() {
     };
 
+    /**
+     * initiate valid command's list
+     */
     public static void init() {
         sizes.put("NEWPL", 3);
         sizes.put("REGIS", 4);

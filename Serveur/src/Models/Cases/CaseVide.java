@@ -23,6 +23,10 @@ public class CaseVide extends Case{
         super(original);
     }
 
+    /**
+     *
+     * @return this' copy
+     */
     public CaseVide copy(){
         return new CaseVide(this);
     }
@@ -32,6 +36,10 @@ public class CaseVide extends Case{
         return true;
     }
 
+    /**
+     * significate case's type
+     * @return " "
+     */
     @Override
     public String toString() {
         return " ";
