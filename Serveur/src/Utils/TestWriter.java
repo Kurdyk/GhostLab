@@ -12,11 +12,21 @@ public class TestWriter {
     private OutputStream outputStream;
     private String delim;
 
+    /**
+     * constructor
+     * @param _outputStream
+     * @param _delim
+     */
     public TestWriter(OutputStream _outputStream, String _delim) {
         this.outputStream = _outputStream;
         this.delim = _delim;
     }
 
+    /**
+     * convert short to LittleEndian encryption
+     * @param n
+     * @return
+     */
     private short toLittleEndian(short n) {
         if (ByteOrder.nativeOrder().equals(ByteOrder.LITTLE_ENDIAN)) {
             return n;
@@ -25,6 +35,11 @@ public class TestWriter {
         }
     }
 
+    /**
+     * send short to socket
+     * @param n
+     * @return
+     */
     public TestWriter send(short n) {
         n = toLittleEndian(n);
         ByteBuffer toSend = ByteBuffer.allocate(2);
@@ -33,12 +48,22 @@ public class TestWriter {
         return this;
     }
 
+    /**
+     * send byte to socket
+     * @param n
+     * @return
+     */
     public TestWriter send(byte n) {
         byte[] tab = new byte[1];
         tab[0] = n;
         return this.send(tab);
     }
 
+    /**
+     * send integer to socket
+     * @param n
+     * @return
+     */
     public TestWriter send(int n) {
         try {
             this.outputStream.write(n);
@@ -49,7 +74,11 @@ public class TestWriter {
     }
 
 
-
+    /**
+     * send byte[] to socket
+     * @param bytes
+     * @return
+     */
     public TestWriter send(byte[] bytes) {
         try {
             this.outputStream.write(bytes);
@@ -60,10 +89,18 @@ public class TestWriter {
         return this;
     }
 
+    /**
+     * send String to socket
+     * @param message
+     * @return
+     */
     public TestWriter send(String message) {
         return this.send(message.getBytes(StandardCharsets.UTF_8));
     }
 
+    /**
+     * end the stream
+     */
     public void end() {
         this.send(delim.getBytes());
         try {

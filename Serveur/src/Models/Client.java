@@ -72,25 +72,48 @@ public class Client extends Entity {
      */
     public void addScore(int val) {score+=val;}
 
-
+    /**
+     *  get client's udp port
+     * @return port_udp
+     */
     public int getPort_udp() {
         return port_udp;
     }
 
+    /**
+     * set client's udp port
+     * @param port_udp
+     */
     public void setPort_udp(int port_udp) {
         this.port_udp = port_udp;
     }
 
+    /**
+     * get client name
+     * @return name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * set client name
+     * @param name
+     */
     public void setName(String name) {
         this.name = name;
     }
 
+    /**
+     * get client ready's state
+     * @return
+     */
     public boolean isReady() { return ready;}
 
+    /**
+     * set client ready's state
+     * @param ready
+     */
     public void setReady(boolean ready) {this.ready = ready;}
 
 }

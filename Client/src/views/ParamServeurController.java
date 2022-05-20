@@ -63,7 +63,11 @@ public class ParamServeurController {
             socket.connect(new InetSocketAddress(url, port), 3*1000);
             TestWriter writer = new TestWriter(socket.getOutputStream(), "***");
             RepParser parser = new RepParser(socket.getInputStream(), "***");
-            parser.parse(); //Le GAMES 0 envoyé à la connexion
+            String first = parser.parse(); //Le GAMES n envoyé à la connexion
+            int n = Integer.parseInt(first.split(" ")[1]);
+            for (int i = 0; i < n; i++) {
+                parser.parse();
+            }
             writer.send("PING?").end();
             String rep = parser.parse();
             System.out.println(rep);

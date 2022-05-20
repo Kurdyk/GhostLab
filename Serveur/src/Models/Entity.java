@@ -35,10 +35,18 @@ public abstract class Entity {
         }
     }
 
+    /**
+     * get entity's coordinates
+     * @return entity's coordinates
+     */
     public Coordinates getCoordonnees() {
         return this.coordinates;
     }
 
+    /**
+     * set entity's coordinates
+     * @param coordinates to set
+     */
     public void setCoordinates(Coordinates coordinates) {
         this.coordinates = coordinates;
     }

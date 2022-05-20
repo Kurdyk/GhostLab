@@ -53,6 +53,10 @@ public class ConnectionHandler {
 
     }
 
+    /**
+     * launch server socket
+     * @throws Exception
+     */
     private void run() throws Exception{
         ServerSocket listener = new ServerSocket(7236);
         System.out.println("Le serveur est actif sur le port " + listener.getLocalPort());
