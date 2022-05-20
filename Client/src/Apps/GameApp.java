@@ -97,32 +97,6 @@ public class GameApp {
         mainApp.getConnectionHandler().registerCallback("MOVE!", plateau, CallbackInstance::handleMove);
         mainApp.getConnectionHandler().registerCallback("MOVEF", plateau, CallbackInstance::handleMoveCapture);
         mainApp.getConnectionHandler().registerCallback("GOBYE", plateau, CallbackInstance::partieFinie);
-//        mainApp.getConnectionHandler().registerCallback("201", plateau, CallbackInstance::handleMoveAllowed);
-//        mainApp.getConnectionHandler().registerCallback("202", plateau, CallbackInstance::handleMoveBlocked);
-//        mainApp.getConnectionHandler().registerCallback("203", plateau, CallbackInstance::handleMoveTresor);
-//        mainApp.getConnectionHandler().registerCallback("401", plateau, CallbackInstance::getHoles);
-//        mainApp.getConnectionHandler().registerCallback("411", plateau, CallbackInstance::getTresors);
-//        mainApp.getConnectionHandler().registerCallback("421", plateau, CallbackInstance::getWalls);
-//        mainApp.getConnectionHandler().registerCallback("666", plateau, CallbackInstance::handleMoveDead);
-//        mainApp.getConnectionHandler().registerCallback("902", plateau, CallbackInstance::handleNotYourTurn);
-//
-//
-//        mainApp.getConnectionHandler().registerCallback("301", plateau, CallbackInstance::updateRevealHole);
-//        mainApp.getConnectionHandler().registerCallback("320", plateau, CallbackInstance::getNearHoles, true);
-//        mainApp.getConnectionHandler().registerCallback("330", plateau, CallbackInstance::getNearWall,true);
-//        mainApp.getConnectionHandler().registerCallback("340", plateau, CallbackInstance::getTresors, true);
-//        mainApp.getConnectionHandler().registerCallback("311", plateau, CallbackInstance::updateRevealMap);
-//
-//        if (partie.getModeDeJeu().equals("3")) {
-//            mainApp.getConnectionHandler().registerCallback("500", plateau, CallbackInstance::handleTurnChanged, true);
-//            mainApp.getConnectionHandler().registerCallback("510", plateau, CallbackInstance::updatePlayerPosition, true);
-//            mainApp.getConnectionHandler().registerCallback("511", plateau, CallbackInstance::updatePlayerTresor, true);
-//            mainApp.getConnectionHandler().registerCallback("520", plateau, CallbackInstance::declareDead, true);
-//            mainApp.getConnectionHandler().registerCallback("530", plateau, CallbackInstance::partieFinie, true);
-//        }
-
-
-
 
     }
 
@@ -175,9 +149,12 @@ public class GameApp {
         root.setOnKeyPressed(this::handleKeyPressed);
 
         fetchPlayersPositionsTimer = this.mainApp.getConnectionHandler().registerRecurrentServerCall(new RecurrentServerRequest() {
+            private final ConnectionHandler lock = mainApp.getConnectionHandler();
             @Override
             public void run() {
-                handler.getWriter().send("GLIS?").end();
+                synchronized (lock) {
+                    handler.getWriter().send("GLIS?").end();
+                }
             }
         }, 50);
 
@@ -284,12 +261,14 @@ public class GameApp {
     private void processKeyEvent(KeyEvent keyEvent){
         System.out.println("TOUCHE PRESSEE : " + keyEvent.getCode().getName());
         this.directions.add(keyEvent.getCode());
-        switch (keyEvent.getCode()) {
-            case UP -> this.mainApp.getConnectionHandler().getWriter().send("UPMOV 001").end();
-            case DOWN -> this.mainApp.getConnectionHandler().getWriter().send("DOMOV 001").end();
-            case LEFT -> this.mainApp.getConnectionHandler().getWriter().send("LEMOV 001").end();
-            case RIGHT -> this.mainApp.getConnectionHandler().getWriter().send("RIMOV 001").end();
-            default -> {
+        synchronized (this.mainApp.getConnectionHandler()) {
+            switch (keyEvent.getCode()) {
+                case UP -> this.mainApp.getConnectionHandler().getWriter().send("UPMOV 001").end();
+                case DOWN -> this.mainApp.getConnectionHandler().getWriter().send("DOMOV 001").end();
+                case LEFT -> this.mainApp.getConnectionHandler().getWriter().send("LEMOV 001").end();
+                case RIGHT -> this.mainApp.getConnectionHandler().getWriter().send("RIMOV 001").end();
+                default -> {
+                }
             }
         }
     }
