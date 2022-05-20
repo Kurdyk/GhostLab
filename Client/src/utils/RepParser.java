@@ -275,7 +275,8 @@ public class RepParser {
                 endLine();
                 return type;
             case "GOBYE":
-                System.exit(0);
+                endLine();
+                //System.exit(0);
             case "FUCKU":
                 System.exit(1);
             default:

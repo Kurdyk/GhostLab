@@ -3,8 +3,6 @@ package views;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import models.Config;
-import utils.MyPrintWriter;
-import utils.MyScanner;
 
 import java.net.InetSocketAddress;
 import java.net.Socket;
