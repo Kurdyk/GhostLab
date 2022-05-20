@@ -3,7 +3,6 @@ package utils;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
 
 public class MessageriePrivee implements Runnable {
@@ -23,8 +22,7 @@ public class MessageriePrivee implements Runnable {
                     break;
                 }
                 else System.out.println("Port " + port + " already in use.");
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (IOException ignored) {
             }
         }
 

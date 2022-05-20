@@ -622,7 +622,7 @@ public class Plateau {
         }
         Coordinates c = client.getClient().getCoordonnees();
         int i = (int) (Math.random() * 99);
-        if(i < 5){ moveGhost();}
+        if(i < 35){ moveGhost();}
         switch (direction) {
             case "UP":
                 if (!horsLimite(c.getX(), c.getY() - 1) && getCase(c.getX(), c.getY() - 1).isFree()) {
@@ -692,8 +692,10 @@ public class Plateau {
             x = (int) (Math.random() * hor);
             y = (int) (Math.random() * vert);
         }
-        this.grille[gx][gy] = new CaseVide(gx, gy);
+        this.grille[gx][gy].capturedGhost();
         this.grille[x][y].setGhostOn(g);
+        g.getCoordonnees().setX(x);
+        g.getCoordonnees().setY(y);
         this.game.getMessagerie().multicastMessage("GHOST " +
                 Plateau.fillCoordinate(x) +
                 " "+
@@ -712,6 +714,7 @@ public class Plateau {
                 Plateau.fillCoordinate(x) + " " +
                 Plateau.fillCoordinate(y));
         this.game.removeGhost(ghost);
+        this.grille[x][y].capturedGhost();
         nbGhost --;
 
 

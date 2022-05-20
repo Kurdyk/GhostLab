@@ -25,6 +25,9 @@ public class Game {
 
     private ArrayList<Ghost> ghosts;
 
+    private boolean joinable = true;
+    private boolean started = false;
+
     ///Pour UDP et Multicast
     Messagerie messagerie;
 
@@ -38,8 +41,22 @@ public class Game {
         this.id = mainHandler.registerGameId(this);
         dimX = generate_dim();
         dimY = generate_dim();
-        maxPlayers = dimX * dimY / 5;
+        maxPlayers = 10000000;
+        this.nb_fantoms = (Math.max(10, 3 * nb_ready));
 
+    }
+
+    public Game(ClientHandler owner, ConnectionHandler mainHandler, int dimX, int dimY, int nb_fantoms, int maxPlayers) {
+        this.mainHandler = mainHandler;
+        this.owner = owner;
+        this.nb_fantoms = nb_fantoms;
+        this.dimX = dimX;
+        this.dimY = dimY;
+        this.maxPlayers = maxPlayers;
+        this.nb_players = 0;
+        this.nb_ready = 0;
+        this.ghosts = new ArrayList<Ghost>();
+        this.id = mainHandler.registerGameId(this);
     }
 
     public static int generate_dim(){
@@ -93,7 +110,7 @@ public class Game {
      * @param client le joueur à ajouter
      */
     public synchronized void addPlayer(ClientHandler client){
-        if (!registerUsername(client.getClient().getName()) && this.players.size() < this.maxPlayers) {
+        if (!registerUsername(client.getClient().getName()) && this.players.size() < this.maxPlayers && isJoinable()) {
             client.getWriter().send("REGNO").end();
             return;
         }
@@ -109,7 +126,7 @@ public class Game {
         client.getClient().setGameRunning(this);
         client.getWriter().send("REGOK ").send((byte) this.getId()).end();
         if(players.size() == this.maxPlayers){
-            mainHandler.hideGame(this.id);
+            this.joinable = false;
         }
     }
 
@@ -127,11 +144,12 @@ public class Game {
             nb_ready--;
         }
         nb_players--;
+        this.joinable = true;
         client.getWriter().send("UNROK ").send((byte) this.getId()).end();
         this.players.remove(client);
         this.sendGood("PQUIT " + client.getClient().getName());
         if (nb_players == 0){
-            this.mainHandler.hideGame(this.id);
+            joinable = false;
         }
 
     }
@@ -156,8 +174,8 @@ public class Game {
      * Lance une partie
      */
     private void startGame() {
+        this.started = true;
         this.mainHandler.getAvailableGamesMap().remove(this.getId());
-        this.nb_fantoms = (Math.max(10, 3 * nb_ready));
 
         try {
             this.messagerie = new Messagerie(this.getId(), players);
@@ -193,11 +211,11 @@ public class Game {
     }
 
     public static String fillScore(int n) {
-        String res = String.valueOf(n);
+        StringBuilder res = new StringBuilder(String.valueOf(n));
         while (res.length() < 4) {
-            res = "0" + res;
+            res.insert(0, "0");
         }
-        return res;
+        return res.toString();
     }
 
     private void endGame() {
@@ -215,4 +233,7 @@ public class Game {
 
     }
 
+    public boolean isJoinable() {
+        return joinable && !started;
+    }
 }

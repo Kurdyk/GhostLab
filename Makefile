@@ -19,6 +19,7 @@ dependencies:
 	mkdir -p Dependencies/$(jfx)
 	wget -O openjfx.zip $(url)
 	unzip openjfx.zip
+	rm openjfx.zip
 	mv javafx-sdk-18.0.1/lib Dependencies/$(jfx)/
 	rm -r javafx-sdk-18.0.1
 

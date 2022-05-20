@@ -17,6 +17,9 @@ public class CallbackInstance {
     public void receivePublicMessage(String s) {}
     public void receivePrivateMessage(String s) {}
     public void messageSentConfirmed(String s) {}
+    public void regno(String s){}
+    public void ghostMove(String s){}
+    public void ghostCaptured(String s){}
 
 
 }

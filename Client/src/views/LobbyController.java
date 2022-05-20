@@ -136,9 +136,7 @@ public class LobbyController extends CallbackInstance {
     }
     @FXML
     private void handleQuitButtonClick(){
-        if(this.mainApp.getServerConfig().isServeurAmeliore()){
-            this.mainApp.getConnectionHandler().getWriter().send("UNREG").end();
-        }
+        this.mainApp.getConnectionHandler().getWriter().send("UNREG").end();
         // Cette methode est appelée lorsque l'on clique sur le bouton quitter. Ce comportement est défini dans le fichier FXML
         try {
             this.partie.setCreator(false);

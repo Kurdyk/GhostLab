@@ -50,6 +50,13 @@ public class ChatController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         System.out.println("ChatController initialized !");
         System.out.println("ChatListView is now := " + this.chatListView);
+        this.messageArea.textProperty().addListener((observableValue, s, t1) -> {
+            if (t1.length() > 200 && !t1.startsWith("/p:")){
+                messageArea.setText(t1.substring(0, 200));
+            } else if (t1.startsWith("/p:")){
+                messageArea.setText(t1.substring(0, 212));
+            }
+        });
 //        chatListView.setMouseTransparent( true );
 //        chatListView.setFocusTraversable( false );
 
@@ -58,6 +65,7 @@ public class ChatController implements Initializable {
     @FXML
     private void handleSendMessage(){
         String message = this.messageArea.getText();
+        this.messageArea.setText("");
         if (message.startsWith("/p:")){
             String dest = message.substring(3, 11);
             System.out.println("Destinataire : " + dest);

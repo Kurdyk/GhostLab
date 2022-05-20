@@ -9,12 +9,10 @@ import models.Game.Case;
 import models.Game.CaseInconnue;
 import models.Game.CaseMur;
 import models.Game.CaseVide;
-import utils.CallbackInstance;
-import utils.ChatItem;
-import utils.Coordinates;
-import utils.LeaderBoardItem;
+import utils.*;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * The type Plateau.
@@ -29,11 +27,14 @@ public class Plateau extends CallbackInstance {
     private int COEFF_IMAGE;
     private ArrayList<Image> listeImages;
     private HashMap<String, Coordinates> coordonneesJoueurs = new HashMap<>();
+    private ConcurrentHashMap<Coordinates, Long> coordonneesGhosts= new ConcurrentHashMap<>();
     private int compteToursRevealHole;
     private int trousRayon1;
     private int compteToursRevealMap;
-    private int revealedX;
-    private int revealedY;
+
+    private Image screamer;
+    private ImageCrop crop;
+
 
 
     private GameApp gameApp;
@@ -58,7 +59,8 @@ public class Plateau extends CallbackInstance {
                 new Image(Objects.requireNonNull(getClass().getResource("../player_1_left.png")).toExternalForm(), COEFF_IMAGE, COEFF_IMAGE, false, false),
                 new Image(Objects.requireNonNull(getClass().getResource("../player_1_right.png")).toExternalForm(), COEFF_IMAGE, COEFF_IMAGE, false, false),
                 new Image(Objects.requireNonNull(getClass().getResource("../player_2_left.png")).toExternalForm(), COEFF_IMAGE, COEFF_IMAGE, false, false),
-                new Image(Objects.requireNonNull(getClass().getResource("../player_2_right.png")).toExternalForm(), COEFF_IMAGE, COEFF_IMAGE, false, false)));
+                new Image(Objects.requireNonNull(getClass().getResource("../player_2_right.png")).toExternalForm(), COEFF_IMAGE, COEFF_IMAGE, false, false),
+                new Image(Objects.requireNonNull(getClass().getResource("../fantome-petit.png")).toExternalForm(), COEFF_IMAGE, COEFF_IMAGE, false, false)));
 
 
 
@@ -69,6 +71,20 @@ public class Plateau extends CallbackInstance {
                 plateau.get(x).add(new CaseInconnue(x,y, listeImages));
             }
         }
+
+        double ratio = 1280. / 853.;
+        int py = (int) (gameApp.getScreenWidth() / ratio);
+        int px = (int) (gameApp.getScreenHeight() * ratio);
+        int x, y;
+        if (py < gameApp.getScreenHeight()){
+            x = px;
+            y = gameApp.getScreenHeight();
+        } else {
+            x = gameApp.getScreenWidth();
+            y = py;
+        }
+        this.screamer = new Image("fantome-grand.png", x, y, false, false);
+        this.crop = new ImageCrop(this.screamer, x, y , (x - gameApp.getScreenWidth()) / 2, (y - gameApp.getScreenHeight()) / 2, gameApp.getScreenWidth(), gameApp.getScreenHeight());
     }
 
     public void setCase(int x, int y, Case c){
@@ -189,6 +205,7 @@ public class Plateau extends CallbackInstance {
                     trierLeaderBoard();
                 });
         this.plateau.get(coordinates.getX()).set(coordinates.getY(), new CaseVide(coordinates.getX(), coordinates.getY(), listeImages));
+        gameApp.registerDrawOnTop(this.crop, 100);
     }
 
 
@@ -203,6 +220,21 @@ public class Plateau extends CallbackInstance {
         }
     }
 
+
+    @Override
+    public void ghostMove(String s) {
+        System.out.println("Un fantome a bougé!");
+        this.coordonneesGhosts.put(new Coordinates(Integer.parseInt(s.split(" ")[1]), Integer.parseInt(s.split(" ")[2])), System.currentTimeMillis());
+    }
+
+    @Override
+    public void ghostCaptured(String s) {
+        int x = Integer.parseInt(s.split(" ")[3]);
+        int y = Integer.parseInt(s.split(" ")[4]);
+        if (this.coordonneesGhosts.keySet().stream().anyMatch(p -> p.getX() == x && p.getY() == y)) {
+            this.coordonneesGhosts.remove(this.coordonneesGhosts.keySet().stream().filter(p -> p.getX() == x && p.getY() == y).toList().get(0));
+        }
+    }
 
     @Override
     public void receivePublicMessage(String s) {
@@ -221,20 +253,31 @@ public class Plateau extends CallbackInstance {
     @Override
     public void messageSentConfirmed(String s) {
         if (s.equals("SEND!")){
-            Platform.runLater(() -> this.gameApp.getChatItems().add(this.gameApp.getPendingMessages().remove(0)));
+            Platform.runLater(() -> {
+                this.gameApp.getChatItems().add(this.gameApp.getPendingMessages().remove(0));});
         } else {
-            this.gameApp.getPendingMessages().remove(0);
+            Platform.runLater(() -> {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Message non remis");
+                alert.setHeaderText("Impossible de remettre le message");
+                alert.setContentText("Le serveur a refusé de transmettre votre message au joueur " + this.gameApp.getPendingMessages().get(0).getFromAndTo().substring(7));
+                alert.initOwner(gameApp.getGameStage().getOwner());
+                this.gameApp.getPendingMessages().remove(0);
+                alert.showAndWait();
+            });
         }
     }
 
     @Override
     public void partieFinie(String s) {
         String gagnant = s.split(" ")[1];
+        String points = s.split(" ")[2];
         gameApp.getTimer().stop();
+        gameApp.getFetchPlayersPositionsTimer().cancel();
         Platform.runLater(() -> {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("NOUS AVONS UN VAINQUEUR");
-            alert.setContentText("Et le vainqueur est ... " +gagnant+"!");
+            alert.setContentText("Et le vainqueur est ... " +gagnant+" avec " + points + " points!");
             alert.initOwner(gameApp.getGameStage().getOwner());
             alert.setHeaderText(null);
             alert.showAndWait();
@@ -335,19 +378,6 @@ public class Plateau extends CallbackInstance {
      */
     public int getCompteToursRevealMap() { return compteToursRevealMap;}
 
-    /**
-     * Gets revealed x.
-     *
-     * @return the revealed x
-     */
-    public int getRevealedX() {return revealedX;}
-
-    /**
-     * Gets revealed y.
-     *
-     * @return the revealed y
-     */
-    public int getRevealedY() {return revealedY;}
 
     /**
      * Sets compte tours reveal map.
@@ -374,5 +404,9 @@ public class Plateau extends CallbackInstance {
      */
     public int getDimY() {
         return dimY;
+    }
+
+    public ConcurrentHashMap<Coordinates, Long> getCoordonneesGhosts() {
+        return coordonneesGhosts;
     }
 }

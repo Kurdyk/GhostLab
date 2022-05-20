@@ -2,14 +2,10 @@ package views;
 
 import Apps.MainApp;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import models.Partie;
 import utils.CallbackInstance;
-
-import java.nio.charset.StandardCharsets;
 
 /**
  * The type Home controller.
@@ -44,13 +40,10 @@ public class HomeController extends CallbackInstance {
     private Button creationPartieButton;
 
     @FXML
-    private Button defaultGameButton;
+    private Label dimensionsLabel;
 
     @FXML
-    private ChoiceBox<String> modeDeJeuChoiceBox;
-
-    @FXML
-    private Spinner<Integer> nombreDeTresorsSpinner;
+    private Label nbFatomesLabel;
 
     @FXML
     private Spinner<Integer> nombreDeJoueursMaxSpinner;
@@ -62,10 +55,7 @@ public class HomeController extends CallbackInstance {
     private Spinner<Integer> dimensionsYSpinner;
 
     @FXML
-    private Spinner<Integer> nombreDeTrousSpinner;
-
-    @FXML
-    private CheckBox robotsCheckBox;
+    private Spinner<Integer> nombreDeFantomesSpinner;
 
     @FXML
     private Label partiesOuvertesLabel;
@@ -77,9 +67,6 @@ public class HomeController extends CallbackInstance {
     private Label nombreDeJoueursMaxLabel;
 
     @FXML
-    private Label robotsLabel;
-
-    @FXML
     private Label notGoodServerWarningLabel;
 
     /**
@@ -89,32 +76,35 @@ public class HomeController extends CallbackInstance {
      */
     public void setMainApp(MainApp mainApp) {
         this.mainApp = mainApp;
+
+        this.mainApp.getConnectionHandler().registerCallback("REGNO", this, CallbackInstance::regno);
         partiesEnCoursTableView.setItems(mainApp.getPartiesList());
         partiesOuvertesLabel.setText("Parties ouvertes à l'inscription sur "+mainApp.getServerConfig().getAdresseServeur()+":"+mainApp.getServerConfig().getPortServeur());
         creationPartiesLabel.setText("Créer une partie sur " + mainApp.getServerConfig().getAdresseServeur()+":"+mainApp.getServerConfig().getPortServeur());
 
         if (!mainApp.getServerConfig().isServeurAmeliore()){
             nombreDeJoueursMaxSpinner.setDisable(true);
-            robotsCheckBox.setDisable(true);
             nombreDeJoueursMaxLabel.setDisable(true);
-            robotsLabel.setDisable(true);
+            dimensionsXSpinner.setDisable(true);
+            dimensionsYSpinner.setDisable(true);
+            dimensionsLabel.setDisable(true);
+            nombreDeFantomesSpinner.setDisable(true);
+            nbFatomesLabel.setDisable(true);
+            creationPartieButton.setDisable(true);
+            notGoodServerWarningLabel.setVisible(true);
+
 
         } else {
+            nombreDeJoueursMaxSpinner.setDisable(false);
+            nombreDeJoueursMaxLabel.setDisable(false);
+            dimensionsXSpinner.setDisable(false);
+            dimensionsYSpinner.setDisable(false);
+            dimensionsLabel.setDisable(false);
+            nombreDeFantomesSpinner.setDisable(false);
+            nbFatomesLabel.setDisable(false);
+            creationPartieButton.setDisable(false);
             notGoodServerWarningLabel.setVisible(false);
-            modeDeJeuChoiceBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observableValue, String oldValue, String newValue){
-                    if (newValue.equals("Speeding contest")){
-                        robotsCheckBox.setSelected(false);
-                        robotsCheckBox.setDisable(true);
-                    } else {
-                        robotsCheckBox.setDisable(false);
-                    }
-                }
-            });
         }
-
-
     }
 
     /**
@@ -131,39 +121,6 @@ public class HomeController extends CallbackInstance {
         identifiantTableColumn.setCellValueFactory(cellData -> cellData.getValue().identifiantProperty().asObject());
         nbPlayerTableColumn.setCellValueFactory(cellData -> cellData.getValue().nbPlayersProperty().asObject());
         dimensionTableColumn.setCellValueFactory(cellData -> cellData.getValue().dimensionsProperty());
-
-        dimensionsXSpinner.valueProperty().addListener((observable, oldValue, newValue) -> {
-            this.dimensionX = newValue;
-            updateValueFactories();
-
-
-        });
-        dimensionsYSpinner.valueProperty().addListener((observable, oldValue, newValue) -> {
-            this.dimensionY = newValue;
-            updateValueFactories();
-
-        });
-
-        nombreDeTrousSpinner.valueProperty().addListener((observable, oldValue, newValue) -> {
-            updateValueFactories();
-        });
-
-        nombreDeTresorsSpinner.valueProperty().addListener((observable, oldValue, newValue) -> {
-            updateValueFactories();
-        });
-
-    }
-
-    private void updateValueFactories(){
-        SpinnerValueFactory.IntegerSpinnerValueFactory trousFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 3*this.dimensionY*dimensionX/25, nombreDeTrousSpinner.getValue() < 3*this.dimensionY*dimensionX/25 ? nombreDeTrousSpinner.getValue() : 3*this.dimensionY*dimensionX/25);
-        nombreDeTrousSpinner.setValueFactory(trousFactory);
-
-        SpinnerValueFactory.IntegerSpinnerValueFactory tresorsFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, (int) ((1.5*4*(dimensionX*dimensionY)/5-nombreDeTrousSpinner.getValue())/20), nombreDeTresorsSpinner.getValue() < (int) ((1.5*4*(dimensionX*dimensionY)/5-nombreDeTrousSpinner.getValue())/20) ? nombreDeTresorsSpinner.getValue() : (int) ((1.5*4*(dimensionX*dimensionY)/5-nombreDeTrousSpinner.getValue()))/20);
-        nombreDeTresorsSpinner.setValueFactory(tresorsFactory);
-
-        SpinnerValueFactory.IntegerSpinnerValueFactory nbPlayersFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(2,(4*(dimensionX*dimensionY)/5-nombreDeTrousSpinner.getValue()-nombreDeTresorsSpinner.getValue())/20, nombreDeJoueursMaxSpinner.getValue() < (4*(dimensionX*dimensionY)/5-nombreDeTrousSpinner.getValue()-nombreDeTresorsSpinner.getValue())/20 ? nombreDeJoueursMaxSpinner.getValue() : (4*(dimensionX*dimensionY)/5-nombreDeTrousSpinner.getValue()-nombreDeTresorsSpinner.getValue())/20);
-        nombreDeJoueursMaxSpinner.setValueFactory(nbPlayersFactory);
-
     }
 
     @FXML
@@ -180,9 +137,16 @@ public class HomeController extends CallbackInstance {
     private void handlejoinButtonClick() {
         // Cette méthode est appelée lorsque l'on clique sur le bouton rejoindre la partie. Comprtement défini dans le fichier XML
         try {
+            this.mainApp.getConnectionHandler().registerCallback("REGOK", this, CallbackInstance::partieCreationCallback);
             Partie selectedPartie = partiesEnCoursTableView.getSelectionModel().getSelectedItem();
             if (selectedPartie!=null) {
-                this.mainApp.joinGameLobby(selectedPartie);
+                mainApp.getConnectionHandler().getWriter().send("REGIS ")
+                        .send(this.mainApp.getServerConfig().getUsername() + " ")
+                        .send(String.valueOf(this.mainApp.getConnectionHandler().getMessageriePrivee().getPort()))
+                        .send(" ")
+                        .send((byte) selectedPartie.getIdentifiant())
+                        .end();
+                //this.mainApp.joinGameLobby(selectedPartie);
                 System.out.println(this.mainApp.getConnectionHandler().getSocketPort());
             }
         } catch (Exception e1) {
@@ -203,6 +167,20 @@ public class HomeController extends CallbackInstance {
 
     @FXML
     private void handleCreateGameButtonClick(){
+        this.mainApp.getConnectionHandler().registerCallback("REGOK", this, CallbackInstance::partieCreationCallback);
+        partieCreated = new Partie(-1, 1, true);
+        mainApp.getConnectionHandler().getWriter()
+                .send("CUSPL ")
+                .send(this.mainApp.getServerConfig().getUsername() + " ")
+                .send(this.mainApp.getConnectionHandler().getMessageriePrivee().getPort() + " ")
+                .send((byte) (int) this.dimensionsXSpinner.getValue())
+                .send(" ")
+                .send((byte) (int) this.dimensionsYSpinner.getValue())
+                .send(" ")
+                .send((byte) (int) this.nombreDeFantomesSpinner.getValue())
+                .send(" ")
+                .send((byte) (int) this.nombreDeJoueursMaxSpinner.getValue())
+                .end();
         /*partieCreated = new Partie(-1, mainApp.getServerConfig().getUsername(), modeDeJeuChoiceBox.getValue().equals("Speeding contest") ? "1" : modeDeJeuChoiceBox.getValue().equals("Tour par tour") ? "2" : "3",
                 dimensionsXSpinner.getValue(), dimensionsYSpinner.getValue(), nombreDeTrousSpinner.getValue(), nombreDeTresorsSpinner.getValue(), mainApp.getServerConfig().isServeurAmeliore() ? nombreDeJoueursMaxSpinner.getValue() : -1,
                 mainApp.getServerConfig().isServeurAmeliore() && robotsCheckBox.isSelected());
@@ -216,10 +194,21 @@ public class HomeController extends CallbackInstance {
                 partieCreated.getNombreDeTrous(),
                 partieCreated.getNombreDeTresors()));
 */
-
-
     }
 
+    @Override
+    public void regno(String s) {
+        Platform.runLater(() -> {
+            // On crée un dialogue pour avertir l'utilisateur de son erreur
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.initOwner(mainApp.getConfigStage());
+            alert.setTitle("Erreur");
+            alert.setHeaderText("Impossible de rejoindre la partie.");
+            alert.setContentText("Veuillez réessayer, choisir une autre partie ou changer de nom d'utilisateur.");
+
+            alert.showAndWait();
+        });
+    }
 
     @Override
     public void partieCreationCallback(String s) {
@@ -227,6 +216,8 @@ public class HomeController extends CallbackInstance {
         int identifiant = Integer.parseInt(s.split(" ")[1]);
         if (this.partieCreated == null) {
             this.partieCreated = this.mainApp.getPartiesList().filtered(p -> p.getIdentifiant() == identifiant).get(0);
+            this.partieCreated.setConnected(true);
+
         } else {
             this.partieCreated.setIdentifiant(identifiant);
             this.partieCreated.setConnected(true);

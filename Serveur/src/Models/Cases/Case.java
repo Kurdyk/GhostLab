@@ -88,6 +88,10 @@ public abstract class Case {
         }
     }
 
+    public void capturedGhost(){
+        this.ghostOn = null;
+    }
+
     /**
      * Getter for ghostOn
      * @return ghostOn

@@ -52,6 +52,31 @@ public class RequestParser {
         return new NEWPL(new String(id), new String(port));
     }
 
+    private CUSPL parseCUSPL() throws IOException {
+        byte[] id = new byte[8];
+        byte[] port = new byte[4];
+        byte[] dimX = new byte[1];
+        byte[] dimY = new byte[1];
+        byte[] nbGhost = new byte[1];
+        byte[] maxPlayers = new byte[1];
+
+        this.inputStream.read(); //space
+        this.inputStream.read(id);
+        this.inputStream.read(); //space
+        this.inputStream.read(port);
+        this.inputStream.read();
+        this.inputStream.read(dimX);
+        this.inputStream.read();
+        this.inputStream.read(dimY);
+        this.inputStream.read();
+        this.inputStream.read(nbGhost);
+        this.inputStream.read();
+        this.inputStream.read(maxPlayers);
+        endLine();
+
+        return new CUSPL(new String(id), new String(port), dimX[0], dimY[0], nbGhost[0], maxPlayers[0]);
+    }
+
     private REGIS parseREGIS() throws IOException {
         byte[] id = new byte[8];
         byte[] port = new byte[4];
@@ -175,6 +200,16 @@ public class RequestParser {
                 game.addPlayer(this.client);
                 System.out.println(newpl.getId() + " crée la partie : " + game.getId() + " avec le port : " + newpl.getPort());
             }
+            case "CUSPL" -> {
+                CUSPL cuspl = parseCUSPL();
+                this.client.newClient();
+                this.client.getClient().setPort_udp(cuspl.getPortValue());
+                this.client.getClient().setName(cuspl.getId());
+                this.client.setUsername(cuspl.getId());
+                Game game = new Game(this.client, this.mainHandler, cuspl.getDimXValue(), cuspl.getDimYValue(), cuspl.getNbGhostValue(), cuspl.getNbPlayersValue());
+                game.addPlayer(this.client);
+                System.out.println(cuspl.getId() + " crée la partie : " + game.getId() + " avec le port : " + cuspl.getPort());
+            }
             case "START" -> {
                 endLine();
                 System.out.println("START");
@@ -214,7 +249,7 @@ public class RequestParser {
                 endLine();
                 System.out.println("GAME?");
                 client.getWriter().send("GAMES ").send((byte) mainHandler.getAvailableGamesNumber()).end();
-                for (Game g : mainHandler.getAvailableGamesMap().values()) {
+                for (Game g : mainHandler.getAvailableGamesMap().values().stream().filter(Game::isJoinable).toList()) {
                     client.getWriter().send("OGAME ")
                             .send((byte) g.getId())
                             .send(" ")

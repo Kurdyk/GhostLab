@@ -30,7 +30,11 @@ import views.ChatController;
 import views.LeaderBoardController;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Optional;
+import java.util.Timer;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * The type Game app.
@@ -69,6 +73,7 @@ public class GameApp {
 
     Timer fetchPlayersPositionsTimer;
 
+    private final ConcurrentHashMap<ImageCrop, Long> haveToDrawOnTop = new ConcurrentHashMap<>();
     // private final Map<ImageCrop, Long> haveToDrawOnTop = new HashMap<>();
 
 
@@ -99,6 +104,9 @@ public class GameApp {
         mainApp.getConnectionHandler().registerCallback("MESSP", plateau, CallbackInstance::receivePrivateMessage);
         mainApp.getConnectionHandler().registerCallback("SEND!", plateau, CallbackInstance::messageSentConfirmed);
         mainApp.getConnectionHandler().registerCallback("NSEND", plateau, CallbackInstance::messageSentConfirmed);
+        mainApp.getConnectionHandler().registerCallback("ENDGA", plateau, CallbackInstance::partieFinie);
+        mainApp.getConnectionHandler().registerCallback("GHOST", plateau, CallbackInstance::ghostMove);
+        mainApp.getConnectionHandler().registerCallback("SCORE", plateau, CallbackInstance::ghostCaptured);
 
 
 
@@ -147,7 +155,9 @@ public class GameApp {
             @Override
             public void handle(long l) {
                 drawGame();
+                drawGhosts();
                 drawPlayers();
+                drawOnTop();
             }
         };
         timer.start();
@@ -327,6 +337,33 @@ public class GameApp {
         }
     }
 
+    protected void drawGhosts(){
+        for(Coordinates c: plateau.getCoordonneesGhosts().keySet()){
+            if (plateau.getCoordonneesGhosts().get(c) < System.currentTimeMillis() - 10000){
+                plateau.getCoordonneesGhosts().remove(c);
+            } else {
+                gc.drawImage(plateau.getListeImages().get(7), c.getX() * COEFF_IMAGE, c.getY() * COEFF_IMAGE);
+            }
+        }
+    }
+
+    public void registerDrawOnTop(ImageCrop imageCrop, long duration){
+        System.out.println("On enregistre une demande de draw on top jusqua " + (System.currentTimeMillis() + duration) +" actuellement "+System.currentTimeMillis());
+        this.haveToDrawOnTop.put(imageCrop, System.currentTimeMillis() + duration);
+    }
+
+
+    private void drawOnTop(){
+        for (ImageCrop i : this.haveToDrawOnTop.keySet()){
+            if (this.haveToDrawOnTop.get(i) > System.currentTimeMillis()){
+                gc.drawImage(i.getImage(), i.getCropStartX(), i.getCropStartY(), i.getCropWidth(), i.getCropHeight(), 0, 0, getScreenWidth(), getScreenHeight());
+            } else {
+                this.haveToDrawOnTop.remove(i);
+            }
+        }
+    }
+
+
 
     /**
      * Handle mouse pressed.
@@ -456,6 +493,7 @@ public class GameApp {
     public void endGame(){
         leaderBoardStage.close();
         gameStage.close();
+        fetchPlayersPositionsTimer.cancel();
         releaseAllCallbacks();
         mainApp.gameStageClosed();
     }
@@ -470,6 +508,9 @@ public class GameApp {
         return partie;
     }
 
+    public Timer getFetchPlayersPositionsTimer() {
+        return fetchPlayersPositionsTimer;
+    }
 
     /**
      * Gets plateau.

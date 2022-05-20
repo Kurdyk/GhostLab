@@ -83,6 +83,7 @@ public class MainApp extends Application {
     }
 
     private void fetchPartiesList(){
+        connectionHandler.clearAll(true);
         connectionHandler.registerCallback("GAMES", this.partiesUpdater, CallbackInstance::parse, true);
         connectionHandler.registerCallback("OGAME", this.partiesUpdater, CallbackInstance::parse, true);
         connectionHandler.registerCallback("SIZE!", this.partiesUpdater, CallbackInstance::parse, true);
@@ -187,7 +188,7 @@ public class MainApp extends Application {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(getClass().getResource("/views/lobby.fxml"));
 
-        AnchorPane rootLayout = (AnchorPane) loader.load();
+        AnchorPane rootLayout = loader.load();
         Scene scene = new Scene (rootLayout);
 
         this.lobbyStage.setScene(scene);
