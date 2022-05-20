@@ -61,16 +61,8 @@ public class ParamServeurController {
         try {
             Socket socket = new Socket();
             socket.connect(new InetSocketAddress(url, port), 3*1000);
-            MyScanner scanner = new MyScanner(socket.getInputStream());
-            scanner.useDelimiter("\\s*\\*{3}\\s*");
-            MyPrintWriter printWriter = new MyPrintWriter(socket.getOutputStream(), true);
-
-            printWriter.println("PING?");
-            String rep = scanner.next();
-            scanner.close();
-            printWriter.close();
             socket.close();
-            return rep.equals("PING!");
+            return true;
         } catch (Exception e){
             return false;
         }
