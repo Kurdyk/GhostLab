@@ -15,7 +15,6 @@ public class ClientHandler implements Runnable {
 
     private ConnectionHandler mainApp;
     private Socket socket;
-//    private MyBufferedReader scanner;
     private TestWriter writer;
     private Client client;
     private String username;

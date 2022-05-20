@@ -170,6 +170,7 @@ public class RequestParser {
                 this.client.newClient();
                 this.client.getClient().setPort_udp(newpl.getPortValue());
                 this.client.getClient().setName(newpl.getId());
+                this.client.setUsername(newpl.getId());
                 Game game = new Game(this.client, this.mainHandler);
                 game.addPlayer(this.client);
                 System.out.println(newpl.getId() + " crée la partie : " + game.getId() + " avec le port : " + newpl.getPort());
@@ -190,6 +191,7 @@ public class RequestParser {
                 this.client.newClient();
                 this.client.getClient().setPort_udp(regis.getPortValue());
                 this.client.getClient().setName(regis.getId());
+                this.client.setUsername(regis.getId());
                 System.out.println(regis.getId() + " s'inscrit dans la partie : " + (int) regis.getM() + " avec le port : " + regis.getPortValue());
                 try {
                     Game wantedGame = mainHandler.getAvailableGamesMap().get((int) regis.getM());

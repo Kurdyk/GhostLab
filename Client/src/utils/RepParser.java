@@ -276,6 +276,8 @@ public class RepParser {
                 return type;
             case "GOBYE":
                 System.exit(0);
+            case "FUCKU":
+                System.exit(1);
             default:
                 endLine();
                 throw new IllegalArgumentException("Unrecognized response");
