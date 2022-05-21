@@ -28,6 +28,21 @@ Faire `make clean` pour supprimer les dépendances et les out.
 
 #### Côté client
 
+La classe `ConnectionHandler` gère la connexion TCP principale avec le serveur. 
+On peut lui demander d'enregistrer un "callback", c'est à dire un triplet
+(`mot_clé`, `instance`, `pointeur_de_fonction`). L'instance doit hériter de la 
+classe `CallbackInstance`, et surcharger la méthode donnée en dernier paramètre.
+De cette façon, dès que le `connectionHandler` reçoit un message,
+il peut le transferer au reste du programme, qui va se charger de le traiter.
+C'est donc ce thread qui altère les données de jeu. Le thread de l'interface
+se contente d'envoyer des requêtes au serveur et d'afficher à l'écran les données
+enregistrées (position des joueurs, messages, liste des parties, etc...).
+Des buffers sont également prévus pour gérer le cas où un message 
+est envoyé au client avant que celui-ci ne s'y attende, ou qu'il
+n'ai eu le temps d'enregistrer le "callback". Cette architecture permet une grande flexibilité lors de la programmation, et un traitement 
+différent des requêtes selon l'état du programme.
+Les données UDP et multicast sont renvoyées à travers la classe `ConnectionHandler`
+pour que le programmeur ne fasse pas la différence.
 #### Côté serveur
 
 Les fichiers sources sont séparés en 3 répertoires :
