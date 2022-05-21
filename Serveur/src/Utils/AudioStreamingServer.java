@@ -33,6 +33,7 @@ public class AudioStreamingServer implements Runnable{
             inputStream = AudioSystem.getAudioInputStream(decodedFormat, in);
 
             this.buffer = new byte[(int) (decodedFormat.getSampleRate() / 4 * 4)];
+            System.out.println("Buffer size = " + this.buffer.length);
         } catch (Exception e){
             e.printStackTrace();
         }

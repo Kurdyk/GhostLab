@@ -163,6 +163,7 @@ public class ConnectionHandler extends Thread{
         if (callLinks.containsKey(response[0])) {
             callLinks.get(response[0]).call(callOwners.get(response[0]), command);
         } else {
+            System.out.println("UNHANDLED COMMAND : " + command);
             buffers.computeIfAbsent(response[0], k -> new ArrayList<>());
             buffers.get(response[0]).add(command);
         }
