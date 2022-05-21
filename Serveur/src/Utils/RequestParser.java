@@ -11,7 +11,7 @@ import java.io.InputStream;
 public class RequestParser {
 
     private InputStream inputStream;
-    private ClientHandler client;
+    private final ClientHandler client;
     private ConnectionHandler mainHandler;
     private boolean goodClient = false;
 
@@ -353,7 +353,9 @@ public class RequestParser {
                     break;
                 }
                 Game gameToMessage = client.getClient().getGameRunning();
-                gameToMessage.getMessagerie().multicastMessage("MESSA " + this.client.getClient().getName() + " " + mall.getMessage());
+                synchronized (gameToMessage.getPlateau()) {
+                    gameToMessage.getMessagerie().multicastMessage("MESSA " + this.client.getClient().getName() + " " + mall.getMessage());
+                }
                 client.getWriter().send("MALL!").end();
             }
             case "SEND?" -> {
@@ -366,7 +368,9 @@ public class RequestParser {
                 }
                 Game gameToMP = client.getClient().getGameRunning();
                 try {
-                    gameToMP.getMessagerie().sendToOne("MESSP " + this.client.getClient().getName() + " " + send.getMessage(), send.getId());
+                    synchronized (gameToMP.getPlateau()) {
+                        gameToMP.getMessagerie().sendToOne("MESSP " + this.client.getClient().getName() + " " + send.getMessage(), send.getId());
+                    }
                 } catch (Exception e) {
                     client.getWriter().send("NSEND").end();
                     break;
@@ -386,23 +390,26 @@ public class RequestParser {
                 Game currentGame = client.getClient().getGameRunning();
                 byte s = (byte) currentGame.getNb_players();
                 client.getWriter().send("GLIS! ").send(s).end();
-                for (ClientHandler c : currentGame.getPlayers()) {
-                    String id = c.getClient().getName();
-                    System.out.println(id + " : " + c.getClient().getCoordonnees());
-                    String x = Plateau.fillCoordinate(c.getClient().getCoordonnees().getX());
-                    String y = Plateau.fillCoordinate(c.getClient().getCoordonnees().getY());
-                    String p = Game.fillScore(c.getClient().getScore());
+                synchronized (client) {
+                    for (ClientHandler c : currentGame.getPlayers()) {
+                        String id = c.getClient().getName();
+                        System.out.println(id + " : " + c.getClient().getCoordonnees());
+                        String x = Plateau.fillCoordinate(c.getClient().getCoordonnees().getX());
+                        String y = Plateau.fillCoordinate(c.getClient().getCoordonnees().getY());
+                        String p = Game.fillScore(c.getClient().getScore());
 
-                    client.getWriter()
-                            .send("GPLYR ")
-                            .send(id)
-                            .send(" ")
-                            .send(x)
-                            .send(" ")
-                            .send(y)
-                            .send(" ")
-                            .send(p)
-                            .end();
+
+                        client.getWriter()
+                                .send("GPLYR ")
+                                .send(id)
+                                .send(" ")
+                                .send(x)
+                                .send(" ")
+                                .send(y)
+                                .send(" ")
+                                .send(p)
+                                .end();
+                    }
                 }
             }
             case "IQUIT" -> {
@@ -416,8 +423,10 @@ public class RequestParser {
                 XMOVE upMove = parseXMOVE();
                 System.out.println("UPMOVE " + upMove.getD());
                 try {
-                    this.client.getClient().getGameRunning().getPlateau()
-                            .moveN(this.client, "UP", upMove.getDValue());
+                    synchronized (client) {
+                        this.client.getClient().getGameRunning().getPlateau()
+                                .moveN(this.client, "UP", upMove.getDValue());
+                    }
                 } catch (Exception e) {
                     System.out.println("Invalid move");
                     illegalCommand();
@@ -427,8 +436,10 @@ public class RequestParser {
                 XMOVE downMove = parseXMOVE();
                 System.out.println("DOMOV " + downMove.getD());
                 try {
-                    this.client.getClient().getGameRunning().getPlateau()
-                            .moveN(this.client, "DOWN", downMove.getDValue());
+                    synchronized (client) {
+                        this.client.getClient().getGameRunning().getPlateau()
+                                .moveN(this.client, "DOWN", downMove.getDValue());
+                    }
                 } catch (Exception e) {
                     System.out.println("Invalid move");
                     illegalCommand();
@@ -438,8 +449,10 @@ public class RequestParser {
                 XMOVE leftMove = parseXMOVE();
                 System.out.println("LEMOV " + leftMove.getD());
                 try {
-                    this.client.getClient().getGameRunning().getPlateau()
-                            .moveN(this.client, "LEFT", leftMove.getDValue());
+                    synchronized (client) {
+                        this.client.getClient().getGameRunning().getPlateau()
+                                .moveN(this.client, "LEFT", leftMove.getDValue());
+                    }
                 } catch (Exception e) {
                     System.out.println("Invalid move");
                     illegalCommand();
@@ -449,8 +462,10 @@ public class RequestParser {
                 XMOVE rightMove = parseXMOVE();
                 System.out.println("RIMOV " + rightMove.getD());
                 try {
-                    this.client.getClient().getGameRunning().getPlateau()
-                            .moveN(this.client, "RIGHT", rightMove.getDValue());
+                    synchronized (client) {
+                        this.client.getClient().getGameRunning().getPlateau()
+                                .moveN(this.client, "RIGHT", rightMove.getDValue());
+                    }
                 } catch (Exception e) {
                     System.out.println("Invalid move");
                     illegalCommand();

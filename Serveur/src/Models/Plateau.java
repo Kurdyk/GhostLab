@@ -29,7 +29,7 @@ public class Plateau {
 
     private Case [][] grille;
     private ArrayList<Coordinates> coordinatesMurs = new ArrayList<>();
-    private Game game;
+    private final Game game;
 
 
     /**
@@ -698,10 +698,12 @@ public class Plateau {
         this.grille[x][y].setGhostOn(g);
         g.getCoordonnees().setX(x);
         g.getCoordonnees().setY(y);
-        this.game.getMessagerie().multicastMessage("GHOST " +
-                Plateau.fillCoordinate(x) +
-                " "+
-                Plateau.fillCoordinate(y));
+        synchronized (this) {
+            this.game.getMessagerie().multicastMessage("GHOST " +
+                    Plateau.fillCoordinate(x) +
+                    " " +
+                    Plateau.fillCoordinate(y));
+        }
     }
 
     /**
@@ -716,11 +718,13 @@ public class Plateau {
         int y = ghost.getCoordonnees().getY();
         int score = ghost.getValues();
         client.addScore(score);
-        this.game.getMessagerie().multicastMessage("SCORE " +
-                client.getName() + " " +
-                Game.fillScore(client.getScore())+ " " +
-                Plateau.fillCoordinate(x) + " " +
-                Plateau.fillCoordinate(y));
+        synchronized (this) {
+            this.game.getMessagerie().multicastMessage("SCORE " +
+                    client.getName() + " " +
+                    Game.fillScore(client.getScore()) + " " +
+                    Plateau.fillCoordinate(x) + " " +
+                    Plateau.fillCoordinate(y));
+        }
         this.game.removeGhost(ghost);
         this.grille[x][y].capturedGhost();
         nbGhost --;
