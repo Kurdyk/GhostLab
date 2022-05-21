@@ -20,6 +20,7 @@ public class CallbackInstance {
     public void regno(String s){}
     public void ghostMove(String s){}
     public void ghostCaptured(String s){}
+    public void receiveMusic(String s){}
 
 
 }

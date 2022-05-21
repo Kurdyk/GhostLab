@@ -28,8 +28,7 @@ public class Messagerie {
 
 
     public String getIpProto(){
-        String s= fillIP(multicastIP.getHostAddress());
-        return s;
+        return fillIP(multicastIP.getHostAddress());
     }
 
     public static String fillIP(String s) {

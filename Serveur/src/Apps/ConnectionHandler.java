@@ -1,12 +1,12 @@
 package Apps;
 
 import Models.Games.Game;
+import Utils.AudioStreamingServer;
 import Utils.ClientHandler;
 import Utils.CommandValidator;
 
 import java.net.ServerSocket;
 import java.util.Map;
-import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
@@ -28,6 +28,9 @@ public class ConnectionHandler {
     private final Map<Integer, Game> gamesMap = new ConcurrentHashMap<Integer, Game>();
     private final Map<Integer, Game> availableGamesMap = new ConcurrentHashMap<Integer, Game>();
 
+    private AudioStreamingServer streamingServer;
+    private Thread streamingThread;
+
 
     /**
      * Instantiates a new Connection handler.
@@ -36,6 +39,9 @@ public class ConnectionHandler {
      */
     public ConnectionHandler() throws Exception{
         CommandValidator.init();
+        this.streamingServer = new AudioStreamingServer();
+        this.streamingThread = new Thread(this.streamingServer);
+        this.streamingThread.start();
         run();
     }
 

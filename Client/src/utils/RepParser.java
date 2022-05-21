@@ -272,6 +272,7 @@ public class RepParser {
             case "NSEND":
             case "MALL!":
             case "UPGD!":
+            case "MUSIC":
                 endLine();
                 return type;
             case "GOBYE":

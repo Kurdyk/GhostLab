@@ -622,7 +622,7 @@ public class Plateau {
         }
         Coordinates c = client.getClient().getCoordonnees();
         int i = (int) (Math.random() * 99);
-        if(i < 35){ moveGhost();}
+        if(i < 15){ moveGhost();}
         switch (direction) {
             case "UP":
                 if (!horsLimite(c.getX(), c.getY() - 1) && getCase(c.getX(), c.getY() - 1).isFree()) {

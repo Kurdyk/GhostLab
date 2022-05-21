@@ -35,6 +35,9 @@ public class Plateau extends CallbackInstance {
     private Image screamer;
     private ImageCrop crop;
 
+    private AudioReceiver audioReceiver;
+    private Thread audioThread;
+
 
 
     private GameApp gameApp;
@@ -271,7 +274,7 @@ public class Plateau extends CallbackInstance {
     @Override
     public void partieFinie(String s) {
         String gagnant = s.split(" ")[1];
-        String points = s.split(" ")[2];
+        int points = Integer.parseInt(s.split(" ")[2]);
         gameApp.getTimer().stop();
         gameApp.getFetchPlayersPositionsTimer().cancel();
         Platform.runLater(() -> {
@@ -284,6 +287,14 @@ public class Plateau extends CallbackInstance {
 
             gameApp.endGame();
         });
+    }
+
+    @Override
+    public void receiveMusic(String s) {
+        System.out.println("REQUETE DE MUSIQUE TRAITEE");
+        this.audioReceiver = new AudioReceiver();
+        this.audioThread = new Thread(this.audioReceiver);
+        this.audioThread.start();
     }
 
     /**

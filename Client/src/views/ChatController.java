@@ -73,7 +73,7 @@ public class ChatController implements Initializable {
             this.gameApp.getConnectionHandler().getWriter().send("SEND? ")
                     .send(dest)
                     .send(" ")
-                    .send(message.substring(12))
+                    .send(message.substring(13))
                     .end();
         }
         else {

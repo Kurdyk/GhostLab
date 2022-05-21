@@ -95,7 +95,7 @@ public class GameApp {
         COEFF_IMAGE = Math.min(sizeX, sizeY);
         this.plateau = new Plateau(partie.getDimensionX(), partie.getDimensionY(), COEFF_IMAGE, this);
 
-        this.mainApp.getConnectionHandler().clearAll(true);
+        this.mainApp.getConnectionHandler().clearAll();
         mainApp.getConnectionHandler().registerCallback("GPLYR", plateau, CallbackInstance::updatePlayerPosition);
         mainApp.getConnectionHandler().registerCallback("MOVE!", plateau, CallbackInstance::handleMove);
         mainApp.getConnectionHandler().registerCallback("MOVEF", plateau, CallbackInstance::handleMoveCapture);
@@ -107,6 +107,7 @@ public class GameApp {
         mainApp.getConnectionHandler().registerCallback("ENDGA", plateau, CallbackInstance::partieFinie);
         mainApp.getConnectionHandler().registerCallback("GHOST", plateau, CallbackInstance::ghostMove);
         mainApp.getConnectionHandler().registerCallback("SCORE", plateau, CallbackInstance::ghostCaptured);
+        mainApp.getConnectionHandler().registerCallback("MUSIC", plateau, CallbackInstance::receiveMusic, true);
 
 
 

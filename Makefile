@@ -22,6 +22,7 @@ dependencies:
 	rm openjfx.zip
 	mv javafx-sdk-18.0.1/lib Dependencies/$(jfx)/
 	rm -r javafx-sdk-18.0.1
+	wget -O Serveur/src/assets/musique.wav https://cloud.josso.fr/s/B7CBbY8Sgf2XBFr/download/Standing-On-The-Horizon-_feat.-Moses-Sumney_.wav
 
 
 client: build_client run_client
@@ -38,7 +39,7 @@ serveur: build_server run_server
 
 build_server:
 	mkdir -p out/production/Serveur
-	javac --add-exports java.base/sun.util.locale.provider=ALL-UNNAMED -encoding utf8 -d out/production/Serveur $(shell find Serveur/src -name "*.java")
+	javac --add-exports java.base/sun.util.locale.provider=ALL-UNNAMED -encoding utf8 -d out/production/Serveur $(shell find Serveur/src -name "*.java") && cp Serveur/src/assets/* out/production/Serveur/
 
 run_server:
 	java -Dfile.encoding=UTF-8 -classpath out/production/Serveur GhostLabServer
@@ -46,3 +47,4 @@ run_server:
 clean:
 	rm -r Dependencies/
 	rm -r out/
+	rm Serveur/src/assets/musique.wav
