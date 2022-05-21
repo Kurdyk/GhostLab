@@ -37,7 +37,6 @@ public class ChatController implements Initializable {
      * @param app the app
      */
     public void setGameApp(GameApp app){
-        System.out.println("GameApp knocked on CharController's door");
         this.gameApp = app;
 
         chatListView.setCellFactory(chatListView -> new ChatListViewCell());
@@ -48,8 +47,6 @@ public class ChatController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        System.out.println("ChatController initialized !");
-        System.out.println("ChatListView is now := " + this.chatListView);
         this.messageArea.textProperty().addListener((observableValue, s, t1) -> {
             if (t1.length() > 200 && !t1.startsWith("/p:")){
                 messageArea.setText(t1.substring(0, 200));
@@ -68,7 +65,6 @@ public class ChatController implements Initializable {
         this.messageArea.setText("");
         if (message.startsWith("/p:")) {
             String dest = message.substring(3, 11);
-            System.out.println("Destinataire : " + dest);
             this.gameApp.getPendingMessages().add(new ChatItem("Moi, à " + dest, message.substring(12)));
             synchronized (this.gameApp.getConnectionHandler()) {
                 this.gameApp.getConnectionHandler().getWriter().send("SEND? ")

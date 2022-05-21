@@ -147,7 +147,6 @@ public class HomeController extends CallbackInstance {
                         .send((byte) selectedPartie.getIdentifiant())
                         .end();
                 //this.mainApp.joinGameLobby(selectedPartie);
-                System.out.println(this.mainApp.getConnectionHandler().getSocketPort());
             }
         } catch (Exception e1) {
             e1.printStackTrace();

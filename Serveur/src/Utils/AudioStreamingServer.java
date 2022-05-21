@@ -33,7 +33,6 @@ public class AudioStreamingServer implements Runnable{
             inputStream = AudioSystem.getAudioInputStream(decodedFormat, in);
 
             this.buffer = new byte[(int) (decodedFormat.getSampleRate() / 4 * 4)];
-            System.out.println("Buffer size = " + this.buffer.length);
         } catch (Exception e){
             e.printStackTrace();
         }
@@ -50,7 +49,6 @@ public class AudioStreamingServer implements Runnable{
             while (true){
                 while (System.currentTimeMillis() - lastsent < 249) {}
                 int c = inputStream.read(this.buffer, 0, this.buffer.length);
-                System.out.println("Have read " + c + " bytes from buffer");
                 if (c > 0) {
                     DatagramPacket packet = new DatagramPacket(buffer, buffer.length, ip, port);
                     socket.send(packet);

@@ -115,7 +115,6 @@ public class Plateau {
         for (int i=0;i<hor;i++) {
             for (int j=0;j<vert;j++) {
                 if (!(grille[i][j].isMarked()) && (grille[i][j] instanceof CaseVide) ) {
-                    System.out.println(i+" "+j+" pas connexe");
                     if (!chercheConnexe(i,j)) {
                         smartSuppr(i, j, mI, mJ);
                     }
@@ -137,7 +136,6 @@ public class Plateau {
             tmpvert = (int)(Math.random() * vert);
             tmphor = (int)(Math.random() * hor);
         } while (!(grille[tmphor][tmpvert] instanceof CaseVide));
-        System.out.println("on teste i="+tmphor+ " j="+tmpvert);
         explore(tmphor, tmpvert);
         return connexe(tmphor,tmpvert);
 
@@ -151,7 +149,6 @@ public class Plateau {
 
             while (j<finJ) {
 
-                System.out.println("supprime "+i+" "+j);
 
                 supprime(i, j);
 
@@ -162,7 +159,6 @@ public class Plateau {
 
             while (j>finJ) {
 
-                System.out.println("supprime "+i+" "+j);
 
                 supprime(i, j);
 
@@ -173,7 +169,6 @@ public class Plateau {
         if(finI>initI) {
 
             while (i<finI) {
-                System.out.println("supprime "+i+" "+j);
 
                 supprime(i, j);
 
@@ -183,7 +178,6 @@ public class Plateau {
         if(finI<initI) {
 
             while (i>finI) {
-                System.out.println("supprime "+i+" "+j);
                 supprime(i, j);
 
                 i--;
@@ -468,7 +462,6 @@ public class Plateau {
     private void destroyCloseWall(int i, int j, Tracker tracker){
         grille[i][j].setMarkedForDestruction(true);
         if (grille[i][j] instanceof CaseMur && !tracker.getStatus()){
-            System.out.println("ON DETRUIT LE MUR EN POSITION "+i+":"+j);
             grille[i][j] = new CaseVide(i,j);
             coordinatesMurs.removeIf(coordinates -> coordinates.getX() == i && coordinates.getY() == j);
             tracker.setStatus(true);
@@ -500,7 +493,6 @@ public class Plateau {
         for (int i=0; i<hor; i++) {
             for (int j=0; j<vert;j++) {
                 if (!(grille[i][j].isMarked()) && (grille[i][j] instanceof CaseVide)) {
-                    System.out.println(i+", "+j+" n'est pas marquée");
 
                     destroyCloseWall(i, j ,new Tracker());
                     destroyed += 1;
@@ -511,7 +503,6 @@ public class Plateau {
                 }
             }
         }
-        System.out.println("Pour valider le plateau, on a du détruire "+destroyed+" murs");
         return true;
     }
 
@@ -542,7 +533,6 @@ public class Plateau {
         int y = (int) (Math.random()*vert);
         if(this.grille[x][y] instanceof CaseVide && this.grille[x][y].getPlayerOn()==null) {
             this.grille[x][y].setPlayerOn(client);
-            System.out.println("ON AFFECTE LES COORDONEES ("+x+", "+y+") AU CLIENT : "+client.getClient().getName());
             client.getClient().getCoordonnees().setX(x);
             client.getClient().getCoordonnees().setY(y);
             client.getWriter()
@@ -567,7 +557,6 @@ public class Plateau {
         System.out.println("nb de fantome : " + nbGhostInit);
 
         while (nbGhostInit > nbGhost) {
-            System.out.println("on en est à : " + nbGhost);
             int x = (int) (Math.random()*hor);
             int y = (int) (Math.random()*vert);
             if(this.grille[x][y] instanceof CaseVide && this.grille[x][y].getPlayerOn() == null

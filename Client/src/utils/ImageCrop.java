@@ -26,7 +26,6 @@ public class ImageCrop {
      * @param cropHeight the crop height
      */
     public ImageCrop(Image image, int width, int height, int cropStartX, int cropStartY, int cropWidth, int cropHeight) {
-        System.out.println("ImageCrop() called with: image = [" + image + "], width = [" + width + "], height = [" + height + "], cropStartX = [" + cropStartX + "], cropStartY = [" + cropStartY + "], cropWidth = [" + cropWidth + "], cropHeight = [" + cropHeight + "]");
         this.image = image;
         this.width = width;
         this.height = height;

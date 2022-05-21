@@ -74,14 +74,12 @@ public class ClientHandler implements Runnable {
             try {
                 parser.parse();
             } catch (IOException e) {
-                System.out.println("ON EST BIEN DANS LE CATCH");
-                //System.out.println("Socket closed by client");
+                System.out.println("Socket closed by client");
                 try {
                     socket.close();
                 } catch (IOException ignored) {}
                 running = false;
             } catch (SocketClosedException e){
-                System.out.println("ON A REMARQUE QUE LA SOCKET ETAIT FERMEE BORDEL DE MERDE");
                 running = false;
             }
         }

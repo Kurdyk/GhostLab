@@ -34,7 +34,7 @@ public class RequestParser {
     private void endLine() throws IOException {
         for (int i = 0; i < 3; i++) {
             if (this.inputStream.read() < 0) {
-                System.out.println("PAS COOL");
+                throw new IOException();
             }
         }
     }
@@ -282,7 +282,6 @@ public class RequestParser {
                 this.client.getClient().setPort_udp(regis.getPortValue());
                 this.client.getClient().setName(regis.getId());
                 this.client.setUsername(regis.getId());
-                System.out.println(regis.getId() + " s'inscrit dans la partie : " + (int) regis.getM() + " avec le port : " + regis.getPortValue());
                 try {
                     Game wantedGame = mainHandler.getAvailableGamesMap().get((int) regis.getM());
                     wantedGame.addPlayer(this.client);
@@ -304,7 +303,7 @@ public class RequestParser {
                 endLine();
                 System.out.println("GAME?");
                 client.getWriter().send("GAMES ").send((byte) mainHandler.getAvailableGamesNumber()).end();
-                for (Game g : mainHandler.getAvailableGamesMap().values().stream().filter(Game::isJoinable).toList()) {
+                for (Game g : mainHandler.getAvailableGamesMap().values()) {
                     client.getWriter().send("OGAME ")
                             .send((byte) g.getId())
                             .send(" ")
@@ -388,7 +387,6 @@ public class RequestParser {
                 client.getWriter().send("GLIS! ").send(s).end();
                 for (ClientHandler c : currentGame.getPlayers()) {
                     String id = c.getClient().getName();
-                    System.out.println(id + " : " + c.getClient().getCoordonnees());
                     String x = Plateau.fillCoordinate(c.getClient().getCoordonnees().getX());
                     String y = Plateau.fillCoordinate(c.getClient().getCoordonnees().getY());
                     String p = Game.fillScore(c.getClient().getScore());
@@ -419,7 +417,6 @@ public class RequestParser {
                     this.client.getClient().getGameRunning().getPlateau()
                             .moveN(this.client, "UP", upMove.getDValue());
                 } catch (Exception e) {
-                    System.out.println("Invalid move");
                     illegalCommand();
                 }
             }
@@ -430,7 +427,6 @@ public class RequestParser {
                     this.client.getClient().getGameRunning().getPlateau()
                             .moveN(this.client, "DOWN", downMove.getDValue());
                 } catch (Exception e) {
-                    System.out.println("Invalid move");
                     illegalCommand();
                 }
             }
@@ -441,7 +437,6 @@ public class RequestParser {
                     this.client.getClient().getGameRunning().getPlateau()
                             .moveN(this.client, "LEFT", leftMove.getDValue());
                 } catch (Exception e) {
-                    System.out.println("Invalid move");
                     illegalCommand();
                 }
             }
@@ -452,7 +447,6 @@ public class RequestParser {
                     this.client.getClient().getGameRunning().getPlateau()
                             .moveN(this.client, "RIGHT", rightMove.getDValue());
                 } catch (Exception e) {
-                    System.out.println("Invalid move");
                     illegalCommand();
                 }
             }
@@ -479,8 +473,6 @@ public class RequestParser {
             case "" -> throw new SocketClosedException();
             default -> {
                 System.out.println(type + " is illegal, calling the cops");
-                System.out.println("TYPE DE reponse := " + type.getClass());
-                System.out.println("TAILLE = " + type.length());
                 illegalCommand();
             }
         }

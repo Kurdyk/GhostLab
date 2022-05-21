@@ -32,11 +32,11 @@ public class Messagerie {
     }
 
     public static String fillIP(String s) {
-        System.out.println("Remplissage de : " + s);
-        while (s.length() < 15) {
-            System.out.println(s);
-            s+="#";
+        StringBuilder sBuilder = new StringBuilder(s);
+        while (sBuilder.length() < 15) {
+            sBuilder.append("#");
         }
+        s = sBuilder.toString();
         return s;
     }
 

@@ -117,7 +117,6 @@ public class Plateau extends CallbackInstance {
 
     @Override
     public void updatePlayerPosition(String s) {
-        System.out.println("On a recu : "+s);
         String[] command = s.split(" ");
         String name = command[1];
         int x = Integer.parseInt(command[2]);
@@ -285,13 +284,13 @@ public class Plateau extends CallbackInstance {
             alert.setHeaderText(null);
             alert.showAndWait();
 
+            this.audioReceiver.setRunning(false);
             gameApp.endGame();
         });
     }
 
     @Override
     public void receiveMusic(String s) {
-        System.out.println("REQUETE DE MUSIQUE TRAITEE");
         this.audioReceiver = new AudioReceiver();
         this.audioThread = new Thread(this.audioReceiver);
         this.audioThread.start();

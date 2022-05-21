@@ -86,7 +86,6 @@ public class LobbyController extends CallbackInstance {
 
 
 
-        System.out.println("ID : " + this.partie.getIdentifiant());
         mainApp.getConnectionHandler().getWriter()
                 .send("SIZE? ")
                 .send((byte) this.partie.getIdentifiant())

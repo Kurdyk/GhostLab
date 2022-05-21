@@ -35,6 +35,7 @@ import java.util.HashMap;
 import java.util.Optional;
 import java.util.Timer;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * The type Game app.
@@ -59,7 +60,7 @@ public class GameApp {
     private final int COEFF_IMAGE;
 
     private final HashMap<KeyCode, Long> keyEvents = new HashMap<>();
-    private final ArrayList<KeyCode> directions = new ArrayList<>();
+    private final CopyOnWriteArrayList<KeyCode> directions = new CopyOnWriteArrayList<>();
 
     private double dragOffsetX;
     private double dragOffsetY;
@@ -125,8 +126,6 @@ public class GameApp {
         Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
         double x = bounds.getMinX() + 5;
         double y = bounds.getMinY() + 5;
-        System.out.println("X POS : "+x);
-        System.out.println("Y POS : "+y);
         this.gameStage.setX(x);
         this.gameStage.setY(y);
         Group root = new Group();
@@ -219,7 +218,6 @@ public class GameApp {
         this.leaderBoardStage.setScene(scene);
         this.leaderBoardStage.initStyle(StageStyle.UNDECORATED);
         this.leaderBoardStage.setX(x + partie.getDimensionX() * COEFF_IMAGE + 5);
-        System.out.println("LEADERBOARD X POS : "+ (x + partie.getDimensionX()*this.COEFF_IMAGE + 5));
         //this.leaderBoardStage.setX(y);
         this.leaderBoardStage.setTitle("Leader Board");
         this.leaderBoardStage.setResizable(false);
@@ -274,7 +272,6 @@ public class GameApp {
     }
 
     private void processKeyEvent(KeyEvent keyEvent){
-        System.out.println("TOUCHE PRESSEE : " + keyEvent.getCode().getName());
         this.directions.add(keyEvent.getCode());
         synchronized (this.mainApp.getConnectionHandler()) {
             switch (keyEvent.getCode()) {
@@ -349,7 +346,6 @@ public class GameApp {
     }
 
     public void registerDrawOnTop(ImageCrop imageCrop, long duration){
-        System.out.println("On enregistre une demande de draw on top jusqua " + (System.currentTimeMillis() + duration) +" actuellement "+System.currentTimeMillis());
         this.haveToDrawOnTop.put(imageCrop, System.currentTimeMillis() + duration);
     }
 
@@ -416,7 +412,7 @@ public class GameApp {
      *
      * @return the directions
      */
-    public ArrayList<KeyCode> getDirections() {
+    public CopyOnWriteArrayList<KeyCode> getDirections() {
         return directions;
     }
 

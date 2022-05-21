@@ -37,7 +37,6 @@ public class AudioReceiver implements Runnable{
         player = new Player(this);
         pThread = new Thread(this.player);
         pThread.start();
-        System.out.println("ON RUN L'AUDIO RECEIVER");
         try {
             DataLine.Info infos = new DataLine.Info(SourceDataLine.class, audioFormat);
             dataLine = (SourceDataLine) AudioSystem.getLine(infos);
@@ -50,7 +49,6 @@ public class AudioReceiver implements Runnable{
                 socket.receive(packet);
                 try {
                     byte[] data = packet.getData();
-                    System.out.println("On a reçu " + data.length + " bytes!");
                     InputStream is = new ByteArrayInputStream(Arrays.copyOfRange(buffer, 0, packet.getLength()-1));
                     queue.add(new AudioInputStream(is, audioFormat, packet.getLength()));
                 } catch (Exception e){
@@ -93,5 +91,9 @@ public class AudioReceiver implements Runnable{
                 e.printStackTrace();
             }
         }
+    }
+
+    public void setRunning(boolean running) {
+        this.running = running;
     }
 }

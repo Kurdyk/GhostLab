@@ -14,11 +14,9 @@ public class MessageriePrivee implements Runnable {
         this.connectionHandler = connectionHandler;
 
         for (int port = 2001; port < 9999; port++ ) {
-            System.out.println(port);
             try {
                 this.datagramSocket = new DatagramSocket(port);
                 if (this.datagramSocket.isBound()) {
-                    System.out.println("Bound to : " + this.datagramSocket.getLocalPort());
                     break;
                 }
                 else System.out.println("Port " + port + " already in use.");

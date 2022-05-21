@@ -140,7 +140,6 @@ public class ConnectionHandler extends Thread{
             System.out.println("Something went wrong...");
             return;
         }
-        System.out.println("Starting while loop !");
         if (this.config.isServeurAmeliore()){
             upgrade();
         }

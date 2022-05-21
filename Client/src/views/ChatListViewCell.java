@@ -47,10 +47,8 @@ public class ChatListViewCell extends ListCell<ChatItem> {
                     e1.printStackTrace();
                 }
             }
-            System.out.println("Le loader = " + mLLoader);
             fromAndToLabel.setText(chatItem.getFromAndTo());
             messageLabel.setText(chatItem.getMessage());
-            System.out.println("On affecte les valeurs = " + chatItem.getFromAndTo() + " et " + chatItem.getMessage());
 
 
             anchorPane.setFocusTraversable(false);

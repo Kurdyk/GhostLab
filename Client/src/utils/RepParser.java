@@ -25,7 +25,7 @@ public class RepParser {
     private void endLine() throws IOException {
         for (int i = 0; i < 3; i++) {
             if (this.inputStream.read() < 0) {
-                System.out.println("PAS COOL");
+                throw new IOException();
             }
         }
     }
