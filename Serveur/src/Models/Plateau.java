@@ -595,13 +595,15 @@ public class Plateau {
             if (r == -1) break;
         }
 
-        client.getWriter()
-                .send(ghost ? "MOVEF " : "MOVE! ")
-                .send(Plateau.fillCoordinate(client.getClient().getCoordonnees().getX()))
-                .send(" ")
-                .send(Plateau.fillCoordinate(client.getClient().getCoordonnees().getY()));
-        if (ghost) client.getWriter().send(" ").send(Game.fillScore(client.getClient().getScore()));
-        client.getWriter().end();
+        synchronized(client) {
+            client.getWriter()
+                    .send(ghost ? "MOVEF " : "MOVE! ")
+                    .send(Plateau.fillCoordinate(client.getClient().getCoordonnees().getX()))
+                    .send(" ")
+                    .send(Plateau.fillCoordinate(client.getClient().getCoordonnees().getY()));
+            if (ghost) client.getWriter().send(" ").send(Game.fillScore(client.getClient().getScore()));
+            client.getWriter().end();
+        }
 
     }
 
