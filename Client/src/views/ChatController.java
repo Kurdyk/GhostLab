@@ -77,10 +77,12 @@ public class ChatController implements Initializable {
                     .end();
         }
         else {
-            this.gameApp.getConnectionHandler().getWriter()
-                    .send("MALL? ")
-                    .send(message)
-                    .end();
+            synchronized (this.gameApp.getConnectionHandler()) {
+                this.gameApp.getConnectionHandler().getWriter()
+                        .send("MALL? ")
+                        .send(message)
+                        .end();
+            }
         }
     }
 
