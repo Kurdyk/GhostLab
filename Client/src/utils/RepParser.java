@@ -112,6 +112,19 @@ public class RepParser {
 
     }
 
+    private GHST parseGHST() throws IOException {
+        byte[] id = new byte[1];
+        byte[] n = new byte[2];
+
+        this.inputStream.read();
+        this.inputStream.read(id);
+        this.inputStream.read();
+        this.inputStream.read(n);
+        endLine();
+
+        return new GHST(id[0], ByteBuffer.wrap(n).getShort());
+    }
+
     private WELCO parseWELCO() throws IOException {
         byte[] m = new byte[1];
         byte[] h = new byte[2];
@@ -266,6 +279,9 @@ public class RepParser {
             case "MOVEF":
                 MOVEF movef = parseMOVEF();
                 return "MOVEF " + movef.getX() + " " + movef.getY() + " " + movef.getP();
+            case "GHST!":
+                GHST ghst = parseGHST();
+                return "GHST! " + ghst.getM() + " " + ghst.getN();
             case "REGNO":
             case "DUNNO":
             case "SEND!":

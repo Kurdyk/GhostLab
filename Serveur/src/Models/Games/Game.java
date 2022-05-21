@@ -302,4 +302,9 @@ public class Game {
     public boolean isJoinable() {
         return joinable && !started;
     }
+
+
+    public int getNb_fantoms() {
+        return nb_fantoms;
+    }
 }

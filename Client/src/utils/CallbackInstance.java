@@ -21,6 +21,7 @@ public class CallbackInstance {
     public void ghostMove(String s){}
     public void ghostCaptured(String s){}
     public void receiveMusic(String s){}
+    public void getNbGhosts(String s){}
 
 
 }

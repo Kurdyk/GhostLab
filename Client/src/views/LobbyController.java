@@ -81,9 +81,7 @@ public class LobbyController extends CallbackInstance {
 
         mainApp.getConnectionHandler().registerCallback("SIZE!", this, CallbackInstance::updateGameDim);
         mainApp.getConnectionHandler().registerCallback("PLAYR", this, CallbackInstance::addPlayer);
-
-        mainApp.getConnectionHandler().registerCallback("ENDGA", this, CallbackInstance::partieFinie);
-
+        mainApp.getConnectionHandler().registerCallback("GHST!", this, CallbackInstance::getNbGhosts);
 
 
         mainApp.getConnectionHandler().getWriter()
@@ -93,6 +91,11 @@ public class LobbyController extends CallbackInstance {
 
         mainApp.getConnectionHandler().getWriter()
                 .send("LIST? ")
+                .send((byte) this.partie.getIdentifiant())
+                .end();
+
+        mainApp.getConnectionHandler().getWriter()
+                .send("GHST? ")
                 .send((byte) this.partie.getIdentifiant())
                 .end();
         // initialiser la partie
@@ -146,6 +149,11 @@ public class LobbyController extends CallbackInstance {
             this.partie.getPlayersNames().add(s.split(" ")[1]);
             this.playersInListView.refresh();
         });
+    }
+
+    @Override
+    public void getNbGhosts(String s) {
+        Platform.runLater(() -> this.nombreGhostLabel.setText(s.split(" ")[2]));
     }
 
     @Override

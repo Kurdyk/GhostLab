@@ -133,6 +133,16 @@ public class RequestParser {
         return new SIZE(m[0]);
     }
 
+    private GHST parseGHST() throws IOException {
+        byte[] m = new byte[1];
+
+        this.inputStream.read(); //space
+        this.inputStream.read(m);
+        endLine();
+
+        return new GHST(m[0]);
+    }
+
     /**
      * parse LIST request
      * @return
@@ -274,6 +284,21 @@ public class RequestParser {
                     System.out.println("Not in a game");
                     illegalCommand();
                 }
+            }
+            case "GHST?" -> {
+                GHST size = parseGHST();
+                System.out.println("GHST? " + size.getM());
+                Game g = mainHandler.getAvailableGamesMap().get((int) size.getM());
+                if (g == null) {
+                    client.getWriter().send("DUNNO").end();
+                    break;
+                }
+                client.getWriter()
+                        .send("GHST! ")
+                        .send((byte) g.getId())
+                        .send(" ")
+                        .send((short) g.getNb_fantoms())
+                        .end();
             }
             case "REGIS" -> {
                 REGIS regis = parseREGIS();

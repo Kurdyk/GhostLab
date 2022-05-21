@@ -610,8 +610,8 @@ public class Plateau {
             return -1;
         }
         Coordinates c = client.getClient().getCoordonnees();
-        int i = (int) (Math.random() * 99);
-        if(i < 15){ moveGhost();}
+        double i = (Math.random() * 99);
+        if(i < 15./game.getPlayers().size() * Math.log(game.getGhosts().size() + 1)){ moveGhost();}
         switch (direction) {
             case "UP":
                 if (!horsLimite(c.getX(), c.getY() - 1) && getCase(c.getX(), c.getY() - 1).isFree()) {
