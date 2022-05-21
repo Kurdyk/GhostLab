@@ -17,6 +17,7 @@ configure:
 
 dependencies:
 	mkdir -p Dependencies/$(jfx)
+	mkdir -p Serveur/src/assets
 	wget -O openjfx.zip $(url)
 	unzip openjfx.zip
 	rm openjfx.zip
