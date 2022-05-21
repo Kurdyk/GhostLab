@@ -70,17 +70,21 @@ public class ChatController implements Initializable {
             String dest = message.substring(3, 11);
             System.out.println("Destinataire : " + dest);
             this.gameApp.getPendingMessages().add(new ChatItem("Moi, à " + dest, message.substring(12)));
-            this.gameApp.getConnectionHandler().getWriter().send("SEND? ")
-                    .send(dest)
-                    .send(" ")
-                    .send(message.substring(12))
-                    .end();
+            synchronized (this.gameApp.getConnectionHandler()) {
+                this.gameApp.getConnectionHandler().getWriter().send("SEND? ")
+                        .send(dest)
+                        .send(" ")
+                        .send(message.substring(12))
+                        .end();
+            }
         }
         else {
-            this.gameApp.getConnectionHandler().getWriter()
-                    .send("MALL? ")
-                    .send(message)
-                    .end();
+            synchronized (this.gameApp.getConnectionHandler()) {
+                this.gameApp.getConnectionHandler().getWriter()
+                        .send("MALL? ")
+                        .send(message)
+                        .end();
+            }
         }
     }
 
