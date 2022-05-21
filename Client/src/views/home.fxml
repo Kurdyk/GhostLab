@@ -97,7 +97,7 @@
                          </font></Label>
                         <Spinner fx:id="nombreDeFantomesSpinner" prefHeight="30.0" prefWidth="160.0" style="-fx-font-family: Chilanka;" GridPane.columnIndex="1" GridPane.rowIndex="1">
                             <valueFactory>
-                                <SpinnerValueFactory.IntegerSpinnerValueFactory max="12000000" min="0" />
+                                <SpinnerValueFactory.IntegerSpinnerValueFactory max="12000000" min="1" />
                             </valueFactory>
                         </Spinner>
                         <Label fx:id="nombreDeJoueursMaxLabel" text="Nombre de joueurs maximum" GridPane.rowIndex="2">
