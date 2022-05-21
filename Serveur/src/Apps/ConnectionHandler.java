@@ -78,15 +78,7 @@ public class ConnectionHandler {
      * @param id the id
      * @return the boolean
      */
-    public boolean hideGame(int id){
-        if (this.availableGamesMap.containsKey(id)){
-            this.availableGamesMap.remove(id);
-            return true;
-        }
-        else{
-            return false;
-        }
-    }
+    public boolean hideGame(int id){return false;}
 
 
     /**

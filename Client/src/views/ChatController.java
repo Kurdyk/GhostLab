@@ -66,15 +66,17 @@ public class ChatController implements Initializable {
     private void handleSendMessage(){
         String message = this.messageArea.getText();
         this.messageArea.setText("");
-        if (message.startsWith("/p:")){
+        if (message.startsWith("/p:")) {
             String dest = message.substring(3, 11);
             System.out.println("Destinataire : " + dest);
             this.gameApp.getPendingMessages().add(new ChatItem("Moi, à " + dest, message.substring(12)));
-            this.gameApp.getConnectionHandler().getWriter().send("SEND? ")
-                    .send(dest)
-                    .send(" ")
-                    .send(message.substring(13))
-                    .end();
+            synchronized (this.gameApp.getConnectionHandler()) {
+                this.gameApp.getConnectionHandler().getWriter().send("SEND? ")
+                        .send(dest)
+                        .send(" ")
+                        .send(message.substring(12))
+                        .end();
+            }
         }
         else {
             synchronized (this.gameApp.getConnectionHandler()) {

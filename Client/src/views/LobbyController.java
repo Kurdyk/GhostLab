@@ -85,14 +85,6 @@ public class LobbyController extends CallbackInstance {
         mainApp.getConnectionHandler().registerCallback("ENDGA", this, CallbackInstance::partieFinie);
 
 
-        if (!this.partie.isCreator())
-            mainApp.getConnectionHandler().getWriter().send("REGIS ")
-                    .send(this.mainApp.getServerConfig().getUsername() + " ")
-                    .send(String.valueOf(this.mainApp.getConnectionHandler().getMessageriePrivee().getPort()))
-                    .send(" ")
-                    .send((byte) this.partie.getIdentifiant())
-                    .end();
-
 
         System.out.println("ID : " + this.partie.getIdentifiant());
         mainApp.getConnectionHandler().getWriter()
